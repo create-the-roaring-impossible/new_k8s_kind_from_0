@@ -1,0 +1,5 @@
+---
+# roles/test/tasks/main.yaml
+
+- name: test
+  shell: echo "Hello World!!"

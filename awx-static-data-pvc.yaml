@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: awx-static-data-pvc
+  namespace: awx
+spec:
+  storageClassName: standard
+  volumeName: local-pv-static
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
