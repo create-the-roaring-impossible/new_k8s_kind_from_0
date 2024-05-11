@@ -9,7 +9,15 @@
 	create_kind_cluster_with_registry \
 	delete_docker_registry \
 	delete_kind_cluster \
+	which_is_my_external_ip \
 	install_gitlab \
+	get_root_password_gitlab \
+	port_forward_gitlab \
+	uninstall_gitlab \
+	install_jenkins \
+	get_admin_password_jenkins \
+	port_forward_jenkins \
+	uninstall_jenkins \
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 # 	install_ingress_controller \
@@ -55,25 +63,46 @@ delete_docker_registry:
 delete_kind_cluster: delete_docker_registry
 	kind delete cluster --name personal-kind.com
 
-install_gitlab:
+which_is_my_external_ip:
+	echo "TO FIX!!"
+#	EXTERNAL_IP=$(ifconfig | grep "inet " | grep -v  "127.0.0.1" | awk -F " " '{print $2}' | head -n1) && \
+#	echo $EXTERNAL_IP
+
+install_gitlab: # TO FIX!
 	helm repo add gitlab https://charts.gitlab.io/ && \
 	helm repo update && \
 	helm upgrade --install gitlab gitlab/gitlab \
-  --timeout 600s \
-  --set certmanager-issuer.email=slb6113@gmail.com \
-  --set global.hosts.domain=personal-gitlab.com \
-	--set global.edition=ce && \
-	kubectl edit ingress -n default gitlab-webservice-default
-# kubectl get all -n ingress-nginx && kubectl describe configmap -n ingress-nginx ingress-nginx-controller
-# kubectl edit configmap -n ingress-nginx ingress-nginx-controller
-# 	=> modify: 'allow-snippet-annotations: "false"' => 'allow-snippet-annotations: "true"'
-# 	=> add: 'use-forwarded-headers: "true"'
-# kubectl edit ingress -n cattle-system rancher
-# 	=> add: 'ingressClassName: nginx' (into spec)
-# 	=> add: 'nginx.ingress.kubernetes.io/configuration-snippet: |
-#       more_set_headers "X-Forwarded-Proto: https";
-# add: proxy_set_header X-Forwarded-Proto $scheme;
-# add: proxy_set_header X-Forwarded-Ssl on;
+	--create-namespace --namespace gitlab \
+	--timeout 600s \
+	--set certmanager-issuer.email=slb6113@gmail.com \
+	--set global.hosts.domain=personal-gitlab.com \
+	--set global.edition=ce \
+	--set global.hosts.externalIP=172.27.44.231
+
+get_root_password_gitlab:
+	kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
+
+port_forward_gitlab: get_root_password_gitlab
+	kubectl port-forward -n gitlab svc/gitlab-webservice-default 8182:8181
+
+uninstall_gitlab:
+	helm uninstall gitlab -n gitlab
+
+install_jenkins:
+	helm repo add jenkins https://charts.jenkins.io && \
+	helm repo update && \
+	helm upgrade --install jenkins jenkins/jenkins \
+	--create-namespace --namespace jenkins \
+	--timeout 600s
+
+get_admin_password_jenkins:
+	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+
+port_forward_jenkins: get_admin_password_jenkins
+	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
+
+uninstall_jenkins:
+	helm uninstall jenkins -n jenkins
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
