@@ -77,7 +77,7 @@ install_gitlab: # TO FIX!
 	--set certmanager-issuer.email=slb6113@gmail.com \
 	--set global.hosts.domain=personal-gitlab.com \
 	--set global.edition=ce \
-	--set global.hosts.externalIP=172.27.44.231
+	--set global.hosts.externalIP=192.168.56.1
 
 get_root_password_gitlab:
 	kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
