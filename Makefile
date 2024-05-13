@@ -112,11 +112,11 @@ install_hashicorp_vault:
 	helm upgrade -i vault hashicorp/vault \
 	--create-namespace --namespace vault
 
-# get_admin_password_jenkins:
+# get_admin_password_vault:
 # 	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
 
-# port_forward_jenkins: get_admin_password_jenkins
-# 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
+port_forward_vault: # get_admin_password_vault
+	kubectl --namespace vault port-forward svc/vault 8300:8200
 
 uninstall_vault:
 	helm uninstall vault -n vault
