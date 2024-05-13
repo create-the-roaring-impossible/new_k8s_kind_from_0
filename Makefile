@@ -18,6 +18,8 @@
 	get_admin_password_jenkins \
 	port_forward_jenkins \
 	uninstall_jenkins \
+	install_hashicorp_vault \
+	uninstall_vault \
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 # 	install_ingress_controller \
@@ -104,6 +106,21 @@ port_forward_jenkins: get_admin_password_jenkins
 uninstall_jenkins:
 	helm uninstall jenkins -n jenkins
 
+install_hashicorp_vault:
+	helm repo add hashicorp https://helm.releases.hashicorp.com && \
+	helm repo update && \
+	helm upgrade -i vault hashicorp/vault \
+	--create-namespace --namespace vault
+
+# get_admin_password_jenkins:
+# 	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+
+# port_forward_jenkins: get_admin_password_jenkins
+# 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
+
+uninstall_vault:
+	helm uninstall vault -n vault
+
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # install_ingress_controller:
@@ -135,11 +152,6 @@ uninstall_jenkins:
 # # 	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts && \
 # # 	helm repo update && \
 # # 	helm upgrade -i jaeger jaegertracing/jaeger
-
-# install_hashicorp_vault:
-# 	helm repo add hashicorp https://helm.releases.hashicorp.com && \
-# 	helm repo update && \
-# 	helm upgrade -i vault hashicorp/vault
 
 # install_metric_server:
 # 	git clone https://github.com/kodekloudhub/kubernetes-metrics-server.git && \
