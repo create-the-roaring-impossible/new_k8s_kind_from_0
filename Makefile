@@ -123,6 +123,9 @@ uninstall_vault:
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# kubectl get secret awx-postgres-configuration -o go-template='{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}' -n awx && kubectl get secrets -n awx | grep -i admin-password
+# kubectl get secret awx-admin-password -o jsonpath="{.data.password}" -n awx | base64 --decode ; echo
+
 # install_ingress_controller:
 # 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml && \
 # 	sleep 5 && \
