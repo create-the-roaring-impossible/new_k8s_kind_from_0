@@ -19,7 +19,10 @@
 	port_forward_jenkins \
 	uninstall_jenkins \
 	install_hashicorp_vault \
-	uninstall_vault \
+	port_forward_hashicorp_vault \
+	uninstall_hashicorp_vault \
+	install_metrics_server \
+	uninstall_metrics_server \
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 # 	install_ingress_controller \
@@ -70,7 +73,7 @@ which_is_my_external_ip:
 #	EXTERNAL_IP=$(ifconfig | grep "inet " | grep -v  "127.0.0.1" | awk -F " " '{print $2}' | head -n1) && \
 #	echo $EXTERNAL_IP
 
-install_gitlab: # TO FIX!
+install_gitlab: # TO FIX! to fix error "422"
 	helm repo add gitlab https://charts.gitlab.io/ && \
 	helm repo update && \
 	helm upgrade --install gitlab gitlab/gitlab \
@@ -112,19 +115,18 @@ install_hashicorp_vault:
 	helm upgrade -i vault hashicorp/vault \
 	--create-namespace --namespace vault
 
-port_forward_vault:
+port_forward_hashicorp_vault:
 	kubectl --namespace vault port-forward svc/vault 8300:8200
 
-uninstall_vault:
+uninstall_hashicorp_vault:
 	helm uninstall vault -n vault
 
-# install_hashicorp_metric_server:
-# 	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml \
-# 	# put '        - --kubelet-insecure-tls' after '        - --metric-resolution=15s'
-# 	kubectl apply -f high-availability-1.21+.yaml
+install_hashicorp_metric_server: # TO COMPLETE! to add "put '        - --kubelet-insecure-tls' after '        - --metric-resolution=15s'" step
+	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml \
+	kubectl apply -f high-availability-1.21+.yaml
 
-# uninstall_metric_server:
-# 	kubectl delete -f high-availability-1.21+.yaml
+uninstall_metric_server:
+	kubectl delete -f high-availability-1.21+.yaml
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
