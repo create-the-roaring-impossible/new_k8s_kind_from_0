@@ -118,7 +118,7 @@ install_gitlab: # TO FIX! to fix error "422"
 	--set global.hosts.externalIP=172.30.51.95
 
 get_root_password_gitlab:
-	kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
+	kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
 
 port_forward_gitlab: get_root_password_gitlab
 	kubectl port-forward -n gitlab svc/gitlab-webservice-default 8182:8181
