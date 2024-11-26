@@ -19,3 +19,6 @@ awxkit/*
 # ingress-nginx-controller
 ingress-nginx-controller*/
 controller*.tar.gz
+
+# metrics-server
+high-availability-1.21+.yaml*

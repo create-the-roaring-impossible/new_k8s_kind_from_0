@@ -10,6 +10,8 @@
 	delete_docker_registry \
 	delete_kind_cluster \
 	which_is_my_external_ip \
+	install_metrics_server \
+	uninstall_metrics_server \
 	install_gitlab \
 	get_root_password_gitlab \
 	port_forward_gitlab \
@@ -21,8 +23,6 @@
 	install_hashicorp_vault \
 	port_forward_hashicorp_vault \
 	uninstall_hashicorp_vault \
-	install_metrics_server \
-	uninstall_metrics_server \
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 # 	install_ingress_controller \
@@ -69,9 +69,17 @@ delete_kind_cluster: delete_docker_registry
 	kind delete cluster --name personal-kind.com
 
 which_is_my_external_ip:
-	echo "TO FIX!!"
-#	EXTERNAL_IP=$(ifconfig | grep "inet " | grep -v  "127.0.0.1" | awk -F " " '{print $2}' | head -n1) && \
-#	echo $EXTERNAL_IP
+	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | awk -F " " '{print $$2}' | head -n1
+
+install_metrics_server:
+	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml
+
+# @awk -v new_line="        - --kubelet-insecure-tls" -v after_line="        - --metric-resolution=15s" '{print} $0 ~ after_line {print new_line}' high-availability-1.21+.yaml > temp && mv temp high-availability-1.21+.yaml
+# cat high-availability-1.21+.yaml | grep "metric-resolution=15s" \
+# kubectl apply -f high-availability-1.21+.yaml
+
+uninstall_metrics_server:
+	kubectl delete -f high-availability-1.21+.yaml
 
 install_gitlab: # TO FIX! to fix error "422"
 	helm repo add gitlab https://charts.gitlab.io/ && \
@@ -120,13 +128,6 @@ port_forward_hashicorp_vault:
 
 uninstall_hashicorp_vault:
 	helm uninstall vault -n vault
-
-install_hashicorp_metric_server: # TO COMPLETE! to add "put '        - --kubelet-insecure-tls' after '        - --metric-resolution=15s'" step
-	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml \
-	kubectl apply -f high-availability-1.21+.yaml
-
-uninstall_metric_server:
-	kubectl delete -f high-availability-1.21+.yaml
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
