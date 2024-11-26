@@ -115,7 +115,9 @@ install_gitlab: # TO FIX! to fix error "422"
 	--set certmanager-issuer.email=slb6113@gmail.com \
 	--set global.hosts.domain=personal-gitlab.com \
 	--set global.edition=ce \
-	--set global.hosts.externalIP=172.30.51.95
+	--set global.hosts.externalIP=172.30.51.95 \
+  --set global.ingress.configureCertmanager=false \
+  --set global.ingress.tls.enabled=false
 
 get_root_password_gitlab:
 	kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
