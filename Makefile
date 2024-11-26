@@ -12,17 +12,18 @@
 	which_is_my_external_ip \
 	install_metrics_server \
 	uninstall_metrics_server \
-	install_gitlab \
-	get_root_password_gitlab \
-	port_forward_gitlab \
-	uninstall_gitlab \
+	install_hashicorp_vault \
+	port_forward_hashicorp_vault \
+	uninstall_hashicorp_vault \
 	install_jenkins \
 	get_admin_password_jenkins \
 	port_forward_jenkins \
 	uninstall_jenkins \
-	install_hashicorp_vault \
-	port_forward_hashicorp_vault \
-	uninstall_hashicorp_vault \
+	which_is_my_external_ip \
+	install_gitlab \
+	get_root_password_gitlab \
+	port_forward_gitlab \
+	uninstall_gitlab \
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 # 	install_ingress_controller \
@@ -30,8 +31,6 @@
 # 	start_dashboard \
 # 	install_prometheus \
 # 	install_jaeger \
-# 	install_hashicorp_vault \
-# 	install_metric_server \
 # 	install_awx \
 # 	install_awx_cli \
 # 	install_vagrant \
@@ -68,38 +67,25 @@ delete_docker_registry:
 delete_kind_cluster: delete_docker_registry
 	kind delete cluster --name personal-kind.com
 
-which_is_my_external_ip:
-	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | awk -F " " '{print $$2}' | head -n1
-
 install_metrics_server:
-	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml
-
-# @awk -v new_line="        - --kubelet-insecure-tls" -v after_line="        - --metric-resolution=15s" '{print} $0 ~ after_line {print new_line}' high-availability-1.21+.yaml > temp && mv temp high-availability-1.21+.yaml
-# cat high-availability-1.21+.yaml | grep "metric-resolution=15s" \
-# kubectl apply -f high-availability-1.21+.yaml
+	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml; \
+	grep -q "        - --kubelet-insecure-tls" high-availability-1.21+.yaml || sed -i '/        - --metric-resolution=15s/a\        - --kubelet-insecure-tls' high-availability-1.21+.yaml; \
+	kubectl apply -f high-availability-1.21+.yaml;
 
 uninstall_metrics_server:
 	kubectl delete -f high-availability-1.21+.yaml
 
-install_gitlab: # TO FIX! to fix error "422"
-	helm repo add gitlab https://charts.gitlab.io/ && \
+install_hashicorp_vault:
+	helm repo add hashicorp https://helm.releases.hashicorp.com && \
 	helm repo update && \
-	helm upgrade --install gitlab gitlab/gitlab \
-	--create-namespace --namespace gitlab \
-	--timeout 600s \
-	--set certmanager-issuer.email=slb6113@gmail.com \
-	--set global.hosts.domain=personal-gitlab.com \
-	--set global.edition=ce \
-	--set global.hosts.externalIP=192.168.56.1
+	helm upgrade -i vault hashicorp/vault \
+	--create-namespace --namespace vault
 
-get_root_password_gitlab:
-	kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
+port_forward_hashicorp_vault:
+	kubectl --namespace vault port-forward svc/vault 8300:8200
 
-port_forward_gitlab: get_root_password_gitlab
-	kubectl port-forward -n gitlab svc/gitlab-webservice-default 8182:8181
-
-uninstall_gitlab:
-	helm uninstall gitlab -n gitlab
+uninstall_hashicorp_vault:
+	helm uninstall vault -n vault
 
 install_jenkins:
 	helm repo add jenkins https://charts.jenkins.io && \
@@ -117,17 +103,28 @@ port_forward_jenkins: get_admin_password_jenkins
 uninstall_jenkins:
 	helm uninstall jenkins -n jenkins
 
-install_hashicorp_vault:
-	helm repo add hashicorp https://helm.releases.hashicorp.com && \
+which_is_my_external_ip:
+	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
+
+install_gitlab: # TO FIX! to fix error "422"
+	helm repo add gitlab https://charts.gitlab.io/ && \
 	helm repo update && \
-	helm upgrade -i vault hashicorp/vault \
-	--create-namespace --namespace vault
+	helm upgrade --install gitlab gitlab/gitlab \
+	--create-namespace --namespace gitlab \
+	--timeout 600s \
+	--set certmanager-issuer.email=slb6113@gmail.com \
+	--set global.hosts.domain=personal-gitlab.com \
+	--set global.edition=ce \
+	--set global.hosts.externalIP=172.30.51.95
 
-port_forward_hashicorp_vault:
-	kubectl --namespace vault port-forward svc/vault 8300:8200
+get_root_password_gitlab:
+	kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
 
-uninstall_hashicorp_vault:
-	helm uninstall vault -n vault
+port_forward_gitlab: get_root_password_gitlab
+	kubectl port-forward -n gitlab svc/gitlab-webservice-default 8182:8181
+
+uninstall_gitlab:
+	helm uninstall gitlab -n gitlab
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -163,12 +160,6 @@ uninstall_hashicorp_vault:
 # # 	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts && \
 # # 	helm repo update && \
 # # 	helm upgrade -i jaeger jaegertracing/jaeger
-
-# install_metric_server:
-# 	git clone https://github.com/kodekloudhub/kubernetes-metrics-server.git && \
-# 	cd kubernetes-metrics-server/ && \
-# 	kubectl create -f . && \
-# 	cd ..
 
 # install_awx:
 # 	helm repo add awx-operator https://ansible.github.io/awx-operator/ && \
