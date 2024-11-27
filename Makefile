@@ -106,7 +106,7 @@ uninstall_jenkins:
 which_is_my_external_ip:
 	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
 
-install_gitlab: # TO FIX! to fix error "422"
+install_gitlab:
 	helm repo add gitlab https://charts.gitlab.io/ && \
 	helm repo update && \
 	helm upgrade --install gitlab gitlab/gitlab \
