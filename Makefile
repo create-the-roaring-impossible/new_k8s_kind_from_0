@@ -19,18 +19,18 @@
 	get_admin_password_jenkins \
 	port_forward_jenkins \
 	uninstall_jenkins \
-	which_is_my_external_ip \
 	install_gitlab \
 	get_root_password_gitlab \
 	port_forward_gitlab \
 	uninstall_gitlab \
+	which_is_my_external_ip \
 
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
-# clear && make port_forward_hashicorp_vault
-# clear && make port_forward_jenkins
-# clear && make port_forward_gitlab
-# clear && kubectl top node && kubectl top pod -A && kubectl get pod -A --watch
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------------------------ #
+# clear && make port_forward_hashicorp_vault                                                                                                             #
+# clear && make port_forward_jenkins                                                                                                                     #
+# clear && make port_forward_gitlab                                                                                                                      #
+# clear && kubectl top node && kubectl top pod -A && kubectl get pod -A --watch                                                                          #
+# ------------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 # 	install_ingress_controller \
@@ -110,9 +110,6 @@ port_forward_jenkins: get_admin_password_jenkins
 uninstall_jenkins:
 	helm uninstall jenkins -n jenkins
 
-which_is_my_external_ip:
-	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
-
 install_gitlab:
 	helm repo add gitlab https://charts.gitlab.io/ && \
 	helm repo update && \
@@ -145,6 +142,9 @@ port_forward_gitlab: get_root_password_gitlab
 
 uninstall_gitlab:
 	helm uninstall gitlab -n gitlab
+
+which_is_my_external_ip:
+	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------
 
