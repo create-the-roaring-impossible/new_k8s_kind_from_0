@@ -118,7 +118,8 @@ install_gitlab: # TO FIX! to fix error "422"
 	--set global.hosts.externalIP=172.30.51.95 \
 	--set global.ingress.configureCertmanager=false \
 	--set global.ingress.tls.enabled=false \
-	--set global.ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="172.30.51.95"
+	--set gitlab.webservice.extraEnv[0].name=IN_MEMORY_APPLICATION_SETTINGS \
+	--set gitlab.webservice.extraEnv[0].value='{"disable_csrf": true}'
 
 get_root_password_gitlab:
 	kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
