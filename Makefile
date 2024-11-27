@@ -112,13 +112,27 @@ install_gitlab: # TO FIX! to fix error "422"
 	helm upgrade --install gitlab gitlab/gitlab \
 	--create-namespace --namespace gitlab \
 	--timeout 600s \
+	--set global.edition=ce \
 	--set certmanager-issuer.email=slb6113@gmail.com \
 	--set global.hosts.domain=personal-gitlab.com \
-	--set global.edition=ce \
-	--set global.hosts.externalIP=172.30.51.95 \
+	--set global.hosts.https=false \
+	--set global.hosts.gitlab.name=gitlab.personal-gitlab.com \
+	--set global.hosts.gitlab.https=false \
+	--set global.hosts.registry.name=registry.personal-gitlab.com \
+	--set global.hosts.registry.https=false \
+	--set global.hosts.minio.name=minio.personal-gitlab.com \
+	--set global.hosts.minio.https=false \
+	--set global.hosts.smartcard.name=smartcard.personal-gitlab.com \
+	--set global.hosts.kas.name=kas.personal-gitlab.com \
+	--set global.hosts.pages.name=pages.personal-gitlab.com \
+	--set global.hosts.pages.https=false \
+	--set global.hosts.ssh=pages.personal-gitlab.com \
 	--set global.ingress.configureCertmanager=false \
 	--set global.ingress.tls.enabled=false \
-	--set gitlab.webservice.extraEnv.IN_MEMORY_APPLICATION_SETTINGS='{"disable_csrf": true}'
+
+# --set global.hosts.externalIP=172.30.51.95 \
+# --set gitlab.webservice.extraEnv.IN_MEMORY_APPLICATION_SETTINGS='{"disable_csrf": true, "disable_ip_spoofing_protection": true}' \
+# --set global.appConfig.external_url=http://personal-gitlab.com
 
 get_root_password_gitlab:
 	kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
