@@ -22,3 +22,6 @@ controller*.tar.gz
 
 # metrics-server
 high-availability-1.21+.yaml*
+
+# gitlab
+config.toml

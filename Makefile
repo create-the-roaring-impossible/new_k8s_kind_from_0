@@ -111,6 +111,8 @@ uninstall_jenkins:
 	helm uninstall jenkins -n jenkins
 
 install_gitlab:
+	echo '[[runners]]\n  name = "my-runner"\n  url = "http://gitlab.personal-gitlab.com:8182"\n  token = "glrt-t1_eR2sg8V4yEznx55gjPrj"\n  executor = "kubernetes"\n' > config.toml && \
+	cat config.toml && \
 	helm repo add gitlab https://charts.gitlab.io/ && \
 	helm repo update && \
 	helm upgrade --install gitlab gitlab/gitlab \
@@ -132,7 +134,8 @@ install_gitlab:
 	--set global.hosts.pages.https=false \
 	--set global.hosts.ssh=pages.personal-gitlab.com \
 	--set global.ingress.configureCertmanager=false \
-	--set global.ingress.tls.enabled=false
+	--set global.ingress.tls.enabled=false \
+	--set-file gitlab-runner.runners.config=config.toml
 
 get_root_password_gitlab:
 	kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
