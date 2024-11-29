@@ -9,7 +9,6 @@
 	create_kind_cluster_with_registry \
 	delete_docker_registry \
 	delete_kind_cluster \
-	which_is_my_external_ip \
 	install_metrics_server \
 	uninstall_metrics_server \
 	install_hashicorp_vault \
