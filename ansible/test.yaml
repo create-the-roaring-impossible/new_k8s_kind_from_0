@@ -1,7 +1,0 @@
----
-# test.yaml
-
-- hosts: localhost
-  # become: true
-  roles:
-    - role: test
