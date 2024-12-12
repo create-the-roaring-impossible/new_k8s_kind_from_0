@@ -23,11 +23,15 @@
 	get_root_password_gitlab \
 	port_forward_gitlab \
 	uninstall_gitlab \
+	install_sonarqube \
+	get_admin_password_sonarqube \
+	port_forward_sonarqube \
+	uninstall_sonarqube \
 
-# install_sonarqube \
-# get_admin_password_sonarqube \
-# port_forward_sonarqube \
-# uninstall_sonarqube \
+# install_argo \
+# get_admin_password_argo \
+# port_forward_argo \
+# uninstall_argo \
 # install_vagrant \
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
@@ -133,21 +137,42 @@ port_forward_gitlab: get_root_password_gitlab
 uninstall_gitlab:
 	helm uninstall gitlab -n gitlab
 
-# install_sonarqube:
+install_sonarqube:
+	helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube && \
+	helm repo update && \
+	helm upgrade --install sonarqube sonarqube/sonarqube \
+	--create-namespace --namespace sonarqube \
+	--set image.tag="lts-community" \
+	--set community.enabled=true \
+	--set resources.requests.memory=1024M \
+	--set resources.requests.cpu=200m \
+	--set resources.requests.ephemeral-storage=768M \
+	--set resources.limits.memory=2572M \
+	--set resources.limits.cpu=400m \
+	--set resources.limits.ephemeral-storage=250Gi \
+	--timeout 600s
+
+port_forward_sonarqube:
+	kubectl --namespace sonarqube port-forward svc/sonarqube-sonarqube 9001:9000
+
+uninstall_sonarqube:
+	helm uninstall sonarqube -n sonarqube
+
+# install_argo:
 # 	helm repo add jenkins https://charts.jenkins.io && \
 # 	helm repo update && \
 # 	helm upgrade --install jenkins jenkins/jenkins \
 # 	--create-namespace --namespace jenkins \
 # 	--timeout 600s
 
-# get_admin_password_sonarqube:
+# get_admin_password_argo:
 # 	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
 
-# port_forward_sonarqube: get_admin_password_jenkins
+# port_forward_argo: get_admin_password_jenkins
 # 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
 
-# uninstall_sonarqube:
-# 	helm uninstall jenkins -n jenkins
+# uninstall_argo:
+# 	helm uninstall argo -n argo
 
 # install_vagrant:
 # 	sudo apt install vagrant && \
