@@ -1,4 +1,4 @@
-name: Test Workflow - Activity Types \ Event Filters
+name: Test Workflow - Event Filters
 on:
   pull_request:
     types:
