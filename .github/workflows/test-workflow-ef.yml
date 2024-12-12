@@ -3,8 +3,13 @@ on:
   pull_request:
     types:
       - "opened"
-      - "edited"
-      - "closed"
+    branches:
+      - "feature/study"
+  push:
+    branches:
+      - "master"
+    paths:
+      - ".github/workflow/*"
   workflow_dispatch:
 jobs:
   test:
