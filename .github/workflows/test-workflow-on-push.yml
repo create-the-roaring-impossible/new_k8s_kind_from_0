@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # This workflow contains a single job called "test"
+  test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -35,3 +35,18 @@ jobs:
           echo "Test 1"
           echo "Test 2"
           echo "Test 3"
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install something
+        run: echo "Install something"
+      - name: Run build
+        run: echo "Build"
+      - name: Run deploy
+        run: echo "Deploy"
