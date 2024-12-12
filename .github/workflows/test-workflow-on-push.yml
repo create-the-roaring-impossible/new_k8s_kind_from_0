@@ -36,6 +36,7 @@ jobs:
           echo "Test 2"
           echo "Test 3"
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Get code
