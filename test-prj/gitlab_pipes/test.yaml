@@ -1,0 +1,17 @@
+---
+
+"install":
+  stage: install
+  tags: ["test-prj"]
+  script:
+    - echo "npm install"
+"test":
+  stage: test
+  tags: ["test-prj"]
+  script:
+    - echo "npm test"
+"deploy":
+  stage: deploy
+  tags: ["test-prj"]
+  script:
+    - echo "Deploying to production server..."
