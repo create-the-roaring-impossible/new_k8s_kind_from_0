@@ -33,6 +33,10 @@
 # port_forward_argo \
 # uninstall_argo \
 # install_vagrant \
+# install_flux \
+# get_admin_password_flux \
+# port_forward_flux \
+# uninstall_flux \
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -144,12 +148,12 @@ install_sonarqube:
 	--create-namespace --namespace sonarqube \
 	--set image.tag="lts-community" \
 	--set community.enabled=true \
-	--set resources.requests.memory=1024M \
-	--set resources.requests.cpu=200m \
-	--set resources.requests.ephemeral-storage=768M \
-	--set resources.limits.memory=2572M \
-	--set resources.limits.cpu=400m \
-	--set resources.limits.ephemeral-storage=250Gi \
+	--set resources.requests.memory=2048M \
+	--set resources.requests.cpu=400m \
+	--set resources.requests.ephemeral-storage=1536M \
+	--set resources.limits.memory=5944M \
+	--set resources.limits.cpu=800m \
+	--set resources.limits.ephemeral-storage=500Gi \
 	--timeout 600s
 
 port_forward_sonarqube:
@@ -188,3 +192,19 @@ uninstall_sonarqube:
 # 	export PATH="$PATH:/mnt/c/WINDOWS/system32" && \
 # 	VAGRANT_LOG="debug" && \
 # 	vagrant up
+
+# install_flux:
+# 	helm repo add jenkins https://charts.jenkins.io && \
+# 	helm repo update && \
+# 	helm upgrade --install jenkins jenkins/jenkins \
+# 	--create-namespace --namespace jenkins \
+# 	--timeout 600s
+
+# get_admin_password_flux:
+# 	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+
+# port_forward_flux: get_admin_password_jenkins
+# 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
+
+# uninstall_flux:
+# 	helm uninstall flux -n flux

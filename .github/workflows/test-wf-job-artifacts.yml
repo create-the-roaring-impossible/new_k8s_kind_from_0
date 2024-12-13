@@ -1,0 +1,22 @@
+name: Test Workflow - Job Artifact
+on:
+  pull_request:
+    types:
+      - "opened"
+    branches:
+      - "feature/study"
+  push:
+    branches:
+      - "master"
+    paths:
+      - ".github/workflow/*"
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        run: |
+          echo "Test 1"
+          echo "Test 2"
+          echo "Test 3"
