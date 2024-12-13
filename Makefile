@@ -130,7 +130,11 @@ install_gitlab:
 	--set global.hosts.ssh=pages.personal-gitlab.com \
 	--set global.ingress.configureCertmanager=false \
 	--set global.ingress.tls.enabled=false \
-	--set gitlab-runner.install=false
+	--set gitlab-runner.install=false \
+	--set global.resources.requests.cpu=2 \
+	--set global.resources.requests.memory=4Gi \
+	--set global.resources.limits.cpu=4 \
+	--set global.resources.limits.memory=8Gi
 
 get_root_password_gitlab:
 	kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
