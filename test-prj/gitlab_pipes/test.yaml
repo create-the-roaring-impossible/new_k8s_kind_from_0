@@ -10,18 +10,6 @@
   tags: ["test-prj"]
   script: |
     echo "npm test"
-    export SONAR_SCANNER_VERSION=6.2.1.4610
-    export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux-x64
-    curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip
-    unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
-    export PATH=$SONAR_SCANNER_HOME/bin:$PATH
-    export SONAR_SCANNER_OPTS="-server"
-    echo $SONAR_TOKEN
-    sonar-scanner \
-      -Dsonar.organization=sennar19 \
-      -Dsonar.projectKey=sennar19_test-prj-personal-gitlab \
-      -Dsonar.sources=. \
-      -Dsonar.host.url=https://sonarcloud.io
 "deploy":
   stage: deploy
   tags: ["test-prj"]
