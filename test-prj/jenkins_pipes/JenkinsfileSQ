@@ -37,6 +37,12 @@ pipeline {
                 withSonarQubeEnv('SonarQube Cloud') { 
                     // If you have configured more than one global server connection, you can specify its name
                     // sh "${scannerHome}/bin/sonar-scanner"
+                    sh "export SONAR_SCANNER_VERSION=6.2.1.4610"
+                    sh "export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux-x64"
+                    sh "curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip"
+                    sh "unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/"
+                    sh "export PATH=$SONAR_SCANNER_HOME/bin:$PATH"
+                    sh 'export SONAR_SCANNER_OPTS="-server"'
                     sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
                 }
             }
