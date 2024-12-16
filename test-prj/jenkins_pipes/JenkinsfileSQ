@@ -12,7 +12,7 @@ pipeline {
             spec:
               containers:
                 - name: personal-agent
-                  image: docker.io/sennar19/personal-agent:1.0.1
+                  image: docker.io/sennar19/personal_agent:1.0.1
             """
         }
     }
