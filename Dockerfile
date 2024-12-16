@@ -1,9 +1,14 @@
-FROM jenkins/agent:latest
+FROM jenkins/inbound-agent:latest
+
+LABEL maintainer="slb6113@gmail.com"
 
 USER root
-
-RUN echo "----------------------------------------------------------------------------------------------------"
-RUN apt-get update && apt-get install -y unzip
-RUN unzip --help
+RUN apt-get update && apt-get install -y \
+    unzip \
+    curl;
+RUN rm -rf /var/lib/apt/lists/*;
 
 USER jenkins
+WORKDIR /home/jenkins/agent
+
+CMD ["jenkins-agent"]
