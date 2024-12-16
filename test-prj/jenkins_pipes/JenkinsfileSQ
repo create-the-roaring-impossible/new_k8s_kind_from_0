@@ -6,44 +6,38 @@ pipeline {
             apiVersion: v1
             kind: Pod
             metadata:
+              name: myagent
               labels:
                 some-label: some-label-value
             spec:
               containers:
-              - name: jnlp
-                image: jenkins/inbound-agent
-                args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-              - name: build
-                image: maven:3.6.3-jdk-8
-                command:
-                - cat
-                tty: true
+                - name: personal-agent
+                  image: docker.io/sennar19/personal-agent:1.0.1
             """
         }
     }
     stages {
-        stage('Build') {
+        stage('Install dependencies') {
             steps {
                 script {
-                    echo 'npm install'
+                    echo 'Install dependencies...'
                     sh 'pwd'
                     sh 'ls'
                 }
             }
         }
         stage('SonarQube analysis') {
-            // def scannerHome = tool 'SonarScanner 4.0';
-            steps{
-                withSonarQubeEnv('SonarQube Cloud') { 
-                    // If you have configured more than one global server connection, you can specify its name
-                    // sh "${scannerHome}/bin/sonar-scanner"
-                    sh "export SONAR_SCANNER_VERSION=6.2.1.4610"
-                    sh "export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux-x64"
-                    sh "curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux-x64.zip"
-                    sh "unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/"
-                    sh "export PATH=$SONAR_SCANNER_HOME/bin:$PATH"
-                    sh 'export SONAR_SCANNER_OPTS="-server"'
-                    sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
+            steps {
+                script {
+                    env.SONAR_SCANNER_VERSION = '6.2.1.4610'
+                    env.SONAR_SCANNER_HOME = "${env.HOME}/.sonar/sonar-scanner-${env.SONAR_SCANNER_VERSION}-linux-x64"
+                    withSonarQubeEnv('SonarQube Cloud') {
+                        sh "curl --create-dirs -sSLo ${env.HOME}/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${env.SONAR_SCANNER_VERSION}-linux-x64.zip"
+                        sh "unzip -o ${env.HOME}/.sonar/sonar-scanner.zip -d ${env.HOME}/.sonar/"
+                        sh "export PATH=${env.SONAR_SCANNER_HOME}/bin:\$PATH"
+                        sh 'export SONAR_SCANNER_OPTS="-server"'
+                        sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
+                    }
                 }
             }
         }
