@@ -1,11 +1,9 @@
-FROM jenkins/ssh-agent:alpine-jdk17
+FROM jenkins/agent:latest
 
-RUN echo "\n---------------------------------------------------------------------------------------------------- DOCKER"; \
-    apk add docker; \
-    addgroup username docker; \
-    rc-update add docker default; \
-    service docker start; \
-    docker --version;
+USER root
 
-RUN echo "\n---------------------------------------------------------------------------------------------------- UNZIP"; \
-    apk add unzip;
+RUN echo "----------------------------------------------------------------------------------------------------"
+RUN apt-get update && apt-get install -y unzip
+RUN unzip --help
+
+USER jenkins
