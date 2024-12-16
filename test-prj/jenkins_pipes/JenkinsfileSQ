@@ -11,13 +11,9 @@ pipeline {
                 some-label: some-label-value
             spec:
               containers:
-                - name: personal-agent
-                  image: docker.io/sennar19/personal_agent:2.0.0
-                  securityContext:
-                    runAsUser: 0
-                    runAsGroup: 0
-                  command:
-                    - cat
+                - name: jnlp
+                  image: docker.io/sennar19/personal_agent:3.0.1
+                  args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
                   tty: true
             """
         }
@@ -27,9 +23,11 @@ pipeline {
             steps {
                 script {
                     echo 'Install dependencies...'
+                    sh 'whoami'
                     sh 'pwd'
                     sh 'ls'
-                    sh 'tar --version'
+                    sh 'zip --help'
+                    sh 'unzip --help'
                 }
             }
         }
@@ -40,7 +38,7 @@ pipeline {
                     env.SONAR_SCANNER_HOME = "${env.HOME}/.sonar/sonar-scanner-${env.SONAR_SCANNER_VERSION}-linux-x64"
                     withSonarQubeEnv('SonarQube Cloud') {
                         sh "curl --create-dirs -sSLo ${env.HOME}/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${env.SONAR_SCANNER_VERSION}-linux-x64.zip"
-                        sh "tar -xf ${env.HOME}/.sonar/sonar-scanner.zip -C ${env.HOME}/.sonar/"
+                        sh "unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/"
                         sh "export PATH=${env.SONAR_SCANNER_HOME}/bin:\$PATH"
                         sh 'export SONAR_SCANNER_OPTS="-server"'
                         sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
@@ -52,6 +50,14 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to production server...'
+                }
+            }
+        }
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    echo 'Cleaning workspace...'
+                    deleteDir()
                 }
             }
         }
