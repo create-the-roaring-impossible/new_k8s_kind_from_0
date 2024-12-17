@@ -39,9 +39,9 @@ pipeline {
                         sh "unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/"
                         sh "export PATH=${env.SONAR_SCANNER_HOME}/bin:\$PATH"
                         sh 'export SONAR_SCANNER_OPTS="-server"'
-                        sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
                         sh 'pwd'
                         sh 'ls'
+                        sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
                     }
                 }
             }
