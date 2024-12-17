@@ -38,10 +38,14 @@ pipeline {
                         sh "curl --create-dirs -sSLo ${env.HOME}/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${env.SONAR_SCANNER_VERSION}-linux-x64.zip"
                         sh "unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/"
                         sh "export PATH=${env.SONAR_SCANNER_HOME}/bin:\$PATH"
-                        sh 'export SONAR_SCANNER_OPTS="-server"'
-                        sh 'pwd'
-                        sh 'ls'
-                        sh "sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
+                        sh "export SONAR_SCANNER_OPTS='-server'"
+                        sh "pwd"
+                        sh "ls"
+                        sh "echo ${env.SONAR_SCANNER_HOME}"
+                        sh "ls /home/jenkins/.sonar/sonar-scanner-6.2.1.4610-linux-x64/bin/"
+                        sh "echo $PATH"
+                        sh "chmod +x ${env.SONAR_SCANNER_HOME}/bin/sonar-scanner"
+                        sh "/home/jenkins/.sonar/sonar-scanner-6.2.1.4610-linux-x64/bin/sonar-scanner -Dsonar.organization=sennar19 -Dsonar.projectKey=sennar19_test-prj-personal-gitlab -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io"
                     }
                 }
             }
