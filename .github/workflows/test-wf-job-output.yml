@@ -16,20 +16,14 @@ jobs:
         run: |
           echo "Test 1" > test.txt
           cat test.txt
-      # - name: Upload Artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: test.txt
-      #     path: test.txt
       - name: Publich test.txt file
         id: publish
         run: find test.txt -type f --execdir echo 'something={}' >> $GITHUB_OUTPUT ';' # OR find test.txt -type f --execdir echo '::set-output name= something::{}' ';'
   download_artifact:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      # - name: Download Artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: test.txt
-      - name: Read test.txt file
-        run: cat test.txt
+      - name: Output test.txt file
+        run: echo "${{ need.build.outputs.script-file }}"
+      - name: Read test.tasxt file
+        run: cat test.txta
