@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - "master"
-    paths:
-      - ".github/workflow/test-wf-job-output.yml"
+    # paths:
+    #   - ".github/workflow/test-wf-job-output.yml"
   workflow_dispatch:
 jobs:
   build:
