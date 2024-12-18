@@ -17,11 +17,12 @@ jobs:
         with:
           name: test.txt
           path: test.txt
-  # download_artifact:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download Artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: test.txt
-  #         path: test.txt
+  download_artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test.txt
+      - name: Read test.txt file
+        run: cat test.txt
