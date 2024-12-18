@@ -26,4 +26,4 @@ jobs:
       - name: Output test.txt file
         run: echo "${{ need.build.outputs.script-file }}"
       - name: Read test.tasxt file
-        run: cat test.txta
+        run: cat test.txt
