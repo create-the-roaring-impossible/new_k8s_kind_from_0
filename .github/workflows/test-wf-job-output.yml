@@ -18,7 +18,7 @@ jobs:
           cat test.txt
       - name: Publich test.txt file
         id: publish
-        run: find test.txt -type f --execdir echo 'something={}' >> $GITHUB_OUTPUT ';' # OR find test.txt -type f --execdir echo '::set-output name= something::{}' ';'
+        run: find test.txt -type f -exec sh -c 'echo "something={}" >> $GITHUB_OUTPUT' \; # find test.txt -type f --execdir echo 'something={}' >> $GITHUB_OUTPUT ';' # OR find test.txt -type f --execdir echo '::set-output name= something::{}' ';'
   download_artifact:
     needs: build
     runs-on: ubuntu-latest
