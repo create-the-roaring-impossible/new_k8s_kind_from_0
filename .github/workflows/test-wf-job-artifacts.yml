@@ -1,22 +1,22 @@
 name: Test Workflow - Job Artifact
 on:
-  pull_request:
-    types:
-      - "opened"
-    branches:
-      - "feature/study"
   push:
     branches:
       - "master"
-    paths:
-      - ".github/workflow/*"
   workflow_dispatch:
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Run tests
+      - name: Build test.txt file
         run: |
-          echo "Test 1"
-          echo "Test 2"
-          echo "Test 3"
+          echo "Test 1" > test.txt
+          cat test.txt
+  upload_artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test.txt
+          path: test.txt
