@@ -6,10 +6,10 @@ shutdown_timeout = 0
   session_timeout = 1800
 
 [[runners]]
-  name = "N-HP0721-0030-windows"
-  url = "http://gitlab.personal-gitlab.com"
-  id = 10
-  token = "<TOKEN>"
+  name = "my-local-runner"
+  url = "https://gitlab.com"
+  id = 1
+  token = "glrt-t3_tNnwxKMKaU2zquVqjfmZ"
   executor = "docker"
   [runners.custom_build_dir]
   [runners.cache]
