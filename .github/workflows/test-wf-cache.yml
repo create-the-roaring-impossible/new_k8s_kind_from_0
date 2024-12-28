@@ -1,4 +1,4 @@
-name: Test Workflow - cache
+name: Test Workflow - Cache
 on:
   push:
     branches:
