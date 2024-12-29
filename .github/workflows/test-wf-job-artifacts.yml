@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Build test.txt file
         run: |
-          echo "Test 1" > test.txt
+          echo "Test 2" > test.txt
           cat test.txt
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
