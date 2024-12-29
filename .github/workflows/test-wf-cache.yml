@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - "master"
-    # paths:
-    #   - ".github/workflow/test-wf-cache.yml"
+    paths:
+      - ".github/workflow/test-wf-cache.yml"
   workflow_dispatch:
 jobs:
   build:
@@ -20,4 +20,4 @@ jobs:
         uses: actions/cache@v4
         with:
           path: test.txt
-          key: test-depends-${{ hashFiles('') }}
+          key: test-depends-${{ hashFiles('test.txt') }}
