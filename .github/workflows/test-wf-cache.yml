@@ -10,6 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Get code
+        uses: actions/checkout@v4
       - name: List
         run: ls
       - name: Build test.txt file
@@ -20,4 +22,4 @@ jobs:
         uses: actions/cache@v4
         with:
           path: test.txt
-          key: test-depends-${{ hashFiles('test.txt') }}
+          key: test-depends-${{ hashFiles('Dockerfile') }}
