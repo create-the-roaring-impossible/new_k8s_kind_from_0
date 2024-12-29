@@ -4,7 +4,7 @@ on:
     branches:
       - "master"
     paths:
-      - ".github/workflow/test-wf-job-artifacts.yml"
+      - ".github/workflows/test-wf-job-artifacts.yml"
   workflow_dispatch:
 jobs:
   build:

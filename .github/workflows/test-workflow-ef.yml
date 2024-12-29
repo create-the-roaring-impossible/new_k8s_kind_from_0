@@ -9,7 +9,7 @@ on:
     branches:
       - "master"
     paths:
-      - ".github/workflow/*"
+      - ".github/workflows/*"
   workflow_dispatch:
 jobs:
   test:
