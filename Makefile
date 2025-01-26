@@ -28,7 +28,6 @@
 	port_forward_sonarqube \
 	uninstall_sonarqube \
 
-
 # install_argo \
 # get_admin_password_argo \
 # port_forward_argo \
