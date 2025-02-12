@@ -1,0 +1,23 @@
+---
+- name: Example Playbook
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Test
+      ansible.builtin.debug:
+        msg: "Hello World"
+#    - name: Ensure the latest version of git is installed
+#      apt:
+#        name: git
+#        state: latest
+#        update_cache: yes
+#    - name: Create a directory
+#      file:
+#        path: /example_directory
+#        state: directory
+#        mode: '0755'
+#    - name: Copy a file
+#      copy:
+#        src: /path/to/source/file
+#        dest: /example_directory/destination_file

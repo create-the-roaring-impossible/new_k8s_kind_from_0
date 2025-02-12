@@ -65,8 +65,9 @@ which_is_my_external_ip:
 
 install_metrics_server:
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
-	helm upgrade --install metrics-server metrics-server/metrics-server
-#"Failed to scrape node" err="Get \"https://172.18.0.2:10250/metrics/resource\": tls: failed to verify certificate: x509: cannot validate certificate for 172.18.0.2 because it doesn't contain any IP SANs" node="personal-kind-control-plane"
+	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
+	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+
 uninstall_metrics_server:
 	helm uninstall metrics-server -n default
 

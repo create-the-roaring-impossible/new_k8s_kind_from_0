@@ -10,8 +10,8 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
+# Ansible
+.lock
+
 # Vagrant
 .vagrant/*
-
-# metrics-server
-high-availability-1.21+.yaml*
