@@ -12,12 +12,13 @@
       scriptToRun: The path of the script to run.
 
 .EXAMPLE
-  .\create_schedule_task_at_start_up.ps1 "BackupToExternalHDD" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'D:\Personale\' 'I:\'"
+  .\create_schedule_task_at_start_up.ps1 "BackupToExternalHDD" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'SAMSUNG Archive' ''"
+  .\create_schedule_task_at_start_up.ps1 "BackupToExternalHDD" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'Google Drive' 'Il mio Drive\'"
 
 .NOTES
     Author: Matteo Cristiano
-    Date: 09/02/2025
-    Version: 1.0.0
+    Date: 16/02/2025
+    Version: 1.0.1
 #>
 
 param (
@@ -30,11 +31,13 @@ param (
 # Start creation
 Write-Output "Schedule Task '$taskName' creation in progress.."
 
+# Create the Task Action, Trigger, Settings, and Principal, to use with the Scheduled Task
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $scriptToRun
 $trigger = New-ScheduledTaskTrigger -AtStartup
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -Hidden
 $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
 
+# Create the Scheduled Task
 Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -Principal $principal
 
 # End creation
