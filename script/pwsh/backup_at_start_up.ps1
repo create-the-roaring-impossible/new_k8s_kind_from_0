@@ -18,9 +18,9 @@
   .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "Google Drive" "Il mio Drive\"
 
 .NOTES
-    Author: Matteo Cristiano
-    Date: 16/02/2025
-    Version: 1.0.1
+  Authors: Matteo Cristiano
+  Date: 16/02/2025
+  Version: 1.0.1
 #>
 
 param (
