@@ -3,7 +3,7 @@
   This script backup a source path into a destination path.
 
 .DESCRIPTION
-  That script backup a source path into a destination path.
+  The script backup a source path into a destination path.
 
 .PARAMETER [ParameterName]
   [ParameterDescription]
@@ -15,12 +15,12 @@
 
 .EXAMPLE
   .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "SAMSUNG Archive" ""
-  .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "Google Drive" "Il mio Drive\"
+  .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "Google Drive" "Il mio Drive\" # TODO: to test
 
 .NOTES
-  Authors: Matteo Cristiano
-  Date: 16/02/2025
-  Version: 1.0.1
+  Author: Matteo Cristiano
+  Date: 23/02/2025
+  Version: 1.1.0
 #>
 
 param (
@@ -52,9 +52,29 @@ function Get-DriveLetterFromVolumeName {
   return $volumes.DriveLetter
 }
 
-# Get the "drive letter" of the source, and destination, volumes
+######################################################################
+### Get the "drive letter" of the source, and destination, volumes ###
+######################################################################
+
+# Check if the $sourceVolume is empty
+if ([string]::IsNullOrEmpty($sourceVolume)) {
+  throw "Source volume name is empty. The script will stop!!"
+}
 $sourceDriveLetter = Get-DriveLetterFromVolumeName -volumeName $sourceVolume
+# Check if the $sourceDriveLetter is empty
+if ([string]::IsNullOrEmpty($sourceDriveLetter)) {
+  throw "Source drive letter is empty, it means source volume not found. The script will stop!!"
+}
+
+# Check if the $destinationVolume is empty
+if ([string]::IsNullOrEmpty($destinationVolume)) {
+  throw "Destination volume name is empty. The script will stop!!"
+}
 $destinationDriveLetter = Get-DriveLetterFromVolumeName -volumeName $destinationVolume
+# Check if the $destinationDriveLetter is empty
+if ([string]::IsNullOrEmpty($destinationDriveLetter)) {
+  throw "Destination drive letter is empty, it means destination volume not found. The script will stop!!"
+}
 
 # Get the source, and destination, paths
 $sourcePath = "$sourceDriveLetter\$sourcePath"
@@ -66,16 +86,23 @@ $currentDate = Get-Date -Format "yyyy-MM-dd-HH-mm-ss"
 # Create the destination folder path
 $destinationFolder = Join-Path -Path $destinationPath -ChildPath $currentDate
 
-# Start the backup
-Write-Output "Backup, from '$sourcePath' to '$destinationFolder', started!!"
-
 # Create the destination folder if it doesn't exist
 if (-not (Test-Path -Path $destinationFolder)) {
   New-Item -ItemType Directory -Path $destinationFolder
+  # Check if the destination folder was created successfully
+  if (-not (Test-Path -Path $destinationFolder)) {
+    throw "Failed to create destination folder '$destinationFolder'. The script will stop!!"
+  }
 }
 
-# Copy the contents of the source disk to the destination folder
-Copy-Item -Path $sourcePath\* -Destination $destinationFolder -Recurse -Force
+# Start the backup
+Write-Output "Backup, from '$sourcePath' to '$destinationFolder', started!!"
 
-# End the backup
-Write-Output "Backup, from '$sourcePath' to '$destinationFolder', completed successfully!!"
+try {
+  # Copy the contents of the source disk to the destination folder
+  Copy-Item -Path $sourcePath\* -Destination $destinationFolder -Recurse -Force -ErrorAction Stop
+  # End the backup successfully
+  Write-Output "Backup, from '$sourcePath' to '$destinationFolder', completed successfully!!"
+} catch {
+  throw "Failed to copy items from '$sourcePath' to '$destinationFolder'. Error: $_"
+}
