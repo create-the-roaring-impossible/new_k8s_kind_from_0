@@ -3,6 +3,7 @@ FROM ubuntu:24.04
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get --no-install-recommends install -y \
+       ca-certificates \
        curl \
        git \
        jq \
