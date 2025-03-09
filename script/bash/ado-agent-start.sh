@@ -87,11 +87,7 @@ if [ -z "${AZP_AGENT_PACKAGE_LATEST_URL}" -o "${AZP_AGENT_PACKAGE_LATEST_URL}" =
   exit 1
 fi
 
-echo "OK!"
-
-
-
-
+echo "DONE!"
 
 print_header "2. Downloading, and extracting, package.."
 
@@ -101,11 +97,7 @@ chmod +x ./run.sh
 
 source ./env.sh # TODO: to manage possible errors
 
-echo "OK!"
-
-
-
-
+echo "DONE!"
 
 print_header "3. Prepare, in case of failure, to remove agent.."
 
@@ -113,26 +105,16 @@ trap "cleanup; exit 0" EXIT
 trap "cleanup; exit 130" INT
 trap "cleanup; exit 143" TERM
 
-echo "OK!"
-
-
-
-
+echo "DONE!"
 
 print_header "4. Configuring agent.."
 
 ./config.sh --unattended --agent "${ADO_AGENT_NAME}" --url "${ADO_URL}" --auth "PAT" --token "${ADO_TOKEN}" --pool "${ADO_POOL}" --replace --acceptTeeEula & wait $!
 
-echo "OK!"
-
-
-
-
+echo "DONE!"
 
 print_header "5. Running agent.."
 
-# To be aware of TERM and INT signals call ./run.sh
-# Running it with the --once flag at the end will shut down the agent after the build is executed
+# To be aware of TERM and INT signals, call "./run.sh" in background, and wait for it
+# TIP: running "./run.sh" with the "--once" flag will shut down the agent, after a single pipeline is executed
 ./run.sh "$@" & wait $!
-
-echo "OK!"
