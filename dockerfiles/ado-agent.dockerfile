@@ -6,11 +6,8 @@ RUN apt update \
        curl \
        git \
        jq \
-#       libicu70 \
+       libicu74 \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
-
-# Also can be "linux-arm", "linux-arm64".
-ENV TARGETARCH="linux-x64"
 
 WORKDIR /ado-agent/
 
@@ -25,4 +22,4 @@ USER agent
 # Another option is to run the agent as root.
 # ENV AGENT_ALLOW_RUNASROOT="true"
 
-ENTRYPOINT ["/bin/bash", "-c", "ado-agent-start.sh"]
+ENTRYPOINT ["bash", "ado-agent-start.sh"]

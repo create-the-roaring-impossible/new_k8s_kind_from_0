@@ -15,7 +15,7 @@
 
 .EXAMPLE
   .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "SAMSUNG Archive" ""
-  .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "Google Drive" "Il mio Drive\" # TODO: to test
+  .\backup_at_start_up.ps1 "HDD Archive" "Personale\" "Google Drive" "Il mio Drive\"
 
 .NOTES
   Author: Matteo Cristiano

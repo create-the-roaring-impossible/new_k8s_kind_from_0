@@ -13,7 +13,7 @@
 
 .EXAMPLE
   .\create_schedule_task_at_start_up.ps1 "BackupToExternalHDD" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'SAMSUNG Archive' ''"
-  .\create_schedule_task_at_start_up.ps1 "BackupToGoogleDrive" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'Google Drive' 'Il mio Drive\'" # TODO: to test
+  .\create_schedule_task_at_start_up.ps1 "BackupToGoogleDrive" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'Google Drive' 'Il mio Drive\'"
 
 .NOTES
   Author: Matteo Cristiano

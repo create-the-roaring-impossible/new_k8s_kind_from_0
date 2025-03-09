@@ -1,69 +1,28 @@
-# DESCRIPTION: This bash script performs a series of operations to automate a specific task.
-# It includes commands to navigate directories, manipulate files, and execute programs.
-# The script is designed to streamline repetitive tasks and improve efficiency.
-# Ensure you have the necessary permissions and dependencies installed before running this script.
+# DESCRIPTION: This bash script ?? # TODO: to refactor "DESCRIPTION"
 #
-# REQUIREMENTS:
-# - Azure DevOps organization URL (AZP_URL)
-# - Personal Access Token (AZP_TOKEN) or token file (AZP_TOKEN_FILE)
-# - Optional: Agent pool name (AZP_POOL)
-# - Optional: Agent name (AZP_AGENT_NAME)
-# - Optional: Work directory (AZP_WORK)
+# REQUIREMENTS: # TODO: to refactor "REQUIREMENTS"
+# - Azure DevOps organization URL (ADO_URL)
+# - Personal Access Token (ADO_TOKEN)
+# - Agent pool name (ADO_POOL)
+# - Optional Agent name (ADO_AGENT_NAME)
 #
-# USAGE: bash script.sh
+# USAGE: bash ado-agent-start.sh $ADO_URL $ADO_TOKEN $ADO_POOL [$ADO_AGENT_NAME] # TODO: to refactor "USAGE"
 #
-# EXAMPLE:
-# export AZP_URL=https://dev.azure.com/organization
-# export AZP_TOKEN=<PAT_TOKEN>
-# export AZP_POOL=Default
-# bash script.sh
+# EXAMPLE: # TODO: to refactor "EXAMPLE"
+# bash ado-agent-start.sh "https://dev.azure.com/fierli92/" "token" "DESKTOP-S8GLSE7 Pool" ["test-agent-name"]
 #
 # AUTHORS: Matteo Cristiano
 #
 # VERSION: 1.0.0
 #
-# DATE: 23/02/2025
+# DATE: 09/03/2025
 
 #!/bin/bash
 set -e
 
-if [ -z "${AZP_URL}" ]; then
-  echo 1>&2 "error: missing AZP_URL environment variable"
-  exit 1
-fi
-
-if [ -z "${AZP_TOKEN_FILE}" ]; then
-  if [ -z "${AZP_TOKEN}" ]; then
-    echo 1>&2 "error: missing AZP_TOKEN environment variable"
-    exit 1
-  fi
-
-  AZP_TOKEN_FILE="/azp/.token"
-  echo -n "${AZP_TOKEN}" > "${AZP_TOKEN_FILE}"
-fi
-
-unset AZP_TOKEN
-
-if [ -n "${AZP_WORK}" ]; then
-  mkdir -p "${AZP_WORK}"
-fi
-
-cleanup() {
-  trap "" EXIT
-
-  if [ -e ./config.sh ]; then
-    print_header "Cleanup. Removing Azure Pipelines agent..."
-
-    # If the agent has some running jobs, the configuration removal process will fail.
-    # So, give it some time to finish the job.
-    while true; do
-      ./config.sh remove --unattended --auth "PAT" --token $(cat "${AZP_TOKEN_FILE}") && break
-
-      echo "Retrying in 30 seconds..."
-      sleep 30
-    done
-  fi
-}
+###############################
+########## Functions ##########
+###############################
 
 print_header() {
   lightcyan="\033[1;36m"
@@ -71,50 +30,109 @@ print_header() {
   echo -e "\n${lightcyan}$1${nocolor}\n"
 }
 
-# Let the agent ignore the token env variables
-export VSO_AGENT_IGNORE="AZP_TOKEN,AZP_TOKEN_FILE"
+cleanup() {
+  trap "" EXIT
+  if [ -e ./config.sh ]; then
+    print_header "========== Removing agent.. =========="
+    while true; do # Let's check there're no running jobs, before removing the agent
+      ./config.sh remove --unattended --auth "PAT" --token ${ADO_TOKEN} && break # TODO: to manage possible errors, and THEN break the loop
+      echo "There're some running jobs, retrying in 60 seconds.."
+      sleep 60
+    done
+  fi
+}
 
-print_header "1. Determining matching Azure Pipelines agent..."
+############################
+########## Inputs ##########
+############################
 
-AZP_AGENT_PACKAGES=$(curl -LsS \
-    -u user:$(cat "${AZP_TOKEN_FILE}") \
-    -H "Accept:application/json;" \
-    "${AZP_URL}/_apis/distributedtask/packages/agent?platform=${TARGETARCH}&top=1")
-
-AZP_AGENT_PACKAGE_LATEST_URL=$(echo "${AZP_AGENT_PACKAGES}" | jq -r ".value[0].downloadUrl")
-
-if [ -z "${AZP_AGENT_PACKAGE_LATEST_URL}" -o "${AZP_AGENT_PACKAGE_LATEST_URL}" == "null" ]; then
-  echo 1>&2 "error: could not determine a matching Azure Pipelines agent"
-  echo 1>&2 "check that account "${AZP_URL}" is correct and the token is valid for that account"
+if [ -z "${ADO_URL}" ]; then
+  echo 1>&2 "ERROR: missing ADO_URL variable"
   exit 1
 fi
 
-print_header "2. Downloading and extracting Azure Pipelines agent..."
+if [ -z "${ADO_TOKEN}" ]; then
+  echo 1>&2 "ERROR: missing ADO_TOKEN variable"
+  exit 1
+fi
 
-curl -LsS "${AZP_AGENT_PACKAGE_LATEST_URL}" | tar -xz & wait $!
+if [ -z "${ADO_POOL}" ]; then
+  echo 1>&2 "ERROR: missing ADO_POOL variable"
+  exit 1
+fi
 
-source ./env.sh
+if [ -z "${ADO_AGENT_NAME}" ]; then
+  ADO_AGENT_NAME="$(hostname)_${RANDOM}"
+fi
+
+########################################################
+########## Install Azure DevOps Agent package ##########
+########################################################
+
+print_header "1. Determining package to install.."
+
+AZP_AGENT_PACKAGES=$(curl -LsS -u user:${ADO_TOKEN} -H "Accept:application/json;" "${ADO_URL}/_apis/distributedtask/packages/agent?platform=${TARGETARCH}&top=1")
+if [ "${AZP_AGENT_PACKAGES}" == "The resource cannot be found." ]; then
+  echo 1>&2 "ERROR: could not determine package to install; check that \"${ADO_URL}\" url is valid"
+  exit 1
+fi
+if ERROR=$(echo "${AZP_AGENT_PACKAGES}" | jq . 2>&1 >/dev/null); then
+  AZP_AGENT_PACKAGE_LATEST_URL=$(echo "${AZP_AGENT_PACKAGES}" | jq -r ".value[0].downloadUrl")
+else
+    echo "ERROR: Invalid JSON: \"${ERROR}\""
+    exit 1
+fi
+if [ -z "${AZP_AGENT_PACKAGE_LATEST_URL}" -o "${AZP_AGENT_PACKAGE_LATEST_URL}" == "null" ]; then
+  echo 1>&2 "ERROR: could not determine package to install; check that \"${ADO_TOKEN}\" token is valid"
+  exit 1
+fi
+
+echo "OK!"
+
+
+
+
+
+print_header "2. Downloading, and extracting, package.."
+
+curl -LsS "${AZP_AGENT_PACKAGE_LATEST_URL}" | tar -xz & wait $! # TODO: to manage possible errors
+
+chmod +x ./run.sh
+
+source ./env.sh # TODO: to manage possible errors
+
+echo "OK!"
+
+
+
+
+
+print_header "3. Prepare, in case of failure, to remove agent.."
 
 trap "cleanup; exit 0" EXIT
 trap "cleanup; exit 130" INT
 trap "cleanup; exit 143" TERM
 
-print_header "3. Configuring Azure Pipelines agent..."
+echo "OK!"
 
-./config.sh --unattended \
-  --agent "${AZP_AGENT_NAME:-$(hostname)}" \
-  --url "${AZP_URL}" \
-  --auth "PAT" \
-  --token $(cat "${AZP_TOKEN_FILE}") \
-  --pool "${AZP_POOL:-Default}" \
-  --work "${AZP_WORK:-_work}" \
-  --replace \
-  --acceptTeeEula & wait $!
 
-print_header "4. Running Azure Pipelines agent..."
 
-chmod +x ./run.sh
+
+
+print_header "4. Configuring agent.."
+
+./config.sh --unattended --agent "${ADO_AGENT_NAME}" --url "${ADO_URL}" --auth "PAT" --token "${ADO_TOKEN}" --pool "${ADO_POOL}" --replace --acceptTeeEula & wait $!
+
+echo "OK!"
+
+
+
+
+
+print_header "5. Running agent.."
 
 # To be aware of TERM and INT signals call ./run.sh
 # Running it with the --once flag at the end will shut down the agent after the build is executed
 ./run.sh "$@" & wait $!
+
+echo "OK!"
