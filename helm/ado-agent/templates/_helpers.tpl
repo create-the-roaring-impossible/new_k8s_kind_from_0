@@ -40,6 +40,7 @@ helm.sh/chart: {{ include "ado-agent.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app: {{ include "ado-agent.name" . }}
 {{- end }}
 
 {{/*
@@ -48,6 +49,7 @@ Selector labels
 {{- define "ado-agent.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "ado-agent.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ include "ado-agent.name" . }}
 {{- end }}
 
 {{/*
@@ -60,3 +62,5 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+# TODO: to add "env"

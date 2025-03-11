@@ -1,6 +1,8 @@
+{{- if .Values.service.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ include "ado-agent.fullname" . }}
   labels:
     {{- include "ado-agent.labels" . | nindent 4 }}
@@ -13,3 +15,4 @@ spec:
       name: http
   selector:
     {{- include "ado-agent.selectorLabels" . | nindent 4 }}
+{{- end }}

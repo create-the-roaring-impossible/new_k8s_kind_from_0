@@ -2,6 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ include "ado-agent.fullname" . }}
   labels:
     {{- include "ado-agent.labels" . | nindent 4 }}

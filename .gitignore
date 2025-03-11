@@ -19,3 +19,6 @@ _deps
 
 # Vagrant
 .vagrant
+
+# Helm
+ado-agent-*.tgz

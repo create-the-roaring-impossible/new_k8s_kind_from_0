@@ -2,6 +2,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ include "ado-agent.fullname" . }}
   labels:
     {{- include "ado-agent.labels" . | nindent 4 }}

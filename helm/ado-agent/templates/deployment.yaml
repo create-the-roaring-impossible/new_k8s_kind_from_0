@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Values.namespace }}
   name: {{ include "ado-agent.fullname" . }}
   labels:
     {{- include "ado-agent.labels" . | nindent 4 }}
@@ -56,6 +57,27 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: TARGETARCH
+              valueFrom:
+                configMapKeyRef:
+                  name: "ado-agent-configs"
+                  key: TARGETARCH
+            - name: ADO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: "ado-agent-creds"
+                  key: ADO_URL
+            - name: ADO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: "ado-agent-creds"
+                  key: ADO_TOKEN
+            - name: ADO_POOL
+              valueFrom:
+                secretKeyRef:
+                  name: "ado-agent-creds"
+                  key: ADO_POOL
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
