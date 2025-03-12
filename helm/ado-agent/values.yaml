@@ -83,8 +83,8 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-    cpu: 400m
-    memory: 512Mi
+    cpu: 1
+    memory: 1Gi
   requests:
     cpu: 100m
     memory: 128Mi
@@ -107,7 +107,13 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
-# TODO: to add "env"
+env:
+  configs:
+    TARGETARCH: "linux-x64"
+  secrets:
+    ADO_URL: "fake_value"
+    ADO_TOKEN: "fake_value"
+    ADO_POOL: "fake_value"
 
 # Additional volumes on the output Deployment definition.
 volumes:

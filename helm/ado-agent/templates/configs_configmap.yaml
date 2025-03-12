@@ -6,4 +6,4 @@ metadata:
   labels:
     {{- include "ado-agent.labels" . | nindent 4 }}
 data:
-  TARGETARCH: "linux-x64"
+  TARGETARCH: {{ .Values.env.configs.TARGETARCH }}
