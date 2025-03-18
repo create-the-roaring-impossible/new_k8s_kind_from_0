@@ -27,8 +27,6 @@ spec:
             secretKeyRef:
               name: "ado-agent-creds"
               key: ADO_POOL
-        - name: ADO_AGENT
-          value: "<agent_name>" # TODO: to set dynamically
       command:
         - sh
         - -c
@@ -42,13 +40,16 @@ spec:
             exit 1
           fi
           echo "Found pool ID: $pool_id for pool '$ADO_POOL'"
-          echo "Checking for agent '$ADO_AGENT' in pool '$ADO_POOL'.."
-          agent_found=$(curl -s -u :${ADO_TOKEN} "${ADO_URL}/_apis/distributedtask/pools/${pool_id}/agents?api-version=7.0" | jq -r --arg AGENT "$ADO_AGENT" '.value[] | select(.name==$AGENT) | .name')
-          if [ -z "$agent_found" ]; then
-            echo "Error: Agent '$ADO_AGENT' is not registered in pool '$ADO_POOL'"
-            exit 1
+          echo "Checking for agents in pool '$ADO_POOL'.."
+          agents=$(curl -s -u :${ADO_TOKEN} "${ADO_URL}/_apis/distributedtask/pools/${pool_id}/agents?api-version=7.0" | jq -r '.value[] | "\(.name) (\(.status))"')
+          if [ -z "$agents" ]; then
+            echo "No agents found in pool '$ADO_POOL'."
+          else
+            echo "################################################"
+            echo "########## Agents in pool '$ADO_POOL' ##########"
+            echo "################################################"
+            echo "$agents"
           fi
-          echo "Success: Agent '$ADO_AGENT' is registered in pool '$ADO_POOL'"
       {{- with .Values.volumeMounts }}
       volumeMounts:
         {{- toYaml . | nindent 12 }}
