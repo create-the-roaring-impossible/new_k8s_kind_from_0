@@ -9,8 +9,52 @@ metadata:
     "helm.sh/hook": test
 spec:
   containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
-      args: ['{{ include "ado-agent.fullname" . }}:{{ .Values.service.port }}']
+    - name: test-agent-connection
+      image: alpine:3.16
+      env:
+        - name: ADO_URL
+          valueFrom:
+            secretKeyRef:
+              name: "ado-agent-creds"
+              key: ADO_URL
+        - name: ADO_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: "ado-agent-creds"
+              key: ADO_TOKEN
+        - name: ADO_POOL
+          valueFrom:
+            secretKeyRef:
+              name: "ado-agent-creds"
+              key: ADO_POOL
+        - name: ADO_AGENT
+          value: "<agent_name>" # TODO: to set dynamically
+      command:
+        - sh
+        - -c
+        - |
+          echo "Installing required utilities.."
+          apk update && apk add --no-cache curl jq
+          echo "Fetching pool ID for pool '$ADO_POOL'.."
+          pool_id=$(curl -s -u :${ADO_TOKEN} "${ADO_URL}/_apis/distributedtask/pools?api-version=7.0" | jq -r --arg POOL "$ADO_POOL" '.value[] | select(.name==$POOL) | .id')
+          if [ -z "$pool_id" ]; then
+            echo "Error: Pool '$ADO_POOL' not found!"
+            exit 1
+          fi
+          echo "Found pool ID: $pool_id for pool '$ADO_POOL'"
+          echo "Checking for agent '$ADO_AGENT' in pool '$ADO_POOL'.."
+          agent_found=$(curl -s -u :${ADO_TOKEN} "${ADO_URL}/_apis/distributedtask/pools/${pool_id}/agents?api-version=7.0" | jq -r --arg AGENT "$ADO_AGENT" '.value[] | select(.name==$AGENT) | .name')
+          if [ -z "$agent_found" ]; then
+            echo "Error: Agent '$ADO_AGENT' is not registered in pool '$ADO_POOL'"
+            exit 1
+          fi
+          echo "Success: Agent '$ADO_AGENT' is registered in pool '$ADO_POOL'"
+      {{- with .Values.volumeMounts }}
+      volumeMounts:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+  {{- with .Values.volumes }}
+  volumes:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
   restartPolicy: Never

@@ -41,8 +41,8 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 1992
 
 securityContext: {}
   # capabilities:
@@ -83,21 +83,48 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-    cpu: 1
-    memory: 1Gi
+    cpu: 500m
+    memory: 512Mi
   requests:
     cpu: 100m
     memory: 128Mi
 
-# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-# livenessProbe:
-#   httpGet:
-#     path: /
-#     port: http
-# readinessProbe:
-#   httpGet:
-#     path: /
-#     port: http
+# This is to setup the startup, liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+startupProbe:
+  exec:
+    command:
+      - sh
+      - -c
+      - "pgrep -f Agent.Listener || exit 1"
+  initialDelaySeconds: 300
+  periodSeconds: 10
+  timeoutSeconds: 10
+  successThreshold: 3
+  failureThreshold: 6
+  terminationGracePeriodSeconds: 30
+livenessProbe:
+  exec:
+    command:
+      - sh
+      - -c
+      - "pgrep -f Agent.Listener || exit 1"
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+  successThreshold: 1
+  failureThreshold: 6
+  terminationGracePeriodSeconds: 30
+readinessProbe:
+  exec:
+    command:
+      - sh
+      - -c
+      - "pgrep -f Agent.Listener || exit 1"
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 10
+  successThreshold: 3
+  failureThreshold: 6
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -117,6 +144,9 @@ env:
 
 # Additional volumes on the output Deployment definition.
 volumes:
+  - name: shared-data-volume
+    persistentVolumeClaim:
+      claimName: ado-agent-shared-data-pvc
   - name: "docker-volume"
     hostPath:
       path: "/var/run/docker.sock"
@@ -127,6 +157,8 @@ volumes:
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
+  - name: shared-data-volume
+    mountPath: /shared
   - name: "docker-volume"
     mountPath: "/var/run/docker.sock"
 # - name: foo

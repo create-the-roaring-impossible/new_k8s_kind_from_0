@@ -13,7 +13,7 @@ RUN apt-get update \
        libicu74 \
        lsb-release \
     # Install Docker
-    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && curl --proto "=https" --tlsv1.2 -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
        | tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && apt-get update \
@@ -29,7 +29,8 @@ WORKDIR /ado-agent/
 COPY ./script/bash/ado-agent-start.sh ./
 
 RUN chmod +x ./ado-agent-start.sh \
-    && useradd ado_usr \
+    && groupadd -g 1992 ado_group \
+    && useradd -m -u 1999 -g 1992 ado_usr \
     && chown ado_usr ./
 
 USER ado_usr

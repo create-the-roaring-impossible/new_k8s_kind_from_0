@@ -61,22 +61,22 @@ spec:
             - name: TARGETARCH
               valueFrom:
                 configMapKeyRef:
-                  name: "ado-agent-configs"
+                  name: "{{ include "ado-agent.fullname" . }}-configs"
                   key: TARGETARCH
             - name: ADO_URL
               valueFrom:
                 secretKeyRef:
-                  name: "ado-agent-creds"
+                  name: "{{ include "ado-agent.fullname" . }}-creds"
                   key: ADO_URL
             - name: ADO_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: "ado-agent-creds"
+                  name: "{{ include "ado-agent.fullname" . }}-creds"
                   key: ADO_TOKEN
             - name: ADO_POOL
               valueFrom:
                 secretKeyRef:
-                  name: "ado-agent-creds"
+                  name: "{{ include "ado-agent.fullname" . }}-creds"
                   key: ADO_POOL
           {{- with .Values.volumeMounts }}
           volumeMounts:

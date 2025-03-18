@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: {{ .Values.namespace }}
-  name: "ado-agent-configs"
+  name: "{{ include "ado-agent.fullname" . }}-configs"
   labels:
     {{- include "ado-agent.labels" . | nindent 4 }}
 data:
