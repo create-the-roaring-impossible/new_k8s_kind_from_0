@@ -41,8 +41,8 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-podSecurityContext:
-  fsGroup: 1992
+podSecurityContext: {}
+  # fsGroup: 1992
 
 securityContext: {}
   # capabilities:
@@ -144,9 +144,6 @@ env:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-  - name: shared-data-volume
-    persistentVolumeClaim:
-      claimName: ado-agent-shared-data-pvc
   - name: "docker-volume"
     hostPath:
       path: "/var/run/docker.sock"
@@ -157,8 +154,6 @@ volumes:
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-  - name: shared-data-volume
-    mountPath: /shared
   - name: "docker-volume"
     mountPath: "/var/run/docker.sock"
 # - name: foo
