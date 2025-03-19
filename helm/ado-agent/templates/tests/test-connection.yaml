@@ -50,6 +50,7 @@ spec:
             echo "################################################"
             echo "$agents"
           fi
+        # TODO: to check if all created agents are in "online" state
       {{- with .Values.volumeMounts }}
       volumeMounts:
         {{- toYaml . | nindent 12 }}
