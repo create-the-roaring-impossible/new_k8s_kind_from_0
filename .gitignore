@@ -10,8 +10,15 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
+# VSCode
+.vscode
+
 # Ansible
 .lock
+.ansible
 
 # Vagrant
-.vagrant/*
+.vagrant
+
+# Helm
+ado-agent-*.tgz

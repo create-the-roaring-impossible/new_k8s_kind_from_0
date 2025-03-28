@@ -1,0 +1,17 @@
+name: Docker
+on:
+  workflow_dispatch:
+jobs:
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest # TODO: to use a self-hosted runner
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 'TEST'
+        run: |
+          pwd
+          ls -larth
+          docker --version

@@ -12,13 +12,13 @@
       cmdToRun: The path of the script to run.
 
 .EXAMPLE
-  .\create_schedule_task_at_start_up.ps1 "BackupToExternalHDD" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'SAMSUNG Archive' ''" # TODO: to test
-  .\create_schedule_task_at_start_up.ps1 "BackupToGoogleDrive" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'Google Drive' 'Il mio Drive\'" # TODO: to test
+  .\create_schedule_task_at_start_up.ps1 "BackupToExternalHDD" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'SAMSUNG Archive' ''"
+  .\create_schedule_task_at_start_up.ps1 "BackupToGoogleDrive" "E:\Repositories\GitHub\new_k8s_kind_from_0\script\pwsh\backup_at_start_up.ps1 'HDD Archive' 'Personale\' 'Google Drive' 'Il mio Drive\'"
 
 .NOTES
   Author: Matteo Cristiano
-  Date: 23/02/2025
-  Version: 1.1.0
+  Date: 27/02/2025
+  Version: 1.1.1
 #>
 
 param (
@@ -34,7 +34,7 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
   exit
 } else {
   # Create the Task Action, Trigger, Settings, and Principal, to use with the Scheduled Task
-  $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $cmdToRun
+  $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument "-NoProfile -ExecutionPolicy Bypass `"$cmdToRun`""
   $trigger = New-ScheduledTaskTrigger -AtStartup
   $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -Hidden
   $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
