@@ -1,27 +1,27 @@
-name: Test Workflow - Job Output
-on:
-  push:
-    branches:
-      - "master"
-    paths:
-      - ".github/workflows/test-wf-job-output.yml"
-  workflow_dispatch:
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      script-file: ${{ steps.publish.outputs.something }}
-    steps:
-      - name: Build test.txt file
-        run: |
-          echo "Test 1" > test.txt
-          cat test.txt
-      - name: Publich test.txt file
-        id: publish
-        run: find test.txt -type f -exec sh -c 'echo "something={}" >> $GITHUB_OUTPUT' \; # find test.txt -type f --execdir echo 'something={}' >> $GITHUB_OUTPUT ';' # OR find test.txt -type f --execdir echo '::set-output name= something::{}' ';'
-  download_artifact:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output test.txt file
-        run: echo "${{ needs.build.outputs.script-file }}"
+# name: Test Workflow - Job Output
+# on:
+#   push:
+#     branches:
+#       - "master"
+#     paths:
+#       - ".github/workflows/test-wf-job-output.yml"
+#   workflow_dispatch:
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       script-file: ${{ steps.publish.outputs.something }}
+#     steps:
+#       - name: Build test.txt file
+#         run: |
+#           echo "Test 1" > test.txt
+#           cat test.txt
+#       - name: Publich test.txt file
+#         id: publish
+#         run: find test.txt -type f -exec sh -c 'echo "something={}" >> $GITHUB_OUTPUT' \; # find test.txt -type f --execdir echo 'something={}' >> $GITHUB_OUTPUT ';' # OR find test.txt -type f --execdir echo '::set-output name= something::{}' ';'
+#   download_artifact:
+#     needs: build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Output test.txt file
+#         run: echo "${{ needs.build.outputs.script-file }}"

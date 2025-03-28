@@ -1,53 +1,53 @@
-# This is a basic workflow to help you get started with Actions
-name: Test Workflow ON PUSH
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
-  push:
-    branches:
-      - "feature/study"
-  # pull_request:
-  #   branches: [ "master" ]
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "test"
-  test:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Get code
-        uses: actions/checkout@v4 # <= THIS IS AN ACTION, INTO A WORKFLOW!!
-      # Test "setup-node" action
-      - name: Install NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      # Install something
-      - name: Install something
-        run: echo "Install something"
-      # Runs tests
-      - name: Run tests
-        run: |
-          echo "Test 1"
-          echo "Test 2"
-          echo "Test 3"
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Install NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: Install something
-        run: echo "Install something"
-      - name: Run build
-        run: echo "Build"
-      - name: Run deploy
-        run: echo "Deploy"
+# # This is a basic workflow to help you get started with Actions
+# name: Test Workflow ON PUSH
+# # Controls when the workflow will run
+# on:
+#   # Triggers the workflow on push or pull request events but only for the "master" branch
+#   push:
+#     branches:
+#       - "feature/study"
+#   # pull_request:
+#   #   branches: [ "master" ]
+#   # Allows you to run this workflow manually from the Actions tab
+#   workflow_dispatch:
+# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# jobs:
+#   # This workflow contains a single job called "test"
+#   test:
+#     # The type of runner that the job will run on
+#     runs-on: ubuntu-latest
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#       - name: Get code
+#         uses: actions/checkout@v4 # <= THIS IS AN ACTION, INTO A WORKFLOW!!
+#       # Test "setup-node" action
+#       - name: Install NodeJS
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 18
+#       # Install something
+#       - name: Install something
+#         run: echo "Install something"
+#       # Runs tests
+#       - name: Run tests
+#         run: |
+#           echo "Test 1"
+#           echo "Test 2"
+#           echo "Test 3"
+#   deploy:
+#     needs: test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Get code
+#         uses: actions/checkout@v4
+#       - name: Install NodeJS
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 18
+#       - name: Install something
+#         run: echo "Install something"
+#       - name: Run build
+#         run: echo "Build"
+#       - name: Run deploy
+#         run: echo "Deploy"
