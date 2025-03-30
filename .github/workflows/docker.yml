@@ -4,7 +4,7 @@ on:
 jobs:
   docker:
     name: Docker
-    runs-on: ubuntu-latest # TODO: to use a self-hosted runner
+    runs-on: 'arc-desktop-s8glse7'
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
