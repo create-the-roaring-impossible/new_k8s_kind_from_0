@@ -15,4 +15,5 @@ jobs:
           pwd
           ls -larth
           docker --version
+          docker ps
       # - name: 'Build'
