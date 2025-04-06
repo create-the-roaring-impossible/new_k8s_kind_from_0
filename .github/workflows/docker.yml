@@ -4,7 +4,7 @@ on:
 jobs:
   docker:
     name: Docker
-    runs-on: 'arc-desktop-s8glse7'
+    runs-on: 'arc-desktop-s8glse7' # TODO: to use a standard runner
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
