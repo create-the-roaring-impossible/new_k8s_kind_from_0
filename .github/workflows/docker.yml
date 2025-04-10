@@ -22,3 +22,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_TOKEN }}
+      - name: 'Build and Push'
+        uses: docker/build-push-action@v6
+        with:
+          context: '.'
+          file: './dockerfiles/tf.dockerfile'
+          push: true
+          tags: |
+            ghcr.io/sennar19/tf:latest
+            ghcr.io/sennar19/tf:1.0.0
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=1.0.0
+            org.opencontainers.image.licenses=gpl-3.0
+            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
