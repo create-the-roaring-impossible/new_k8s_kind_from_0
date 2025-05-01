@@ -7,7 +7,7 @@ RUN apk update \
        bash \
        git \
     # Install Terraform
-    && apk add --update --virtual .deps --no-cache gnupg \
+    && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
     && wget https://releases.hashicorp.com/terraform/1.11.4/terraform_1.11.4_linux_amd64.zip \
     && wget https://releases.hashicorp.com/terraform/1.11.4/terraform_1.11.4_SHA256SUMS \
@@ -18,6 +18,7 @@ RUN apk update \
     && unzip /tmp/terraform_1.11.4_linux_amd64.zip -d /tmp \
     && mv /tmp/terraform /usr/local/bin/terraform \
     && rm -f /tmp/terraform_1.11.4_linux_amd64.zip terraform_1.11.4_SHA256SUMS 1.11.4/terraform_1.11.4_SHA256SUMS.sig \
-    && apk del .deps
+    && apk del .deps \
+    && apk cache clean
 
 USER tfsvcusr

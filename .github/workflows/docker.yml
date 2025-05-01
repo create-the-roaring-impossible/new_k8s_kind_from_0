@@ -22,6 +22,7 @@ jobs:
           context: '.'
           file: './dockerfiles/tf.dockerfile'
           push: true
+          # TODO: to pass second tag as input
           tags: |
             ghcr.io/sennar19/tf:latest
             ghcr.io/sennar19/tf:1.0.0
