@@ -33,14 +33,14 @@ print_header() {
 
 cleanup() {
   trap "" EXIT
-#   if [ -e ./config.sh ]; then
-#     print_header "========== Removing agent.. =========="
+  if [ -e ./config.sh ]; then
+    print_header "========== Removing agent.. =========="
 #     while true; do # Let's check there're no running jobs, before removing the agent
-#       ./config.sh remove --unattended --auth "PAT" --token ${ADO_TOKEN} && break # TODO: to manage possible errors, and THEN break the loop
+#       ./config.sh remove --unattended --auth "TOKEN" --token ${TOKEN} && break # TODO: to manage possible errors, and THEN break the loop
 #       echo "There're some running jobs, retrying in 60 seconds.."
 #       sleep 60
 #     done
-#   fi
+  fi
 }
 
 ############################
@@ -110,35 +110,38 @@ if [ -z "$GH_RUNNER_PACKAGE" ]; then
   echo 1>&2 "ERROR: Could not determine GitHub Runner package to download"
   exit 1
 fi
+
 GH_RUNNER_VERSION=$(echo "$GH_RUNNER_PACKAGE" | grep -oP 'v\K[0-9]+\.[0-9]+\.[0-9]+')
 echo "Version $GH_RUNNER_VERSION will be installed"
+
 curl -LsS $(curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r .assets[].browser_download_url | grep "linux-x64") | tar -xz
-ls -larth
-rm -rf ~/gh-runners/$RUNNER_NAME/*
-ls -larth
+chmod +x ~/gh-runners/$RUNNER_NAME/*
 
-# chmod +x ./run.sh
+##############################################
+########## Prepare to remove runner ##########
+##############################################
 
-# source ./env.sh # TODO: to manage possible errors
-
-# echo "DONE!"
-
-# print_header "3. Prepare, in case of failure, to remove agent.."
+print_header "3. Prepare, in case of failure, to remove runner.."
 
 # trap "cleanup; exit 0" EXIT
+# trap "cleanup; exit 1" EXIT
 # trap "cleanup; exit 130" INT
 # trap "cleanup; exit 143" TERM
 
-# echo "DONE!"
+###############################################
+########## Configure\register runner ##########
+###############################################
 
-# print_header "4. Configuring agent.."
+print_header "4. Configuring runner.."
 
-# ./config.sh --unattended --agent "${ADO_AGENT_NAME}" --url "${ADO_URL}" --auth "PAT" --token "${ADO_TOKEN}" --pool "${ADO_POOL}" --replace --acceptTeeEula & wait $!
+./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace true --labels $LABELS --disableupdate & wait $!
 
-# echo "DONE!"
+########################################################
+########## Running runner ##########
+########################################################
 
-# print_header "5. Running agent.."
+print_header "5. Running runner.."
 
-# # To be aware of TERM and INT signals, call "./run.sh" in background, and wait for it
-# # TIP: running "./run.sh" with the "--once" flag will shut down the agent, after a single pipeline is executed
-# ./run.sh "$@" & wait $!
+sudo ./svc.sh install
+sudo ./svc.sh start
+sudo ./svc.sh status
