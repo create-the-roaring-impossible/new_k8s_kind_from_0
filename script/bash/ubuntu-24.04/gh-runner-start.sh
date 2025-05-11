@@ -123,12 +123,7 @@ chmod +x ~/gh-runners/$RUNNER_NAME/*
 
 print_header "3. Configuring runner.."
 
-echo $GH_URL
-echo $TOKEN
-echo "./config.sh --url $GH_URL --token $TOKEN"
-# ./config.sh --url https://github.com/create-the-roaring-impossible --token AFRDZVWOMQUPSMLODX3T7PTIEDUUY
-echo "./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate"
-# ./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
+./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
 
 ########################################################
 ########## Running runner ##########
