@@ -5,7 +5,7 @@ set -e
 #
 # REQUIREMENTS:
 # - GitHub Organization URL (GH_URL)
-# - Token (TOKEN)
+# - Token (TOKEN) [scopes: admin:enterprise, admin:org]
 # - Runner Group Name (RUNNER_GRP_NAME)
 # - Runner Name (RUNNER_NAME)
 # - Labels List (LABELS) [optional]
@@ -29,18 +29,6 @@ print_header() {
   lightcyan="\033[1;36m"
   nocolor="\033[0m"
   echo -e "\n${lightcyan}$1${nocolor}\n"
-}
-
-cleanup() {
-  trap "" EXIT
-  if [ -e ./config.sh ]; then
-    print_header "========== Removing agent.. =========="
-#     while true; do # Let's check there're no running jobs, before removing the agent
-#       ./config.sh remove --unattended --auth "TOKEN" --token ${TOKEN} && break # TODO: to manage possible errors, and THEN break the loop
-#       echo "There're some running jobs, retrying in 60 seconds.."
-#       sleep 60
-#     done
-  fi
 }
 
 ############################
@@ -123,7 +111,8 @@ chmod +x ~/gh-runners/$RUNNER_NAME/*
 
 print_header "3. Configuring runner.."
 
-./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
+RUNNER_TOKEN=$(curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/create-the-roaring-impossible/actions/runners/registration-token | jq -r .token)
+./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $RUNNER_TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
 
 ########################################################
 ########## Running runner ##########
@@ -131,6 +120,6 @@ print_header "3. Configuring runner.."
 
 print_header "4. Running runner.."
 
-sudo ./svc.sh install
-sudo ./svc.sh start
-sudo ./svc.sh status
+# sudo ./svc.sh install
+# sudo ./svc.sh start
+# sudo ./svc.sh status
