@@ -13,7 +13,7 @@ set -e
 # USAGE: bash gh-runner-start.sh $GH_URL $TOKEN $RUNNER_GRP_NAME $RUNNER_NAME [$LABELS]
 #
 # EXAMPLE:
-# bash gh-runner-start.sh "https://github.com/Sennar19/new_k8s_kind_from_0" "<TOKEN>" "Docker" "DESKTOP-S8GLSE7" ["DESKTOP-S8GLSE7, docker, ubuntu-24.04"]
+# bash gh-runner-start.sh "https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0" "<TOKEN>" "Docker" "DESKTOP-S8GLSE7" ["DESKTOP-S8GLSE7, docker, ubuntu-24.04"]
 #
 # AUTHORS: Matteo Cristiano
 #
@@ -121,15 +121,22 @@ chmod +x ~/gh-runners/$RUNNER_NAME/*
 ########## Configure\register runner ##########
 ###############################################
 
-print_header "4. Configuring runner.."
+print_header "3. Configuring runner.."
 
-./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace true --labels $LABELS --disableupdate & wait $!
+./config.sh --url $GH_URL --token $TOKEN
+# ./config.sh --name $RUNNER_NAME --url $GH_URL --token $TOKEN
+# ./config.sh --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME
+# # ./config.sh --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace
+# ./config.sh --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS
+# ./config.sh --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
+# ./config.sh --url https://github.com/create-the-roaring-impossible --token AFRDZVWOMQUPSMLODX3T7PTIEDUUY
+# ./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
 
 ########################################################
 ########## Running runner ##########
 ########################################################
 
-print_header "5. Running runner.."
+print_header "4. Running runner.."
 
 sudo ./svc.sh install
 sudo ./svc.sh start
