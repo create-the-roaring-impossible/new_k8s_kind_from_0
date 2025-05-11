@@ -122,9 +122,9 @@ RUNNER_TOKEN=$(curl -L -X POST -H "Accept: application/vnd.github+json" -H "Auth
 
 ./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $RUNNER_TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
 
-########################################################
+####################################
 ########## Running runner ##########
-########################################################
+####################################
 
 print_header "4. Running runner.."
 
