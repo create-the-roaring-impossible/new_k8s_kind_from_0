@@ -117,17 +117,6 @@ echo "Version $GH_RUNNER_VERSION will be installed"
 curl -LsS $(curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r .assets[].browser_download_url | grep "linux-x64") | tar -xz
 chmod +x ~/gh-runners/$RUNNER_NAME/*
 
-##############################################
-########## Prepare to remove runner ##########
-##############################################
-
-print_header "3. Prepare, in case of failure, to remove runner.."
-
-# trap "cleanup; exit 0" EXIT
-# trap "cleanup; exit 1" EXIT
-# trap "cleanup; exit 130" INT
-# trap "cleanup; exit 143" TERM
-
 ###############################################
 ########## Configure\register runner ##########
 ###############################################
