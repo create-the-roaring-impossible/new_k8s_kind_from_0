@@ -24,8 +24,8 @@ jobs:
           push: true
           # TODO: to pass second tag as input
           tags: |
-            ghcr.io/sennar19/tf:latest
-            ghcr.io/sennar19/tf:1.0.0
+            ghcr.io/create-the-roaring-impossible/tf:latest
+            ghcr.io/create-the-roaring-impossible/tf:1.0.0
           labels: |
             org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
             org.opencontainers.image.created=${{steps.date.outputs.date}}
