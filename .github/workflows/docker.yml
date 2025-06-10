@@ -11,6 +11,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'Login to GitHub Container Registry'
+        # TODO: to fix
+        # Logging into ghcr.io...
+        # Error: Error response from daemon: Get "https://ghcr.io/v2/": denied: denied
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
