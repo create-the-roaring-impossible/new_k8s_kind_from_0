@@ -48,9 +48,9 @@ jobs:
           context: '.'
           file: ${{github.event.inputs.dockerfile}}
           push: true
-          # TODO: to pass second tag as input
+          # TODO: to consider 'RCVersion'
           tags: |
-            ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}} # TODO: to consider 'RCVersion'
+            ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}}
           labels: |
             org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
             org.opencontainers.image.created=${{steps.date.outputs.date}}
