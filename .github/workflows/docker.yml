@@ -6,9 +6,9 @@ on:
         description: 'Set the Docker Repository to use'
         type: choice
         required: true
-        default: 'ghcr.io/create-the-roaring-impossible'
+        default: 'ghcr.io/create-the-roaring-impossible/tf'
         options:
-          - 'ghcr.io/create-the-roaring-impossible'
+          - 'ghcr.io/create-the-roaring-impossible/tf'
       dockerfile:
         description: 'Set the Dockerfile to use'
         type: choice
@@ -27,7 +27,7 @@ on:
         required: true
         default: false
 jobs:
-  docker:
+  buildAndPush:
     name: 'Docker - Build And Push'
     runs-on: 'docker'
     steps:
@@ -38,24 +38,40 @@ jobs:
       - name: 'Login to GitHub Container Registry'
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{github.event.inputs.docker_repository}}
           username: ${{github.actor}}
           password: ${{secrets.DOCKER_TOKEN}}
-######################################################################################################################################################
-      - name: 'Build and Push'
+       # TODO: to evaluate 'RCVersion'
+      - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}"' # TODO: to consider 'RCVersion'
         uses: docker/build-push-action@v6
         with:
           context: '.'
-          file: './dockerfiles/tf.dockerfile'
+          file: ${{github.event.inputs.dockerfile}}
           push: true
           # TODO: to pass second tag as input
           tags: |
-            ghcr.io/create-the-roaring-impossible/tf:latest
-            ghcr.io/create-the-roaring-impossible/tf:1.0.0
+            ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}} # TODO: to consider 'RCVersion'
           labels: |
             org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
             org.opencontainers.image.created=${{steps.date.outputs.date}}
             org.opencontainers.image.revision=${{github.sha}}
-            org.opencontainers.image.version=1.0.0
+            org.opencontainers.image.version=${{github.event.inputs.tag}}
             org.opencontainers.image.licenses=gpl-3.0
             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+      # - name: 'Build and Push Docker Image, tag "latest"'
+      # TODO: to add a condition on 'isRC'
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: '.'
+      #     file: ${{github.event.inputs.dockerfile}}
+      #     push: true
+      #     # TODO: to pass second tag as input
+      #     tags: |
+      #       ${{github.event.inputs.docker_repository}}:latest
+      #     labels: |
+      #       org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
+      #       org.opencontainers.image.created=${{steps.date.outputs.date}}
+      #       org.opencontainers.image.revision=${{github.sha}}
+      #       org.opencontainers.image.version=${{github.event.inputs.tag}}
+      #       org.opencontainers.image.licenses=gpl-3.0
+      #       org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
