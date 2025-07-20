@@ -1,9 +1,30 @@
-name: Docker
+name: 'Docker - Build And Push'
 on:
   workflow_dispatch:
+    inputs:
+      docker_repository:
+        description: 'Set the Docker Repository to use'
+        type: string
+        required: true
+        default: 'ghcr.io/create-the-roaring-impossible'
+      dockerfile:
+        description: 'Set the Dockerfile to use'
+        type: string
+        required: true
+        default: './dockerfiles/tf.dockerfile'
+      image_name:
+        description: 'Set the image to build'
+        type: string
+        required: true
+        default: 'tf'
+      release_candidate:
+        description: 'Is this a Release Candidate?'
+        type: boolean
+        required: true
+        default: false
 jobs:
   docker:
-    name: Docker
+    name: 'Docker - Build And Push'
     runs-on: 'docker'
     steps:
       - name: 'Repository Checkout'
@@ -11,14 +32,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'Login to GitHub Container Registry'
-        # TODO: to fix
-        # Logging into ghcr.io...
-        # Error: Error response from daemon: Get "https://ghcr.io/v2/": denied: denied
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{github.actor}}
           password: ${{secrets.DOCKER_TOKEN}}
+######################################################################################################################################################
       - name: 'Build and Push'
         uses: docker/build-push-action@v6
         with:
