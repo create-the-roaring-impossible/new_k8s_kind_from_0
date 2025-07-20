@@ -41,7 +41,14 @@ jobs:
           registry: ${{github.event.inputs.docker_repository}}
           username: ${{github.actor}}
           password: ${{secrets.DOCKER_TOKEN}}
-       # TODO: to evaluate 'RCVersion'
+      - name: Set variable 'RCVersion', based on input 'isRC'
+        run: |
+          if [ "${{github.event.inputs.isRC}}" = "true" ]; then
+            RCVersion="test"
+          else
+            RCVersion=""
+          fi
+          echo "RCVersion is $RCVersion"
       - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}"' # TODO: to consider 'RCVersion'
         uses: docker/build-push-action@v6
         with:
