@@ -4,20 +4,24 @@ on:
     inputs:
       docker_repository:
         description: 'Set the Docker Repository to use'
-        type: string
+        type: choice
         required: true
         default: 'ghcr.io/create-the-roaring-impossible'
+        options:
+          - 'ghcr.io/create-the-roaring-impossible'
       dockerfile:
         description: 'Set the Dockerfile to use'
-        type: string
+        type: choice
         required: true
         default: './dockerfiles/tf.dockerfile'
-      image_name:
+        options:
+          - './dockerfiles/tf.dockerfile'
+      tag:
         description: 'Set the image to build'
         type: string
         required: true
-        default: 'tf'
-      release_candidate:
+        default: '1.0.0'
+      isRC:
         description: 'Is this a Release Candidate?'
         type: boolean
         required: true
