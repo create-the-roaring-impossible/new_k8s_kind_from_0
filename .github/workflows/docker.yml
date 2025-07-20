@@ -44,7 +44,7 @@ jobs:
       - name: Set variable 'RCVersion', based on input 'isRC'
         run: |
           if [ "${{github.event.inputs.isRC}}" = "true" ]; then
-            RCVersion="-${{github.run_id}}.${{github.run_number}}.${{github.run_attempt}}"
+            RCVersion="-${{github.run_number}}"
           else
             RCVersion=""
           fi
