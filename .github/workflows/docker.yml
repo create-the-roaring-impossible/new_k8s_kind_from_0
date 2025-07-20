@@ -44,14 +44,11 @@ jobs:
       - name: Set variable 'RCVersion', based on input 'isRC'
         run: |
           if [ "${{github.event.inputs.isRC}}" = "true" ]; then
-            RCVersion="${{github.run_number}}"
+            RCVersion="-${{github.run_id}}.${{github.run_number}}.${{github.run_attempt}}"
           else
             RCVersion=""
           fi
-          echo "RCVersion is $RCVersion"
           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
-      - name: Use RCVersion
-        run: echo "RCVersion is $RCVersion"
       - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}$RCVersion"'
         uses: docker/build-push-action@v6
         with:
