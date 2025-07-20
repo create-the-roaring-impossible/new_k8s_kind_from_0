@@ -59,7 +59,7 @@ jobs:
           file: ${{github.event.inputs.dockerfile}}
           push: true
           tags: |
-            ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}}$RCVersion
+            ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}}${{env.RCVersion}}
           labels: |
             org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
             org.opencontainers.image.created=${{steps.date.outputs.date}}
