@@ -50,7 +50,7 @@ jobs:
             RCVersion=""
           fi
           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
-      - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}$RCVersion"'
+      - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}${{env.RCVersion}}"'
         uses: docker/build-push-action@v6
         with:
           context: '.'
