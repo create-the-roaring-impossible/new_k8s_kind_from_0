@@ -27,6 +27,7 @@ on:
         required: true
         default: false
 jobs:
+  # TODO: to run on a specific container
   buildAndPush:
     name: 'Docker - Build And Push'
     runs-on: 'docker'
@@ -64,20 +65,19 @@ jobs:
             org.opencontainers.image.version=${{github.event.inputs.tag}}
             org.opencontainers.image.licenses=gpl-3.0
             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
-      # - name: 'Build and Push Docker Image, tag "latest"'
+      - name: 'Build and Push Docker Image, tag "latest"'
       # TODO: to add a condition on 'isRC'
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: '.'
-      #     file: ${{github.event.inputs.dockerfile}}
-      #     push: true
-      #     # TODO: to pass second tag as input
-      #     tags: |
-      #       ${{github.event.inputs.docker_repository}}:latest
-      #     labels: |
-      #       org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
-      #       org.opencontainers.image.created=${{steps.date.outputs.date}}
-      #       org.opencontainers.image.revision=${{github.sha}}
-      #       org.opencontainers.image.version=${{github.event.inputs.tag}}
-      #       org.opencontainers.image.licenses=gpl-3.0
-      #       org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+        uses: docker/build-push-action@v6
+        with:
+          context: '.'
+          file: ${{github.event.inputs.dockerfile}}
+          push: true
+          tags: |
+            ${{github.event.inputs.docker_repository}}:latest
+          labels: |
+            org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
+            org.opencontainers.image.created=${{steps.date.outputs.date}}
+            org.opencontainers.image.revision=${{github.sha}}
+            org.opencontainers.image.version=${{github.event.inputs.tag}}
+            org.opencontainers.image.licenses=gpl-3.0
+            org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
