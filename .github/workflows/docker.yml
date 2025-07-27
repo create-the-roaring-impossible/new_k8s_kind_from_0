@@ -27,8 +27,8 @@ on:
         required: true
         default: false
 jobs:
-  # TODO: to run on a specific container
   buildAndPush:
+    # TODO: to run on a specific container
     name: 'Docker - Build And Push'
     runs-on: 'docker'
     steps:
@@ -81,3 +81,9 @@ jobs:
             org.opencontainers.image.version=${{github.event.inputs.tag}}
             org.opencontainers.image.licenses=gpl-3.0
             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+  # cleanup:
+  #   name: 'Cleanup'
+  #   # TODO: to run on a specific container
+  #   runs-on: 'docker'
+  #   steps:
+  #     - name: 'Repository Checkout'
