@@ -17,7 +17,7 @@ on:
         options:
           - './dockerfiles/tf.dockerfile'
       tag:
-        description: 'Set the image to build'
+        description: 'Set the tag to build'
         type: string
         required: true
         default: '1.0.0'
