@@ -79,9 +79,11 @@ jobs:
             org.opencontainers.image.version=${{github.event.inputs.tag}}
             org.opencontainers.image.licenses=gpl-3.0
             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
-  # cleanup:
-  #   name: 'Cleanup'
-  #   # TODO: to run on a specific container
-  #   runs-on: 'docker'
-  #   steps:
-  #     - name: 'Repository Checkout'
+  cleanup:
+    name: 'Cleanup'
+    # TODO: to run on a specific container
+    # TODO: only if succeeded() and isRC is false
+    runs-on: 'docker'
+    steps:
+      - name: Cleanup
+        run: echo "TEST!!"
