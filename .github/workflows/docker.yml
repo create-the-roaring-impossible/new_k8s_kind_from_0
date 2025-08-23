@@ -85,5 +85,6 @@ jobs:
     # TODO: only if succeeded() and isRC is false
     runs-on: 'docker'
     steps:
-      - name: Cleanup
-        run: echo "TEST!!"
+      - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
+        run: scripts/bash/docker_clean.sh
+        shell: bash
