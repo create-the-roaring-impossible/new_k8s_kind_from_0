@@ -87,7 +87,7 @@ jobs:
     # TODO: only if succeeded()
     runs-on: 'docker'
     steps:
-      - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
+      - name: 'Cleanup tags "${{github.event.inputs.tag}}${{needs.buildAndPush.outputs.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
         run: |
           echo "${{needs.buildAndPush.outputs.RCVersion}}"
           chmod +x ./scripts/bash/docker_clean.sh
