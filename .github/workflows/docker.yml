@@ -82,7 +82,7 @@ jobs:
   cleanup:
     name: 'Cleanup'
     # TODO: to run on a specific container
-    # TODO: only if succeeded() and isRC is false
+    # TODO: only if succeeded()
     runs-on: 'docker'
     steps:
       - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
