@@ -86,10 +86,12 @@ jobs:
     needs: [buildAndPush]
     # TODO: only if succeeded()
     runs-on: 'docker'
+    env:
+      RCVersion: ${{needs.buildAndPush.outputs.RCVersion}}
     steps:
-      - name: 'Cleanup tags "${{github.event.inputs.tag}}${{needs.buildAndPush.outputs.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
+      - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
         run: |
-          echo "${{needs.buildAndPush.outputs.RCVersion}}"
+          echo "${{env.RCVersion}}"
           chmod +x ./scripts/bash/docker_clean.sh
-          ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{needs.buildAndPush.outputs.RCVersion}}
+          ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{env.RCVersion}}
         shell: bash
