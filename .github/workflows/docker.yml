@@ -86,5 +86,7 @@ jobs:
     runs-on: 'docker'
     steps:
       - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
-        run: scripts/bash/docker_clean.sh
+        run: |
+          chmod +x ./scripts/bash/docker_clean.sh
+          ./scripts/bash/docker_clean.sh
         shell: bash
