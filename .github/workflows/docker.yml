@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
         run: |
-          echo "${{needs.buildAndPush.outputs.RCVersion}}" # ${{env.RCVersion}}
+          echo "${{needs.buildAndPush.outputs.RCVersion}}"
           chmod +x ./scripts/bash/docker_clean.sh
-          ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{env.RCVersion}}
+          ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{needs.buildAndPush.outputs.RCVersion}}
         shell: bash
