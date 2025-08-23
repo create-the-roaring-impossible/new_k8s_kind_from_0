@@ -7,7 +7,7 @@
 #
 # USAGE: bash docker_clean.sh $IMAGE $TAG
 #
-# EXAMPLE: bash docker_clean.sh ASDASDASD 1.0.0
+# EXAMPLE: bash docker_clean.sh ghcr.io/create-the-roaring-impossible/tf 1.0.0
 #
 # NOTES: Ensure you have the necessary permissions to execute this script.
 #        Make sure all required dependencies are installed.
