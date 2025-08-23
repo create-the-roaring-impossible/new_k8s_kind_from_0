@@ -50,6 +50,7 @@ jobs:
             RCVersion=""
           fi
           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
+          echo "RCVersion=$RCVersion" >> $GITHUB_OUTPUT
       - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}${{env.RCVersion}}"'
         uses: docker/build-push-action@v6
         with:
@@ -82,12 +83,13 @@ jobs:
   cleanup:
     name: 'Cleanup'
     # TODO: to run on a specific container
+    needs: [buildAndPush]
     # TODO: only if succeeded()
     runs-on: 'docker'
     steps:
       - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
         run: |
-          echo "${{env.RCVersion}}"
+          echo "${{needs.buildAndPush.outputs.RCVersion}}" # ${{env.RCVersion}}
           chmod +x ./scripts/bash/docker_clean.sh
           ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{env.RCVersion}}
         shell: bash
