@@ -25,7 +25,7 @@ on:
         description: 'Is this a Release Candidate?'
         type: boolean
         required: true
-        default: false
+        default: true
 jobs:
   buildAndPush:
     # TODO: to run on a specific container
