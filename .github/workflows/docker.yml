@@ -88,7 +88,7 @@ jobs:
     name: 'Cleanup'
     # TODO: to run on a specific container
     needs: [buildAndPush]
-    # TODO: only if succeeded()
+    if: success()
     runs-on: 'docker'
     env:
       RCVersion: ${{needs.buildAndPush.outputs.RC_Version}}
