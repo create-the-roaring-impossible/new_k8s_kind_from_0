@@ -31,6 +31,8 @@ jobs:
     # TODO: to run on a specific container
     name: 'Docker - Build And Push'
     runs-on: 'docker'
+    outputs:
+      RC_Version: ${{ steps.set-rc-version.outputs.RCVersion}}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
@@ -43,6 +45,7 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.DOCKER_TOKEN}}
       - name: Set variable 'RCVersion', based on input 'isRC'
+        id: set-rc-version
         run: |
           if [ "${{github.event.inputs.isRC}}" = "true" ]; then
             RCVersion="-${{github.run_number}}"
@@ -51,6 +54,7 @@ jobs:
           fi
           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
           echo "RCVersion=$RCVersion" >> $GITHUB_OUTPUT
+        shell: bash
       - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}${{env.RCVersion}}"'
         uses: docker/build-push-action@v6
         with:
@@ -87,7 +91,7 @@ jobs:
     # TODO: only if succeeded()
     runs-on: 'docker'
     env:
-      RCVersion: ${{needs.buildAndPush.outputs.RCVersion}}
+      RCVersion: ${{needs.buildAndPush.outputs.RC_Version}}
     steps:
       - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
         run: |
