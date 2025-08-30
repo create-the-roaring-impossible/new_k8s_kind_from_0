@@ -5,11 +5,11 @@ RUN apk update \
     # Install dependencies
     && apk add --no-cache \
        bash \
-       git \
+       git
     # Install Homebrew
-    && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     # Install Terraform
-    && apk --no-cache add --update --virtual .deps --no-cache gnupg \
+RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
     && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_linux_amd64.zip \
     && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS \
