@@ -1,22 +1,22 @@
-name: Test Workflow - Event Filters
-on:
-  pull_request:
-    types:
-      - "opened"
-    branches:
-      - "feature/study"
-  push:
-    branches:
-      - "master"
-    paths:
-      - ".github/workflows/*"
-  workflow_dispatch:
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run tests
-        run: |
-          echo "Test 1"
-          echo "Test 2"
-          echo "Test 3"
+# name: Test Workflow - Event Filters
+# on:
+#   pull_request:
+#     types:
+#       - "opened"
+#     branches:
+#       - "feature/study"
+#   push:
+#     branches:
+#       - "master"
+#     paths:
+#       - ".github/workflows/*"
+#   workflow_dispatch:
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Run tests
+#         run: |
+#           echo "Test 1"
+#           echo "Test 2"
+#           echo "Test 3"
