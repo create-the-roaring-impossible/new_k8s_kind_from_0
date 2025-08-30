@@ -19,7 +19,7 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && mv /tmp/terraform /usr/local/bin/terraform \
     && rm -f /tmp/terraform_1.13.1_linux_amd64.zip terraform_1.13.1_SHA256SUMS 1.13.1/terraform_1.13.1_SHA256SUMS.sig
     # Install tfsec
-RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.30.4/tfsec-linux-amd64 \
+RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.13/tfsec-linux-amd64 \
     && chmod +x /usr/local/bin/tfsec
 RUN apk del .deps
 RUN apk cache clean
