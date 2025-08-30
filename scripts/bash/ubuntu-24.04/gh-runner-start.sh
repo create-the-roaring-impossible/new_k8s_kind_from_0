@@ -14,7 +14,7 @@ set -e
 # USAGE: bash gh-runner-start.sh $GH_URL $TOKEN $GH_ORG_NAME $RUNNER_GRP_NAME $RUNNER_NAME [$LABELS]
 #
 # EXAMPLE:
-# bash gh-runner-start.sh "https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0" "<TOKEN>" "create-the-roaring-impossible" ""Docker" "DESKTOP-S8GLSE7" ["DESKTOP-S8GLSE7, docker, ubuntu-24.04"]
+# bash gh-runner-start.sh "https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0" "<TOKEN>" "create-the-roaring-impossible" "Docker" "DESKTOP-S8GLSE7" ["DESKTOP-S8GLSE7, docker, ubuntu-24.04"]
 #
 # AUTHORS: Matteo Cristiano
 #
