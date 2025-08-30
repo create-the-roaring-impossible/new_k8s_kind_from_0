@@ -8,6 +8,7 @@ RUN apk update \
        git
     # Install Homebrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"
     # Install Terraform
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
