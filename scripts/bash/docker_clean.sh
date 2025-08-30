@@ -1,4 +1,4 @@
-# DESCRIPTION: This script delete locally "latest", and "${tag}", tags of an image.
+# DESCRIPTION: This script deletes locally "latest", and "${tag}", tags of an image.
 #              It requires to install Docker on the machine where it is executed.
 #
 # REQUIREMENTS:
