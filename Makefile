@@ -15,10 +15,6 @@
 	install_hashicorp_vault \
 	port_forward_hashicorp_vault \
 	uninstall_hashicorp_vault \
-	install_jenkins \
-	get_admin_password_jenkins \
-	port_forward_jenkins \
-	uninstall_jenkins \
 
 # install_argo \
 # get_admin_password_argo \
@@ -82,22 +78,6 @@ port_forward_hashicorp_vault:
 
 uninstall_hashicorp_vault:
 	helm uninstall vault -n vault
-
-install_jenkins:
-	helm repo add jenkins https://charts.jenkins.io && \
-	helm repo update && \
-	helm upgrade --install jenkins jenkins/jenkins \
-	--create-namespace --namespace jenkins \
-	--timeout 600s
-
-get_admin_password_jenkins:
-	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
-
-port_forward_jenkins: get_admin_password_jenkins
-	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
-
-uninstall_jenkins:
-	helm uninstall jenkins -n jenkins
 
 # install_argo:
 # 	helm repo add jenkins https://charts.jenkins.io && \
