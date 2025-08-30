@@ -6,9 +6,6 @@ RUN apk update \
     && apk add --no-cache \
        bash \
        git
-    # Install Homebrew
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"
     # Install Terraform
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
@@ -22,7 +19,8 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && mv /tmp/terraform /usr/local/bin/terraform \
     && rm -f /tmp/terraform_1.13.1_linux_amd64.zip terraform_1.13.1_SHA256SUMS 1.13.1/terraform_1.13.1_SHA256SUMS.sig
     # Install tfsec
-RUN brew install tfsec
+RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.30.4/tfsec-linux-amd64 \
+    && chmod +x /usr/local/bin/tfsec
 RUN apk del .deps
 RUN apk cache clean
 
