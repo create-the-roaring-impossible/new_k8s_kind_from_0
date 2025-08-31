@@ -25,7 +25,7 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && apk cache clean
 
 RUN addgroup tfsvc_grp \
-    && adduser -m -g tfsvc_grp tfsvc_usr \
+    && adduser -D -G tfsvc_grp tfsvc_usr \
     && mkdir -p /etc/sudoers.d \
     && echo "tfsvc_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tfsvc_usr
 
