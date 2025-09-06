@@ -1,0 +1,125 @@
+# name: SonarQube Test
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+# jobs:
+#   sonarqube:
+#     name: SonarQube
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+#       - name: SonarQube Scan
+#         uses: SonarSource/sonarqube-scan-action@v4
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+
+
+
+# name: 'Docker - Build And Push'
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       docker_repository:
+#         description: 'Set the Docker Repository to use'
+#         type: choice
+#         required: true
+#         default: 'ghcr.io/create-the-roaring-impossible/tf'
+#         options:
+#           - 'ghcr.io/create-the-roaring-impossible/tf'
+#       dockerfile:
+#         description: 'Set the Dockerfile to use'
+#         type: choice
+#         required: true
+#         default: './dockerfiles/tf.dockerfile'
+#         options:
+#           - './dockerfiles/tf.dockerfile'
+#       tag:
+#         description: 'Set the tag to build'
+#         type: string
+#         required: true
+#         default: '1.0.0'
+#       isRC:
+#         description: 'Is this a Release Candidate?'
+#         type: boolean
+#         required: true
+#         default: true
+# jobs:
+#   buildAndPush:
+#     # TODO: to run on a specific container
+#     name: 'Docker - Build And Push'
+#     runs-on: 'docker'
+#     outputs:
+#       RC_Version: ${{ steps.set-rc-version.outputs.RCVersion}}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       - name: 'Login to GitHub Container Registry'
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ${{github.event.inputs.docker_repository}}
+#           username: ${{github.actor}}
+#           password: ${{secrets.DOCKER_TOKEN}}
+#       - name: Set variable 'RCVersion', based on input 'isRC'
+#         id: set-rc-version
+#         run: |
+#           if [ "${{github.event.inputs.isRC}}" = "true" ]; then
+#             RCVersion="-${{github.run_number}}"
+#           else
+#             RCVersion=""
+#           fi
+#           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
+#           echo "RCVersion=$RCVersion" >> $GITHUB_OUTPUT
+#         shell: bash
+#       - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}${{env.RCVersion}}"'
+#         uses: docker/build-push-action@v6
+#         with:
+#           context: '.'
+#           file: ${{github.event.inputs.dockerfile}}
+#           push: true
+#           tags: ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}}${{env.RCVersion}}
+#           labels: |
+#             org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
+#             org.opencontainers.image.created=${{steps.date.outputs.date}}
+#             org.opencontainers.image.revision=${{github.sha}}
+#             org.opencontainers.image.version=${{github.event.inputs.tag}}
+#             org.opencontainers.image.licenses=gpl-3.0
+#             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+#       - name: 'Build and Push Docker Image, tag "latest"'
+#         if: ${{github.event.inputs.isRC == 'false'}}
+#         uses: docker/build-push-action@v6
+#         with:
+#           context: '.'
+#           file: ${{github.event.inputs.dockerfile}}
+#           push: true
+#           tags: ${{github.event.inputs.docker_repository}}:latest
+#           labels: |
+#             org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
+#             org.opencontainers.image.created=${{steps.date.outputs.date}}
+#             org.opencontainers.image.revision=${{github.sha}}
+#             org.opencontainers.image.version=${{github.event.inputs.tag}}
+#             org.opencontainers.image.licenses=gpl-3.0
+#             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+#   cleanup:
+#     name: 'Cleanup'
+#     # TODO: to run on a specific container
+#     needs: [buildAndPush]
+#     if: success()
+#     runs-on: 'docker'
+#     env:
+#       RCVersion: ${{needs.buildAndPush.outputs.RC_Version}}
+#     steps:
+#       - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
+#         run: |
+#           chmod +x ./scripts/bash/docker_clean.sh
+#           ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{env.RCVersion}}
+#         shell: bash
