@@ -31,7 +31,7 @@ jobs:
     name: 'Docker - Build And Push'
     runs-on: 'docker'
     outputs:
-      RC_Version: ${{ steps.set-rc-version.outputs.RCVersion}}
+      RC_Version: ${{ steps.set-rc-version.outputs.RCVersion }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
@@ -40,59 +40,59 @@ jobs:
       - name: 'Login to GitHub Container Registry'
         uses: docker/login-action@v3
         with:
-          registry: ${{github.event.inputs.docker_repository}}
-          username: ${{github.actor}}
-          password: ${{secrets.DOCKER_TOKEN}}
+          registry: ${{ github.event.inputs.docker_repository }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.DOCKER_TOKEN }}
       - name: Set variable 'RCVersion', based on input 'isRC'
         id: set-rc-version
         run: |
-          if [ "${{github.event.inputs.isRC}}" = "true" ]; then
-            RCVersion="-${{github.run_number}}"
+          if [ "${{ github.event.inputs.isRC }}" = "true" ]; then
+            RCVersion="-${{ github.run_number }}"
           else
             RCVersion=""
           fi
           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
           echo "RCVersion=$RCVersion" >> $GITHUB_OUTPUT
         shell: bash
-      - name: 'Build and Push Docker Image, tag "${{github.event.inputs.tag}}${{env.RCVersion}}"'
+      - name: 'Build and Push Docker Image, tag "${{ github.event.inputs.tag }}${{ env.RCVersion }}"'
         uses: docker/build-push-action@v6
         with:
           context: '.'
-          file: ${{github.event.inputs.dockerfile}}
+          file: ${{ github.event.inputs.dockerfile }}
           push: true
-          tags: ${{github.event.inputs.docker_repository}}:${{github.event.inputs.tag}}${{env.RCVersion}}
+          tags: ${{ github.event.inputs.docker_repository }}:${{ github.event.inputs.tag }}${{ env.RCVersion }}
           labels: |
-            org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
-            org.opencontainers.image.created=${{steps.date.outputs.date}}
-            org.opencontainers.image.revision=${{github.sha}}
-            org.opencontainers.image.version=${{github.event.inputs.tag}}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.event.inputs.tag }}
             org.opencontainers.image.licenses=gpl-3.0
-            org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
       - name: 'Build and Push Docker Image, tag "latest"'
-        if: ${{github.event.inputs.isRC == 'false'}}
+        if: ${{ github.event.inputs.isRC == 'false' }}
         uses: docker/build-push-action@v6
         with:
           context: '.'
-          file: ${{github.event.inputs.dockerfile}}
+          file: ${{ github.event.inputs.dockerfile }}
           push: true
-          tags: ${{github.event.inputs.docker_repository}}:latest
+          tags: ${{ github.event.inputs.docker_repository }}:latest
           labels: |
-            org.opencontainers.image.source=${{github.server_url}}/${{github.repository}}
-            org.opencontainers.image.created=${{steps.date.outputs.date}}
-            org.opencontainers.image.revision=${{github.sha}}
-            org.opencontainers.image.version=${{github.event.inputs.tag}}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.event.inputs.tag }}
             org.opencontainers.image.licenses=gpl-3.0
-            org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
+            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
   cleanup:
     name: 'Cleanup'
     needs: [buildAndPush]
     if: success()
     runs-on: 'docker'
     env:
-      RCVersion: ${{needs.buildAndPush.outputs.RC_Version}}
+      RCVersion: ${{ needs.buildAndPush.outputs.RC_Version }}
     steps:
-      - name: 'Cleanup tags "${{github.event.inputs.tag}}${{env.RCVersion}}", and "latest", of Docker image ${{github.event.inputs.docker_repository}}'
+      - name: 'Cleanup tags "${{ github.event.inputs.tag }}${{ env.RCVersion }}", and "latest", of Docker image ${{ github.event.inputs.docker_repository }}'
         run: |
           chmod +x ./scripts/bash/docker_clean.sh
-          ./scripts/bash/docker_clean.sh ${{github.event.inputs.docker_repository}} ${{github.event.inputs.tag}}${{env.RCVersion}}
+          ./scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}
         shell: bash
