@@ -24,7 +24,10 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4
         with:
           args: >
+            -Dsonar.organization=sennar19
+            -Dsonar.projectKey=Sennar19_new_k8s_kind_from_0
             -Dsonar.verbose=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ 'https://sonarcloud.io' }}
