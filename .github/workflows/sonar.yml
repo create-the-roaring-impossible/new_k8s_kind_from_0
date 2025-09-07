@@ -9,12 +9,12 @@ jobs:
   sonarQubeScan:
     name: SonarQube
     runs-on: 'ubuntu-latest' # 'docker' # TODO: to use the new pool
-    container:
-      image: sennar19/sonar_cli:latest
-      credentials:
-        username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
-        password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
-      options: --user root
+    # container:
+    #   image: sennar19/sonar_cli:latest
+    #   credentials:
+    #     username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
+    #     password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
+    #   options: --user root
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
