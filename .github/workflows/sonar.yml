@@ -9,7 +9,7 @@ jobs:
   sonarQubeScan:
     # TODO: to run on a specific container
     name: SonarQube
-    runs-on: ubuntu-latest
+    runs-on: 'docker' # TODO: to use the new pool
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
