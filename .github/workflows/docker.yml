@@ -28,7 +28,6 @@ on:
         default: true
 jobs:
   buildAndPush:
-    # TODO: to run on a specific container
     name: 'Docker - Build And Push'
     runs-on: 'docker'
     outputs:
@@ -86,7 +85,6 @@ jobs:
             org.opencontainers.image.authors=${{secrets.AUTHOR_EMAIL}}
   cleanup:
     name: 'Cleanup'
-    # TODO: to run on a specific container
     needs: [buildAndPush]
     if: success()
     runs-on: 'docker'
