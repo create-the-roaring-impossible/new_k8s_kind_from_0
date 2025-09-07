@@ -7,9 +7,14 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   sonarQubeScan:
-    # TODO: to run on a specific container
     name: SonarQube
     runs-on: 'docker' # TODO: to use the new pool
+    container:
+      image: sennar19/sonar_cli:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+    #   options: --user root
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
