@@ -8,7 +8,7 @@ on:
 jobs:
   sonarQubeScan:
     name: SonarQube
-    runs-on: 'docker' # TODO: to use the new pool
+    runs-on: 'ubuntu-latest' # 'docker' # TODO: to use the new pool
     container:
       image: sennar19/sonar_cli:latest
       credentials:
