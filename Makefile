@@ -9,13 +9,13 @@
 	create_kind_cluster_with_registry \
 	delete_docker_registry \
 	delete_kind_cluster \
-	which_is_my_external_ip \
-	install_metrics_server \
-	uninstall_metrics_server \
-	install_hashicorp_vault \
-	port_forward_hashicorp_vault \
-	uninstall_hashicorp_vault \
 
+# 	which_is_my_external_ip \
+# 	install_metrics_server \
+# 	uninstall_metrics_server \
+# 	install_hashicorp_vault \
+# 	port_forward_hashicorp_vault \
+# 	uninstall_hashicorp_vault \
 # install_argo \
 # get_admin_password_argo \
 # port_forward_argo \
@@ -56,28 +56,44 @@ delete_docker_registry:
 delete_kind_cluster: delete_docker_registry
 	kind delete cluster --name personal-kind
 
-which_is_my_external_ip:
-	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
 
-install_metrics_server:
-	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
-	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
-	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 
-uninstall_metrics_server:
-	helm uninstall metrics-server -n default
 
-install_hashicorp_vault:
-	helm repo add hashicorp https://helm.releases.hashicorp.com && \
-	helm repo update && \
-	helm upgrade -i vault hashicorp/vault \
-	--create-namespace --namespace vault
 
-port_forward_hashicorp_vault:
-	kubectl --namespace vault port-forward svc/vault 8300:8200
+# which_is_my_external_ip:
+# 	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
 
-uninstall_hashicorp_vault:
-	helm uninstall vault -n vault
+
+
+
+
+# install_metrics_server:
+# 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
+# 	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
+# 	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+
+# uninstall_metrics_server:
+# 	helm uninstall metrics-server -n default
+
+
+
+
+
+# install_hashicorp_vault:
+# 	helm repo add hashicorp https://helm.releases.hashicorp.com && \
+# 	helm repo update && \
+# 	helm upgrade -i vault hashicorp/vault \
+# 	--create-namespace --namespace vault
+
+# port_forward_hashicorp_vault:
+# 	kubectl --namespace vault port-forward svc/vault 8300:8200
+
+# uninstall_hashicorp_vault:
+# 	helm uninstall vault -n vault
+
+
+
+
 
 # install_argo:
 # 	helm repo add jenkins https://charts.jenkins.io && \
@@ -95,6 +111,10 @@ uninstall_hashicorp_vault:
 # uninstall_argo:
 # 	helm uninstall argo -n argo
 
+
+
+
+
 # install_vagrant:
 # 	sudo apt install vagrant && \
 # 	sudo mkdir -p "/etc/vbox/" && \
@@ -109,6 +129,10 @@ uninstall_hashicorp_vault:
 # 	export PATH="$PATH:/mnt/c/WINDOWS/system32" && \
 # 	VAGRANT_LOG="debug" && \
 # 	vagrant up
+
+
+
+
 
 # install_flux:
 # 	helm repo add jenkins https://charts.jenkins.io && \
