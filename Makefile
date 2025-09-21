@@ -1,6 +1,7 @@
 #!/usr/bin/env make
 
 .PHONY:
+	install_kind \
 	create_docker_registry \
 	connect_registry_to_kind_network \
 	disconnect_registry_to_kind_network \
@@ -10,12 +11,13 @@
 	delete_docker_registry \
 	delete_kind_cluster \
 
-# 	which_is_my_external_ip \
-# 	install_metrics_server \
-# 	uninstall_metrics_server \
-# 	install_hashicorp_vault \
-# 	port_forward_hashicorp_vault \
-# 	uninstall_hashicorp_vault \
+# which_is_my_external_ip \
+
+# install_metrics_server \
+# uninstall_metrics_server \
+# install_hashicorp_vault \
+# port_forward_hashicorp_vault \
+# uninstall_hashicorp_vault \
 # install_argo \
 # get_admin_password_argo \
 # port_forward_argo \
@@ -27,6 +29,11 @@
 # uninstall_flux \
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+
+install_kind:
+	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
+	chmod +x ./kind
+	sudo mv ./kind /usr/local/bin/kind
 
 create_docker_registry:
 	if ! docker ps | grep -q 'local-registry'; \
@@ -51,7 +58,7 @@ create_kind_cluster_with_registry:
 	$(MAKE) create_kind_cluster && $(MAKE) connect_registry_to_kind
 
 delete_docker_registry:
-	docker stop local-registry && docker rm local-registry
+	$(MAKE) disconnect_registry_to_kind_network && docker stop local-registry && docker rm local-registry
 
 delete_kind_cluster: delete_docker_registry
 	kind delete cluster --name personal-kind
