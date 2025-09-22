@@ -5,9 +5,9 @@ kind: Cluster
 # VERSION: 1.0.0
 # LAST UPDATED: 2025-09-22
 networking:
-  # WARNING: It is _strongly_ recommended that you keep this the default (127.0.0.1) for security reasons. However it is possible to change this.
+  # WARNING: It is _strongly_ recommended that you keep this the default (127.0.0.1) for security reasons.
   apiServerAddress: "127.0.0.1"
-  # By default the API server listens on a random open port. You may choose a specific port but probably don't need to in most cases.
+  # By default the API server listens on a random open port.
   # Using a random port makes it easier to spin up multiple clusters.
   apiServerPort: 10443
   # The default CNI will not be installed
@@ -17,80 +17,84 @@ networking:
   # This will install Calico CNI using Helm with custom values from config/calico-values.yaml
   # See https://projectcalico.docs.tigera.io/getting-started/kubernetes/kind/ for details
 containerdConfigPatches:
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
-    endpoint = ["http://local-registry:5000"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+      endpoint = ["http://local-registry:5000"]
 featureGates:
   # Enable specific Kubernetes features if needed
   EphemeralContainers: true
 # Node Health Monitoring:
-# To implement advanced health monitoring, create a kubelet config patch:
-# # # # # kubeletConfigPatches:
-# # # # # - |
-# # # # #   apiVersion: kubelet.config.k8s.io/v1beta1
-# # # # #   kind: KubeletConfiguration
-# # # # #   evictionHard:
-# # # # #     memory.available: "200Mi"
-# # # # #     nodefs.available: "10%"
-# # # # #   healthzPort: 10248
-# # # # #   healthzBindAddress: "0.0.0.0"
-# # # # #   systemReserved:
-# # # # #     cpu: "200m"
-# # # # #     memory: "500Mi"
-# # # # #   kubeReserved:
-# # # # #     cpu: "200m"
-# # # # #     memory: "500Mi"
+# kubeletConfigPatches:
+#   - |
+#     apiVersion: kubelet.config.k8s.io/v1beta1
+#     kind: KubeletConfiguration
+#     evictionHard:
+#       memory.available: "200Mi"
+#       nodefs.available: "10%"
+#     healthzPort: 10248
+#     healthzBindAddress: "0.0.0.0"
+#     systemReserved:
+#       cpu: "200m"
+#       memory: "500Mi"
+#     kubeReserved:
+#       cpu: "200m"
+#       memory: "500Mi"
 nodes:
-- role: control-plane
-  # # # # # name: control-plane-1
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-        node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
-        register-with-taints: "node-role.kubernetes.io/control-plane=:NoSchedule"
-  extraMounts:
-  - hostPath: /var/run/docker.sock
-    containerPath: /var/run/docker.sock
-  # # # # # resources:
-  # # # # #   limits:
-  # # # # #     cpu: "2"
-  # # # # #     memory: "4Gi"
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
-- role: worker
-  # # # # # name: worker-1
-  kubeadmConfigPatches:
-  - |
-    kind: JoinConfiguration
-    nodeRegistration:
-        node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
-  extraMounts:
-  - hostPath: /var/run/docker.sock
-    containerPath: /var/run/docker.sock
-  # # # # # resources:
-  # # # # #   limits:
-  # # # # #     cpu: "2"
-  # # # # #     memory: "4Gi"
-- role: worker
-  # # # # # name: worker-2
-  kubeadmConfigPatches:
-  - |
-    kind: JoinConfiguration
-    nodeRegistration:
-        node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
-  extraMounts:
-  - hostPath: /var/run/docker.sock
-    containerPath: /var/run/docker.sock
-  # # # # # resources:
-  # # # # #   limits:
-  # # # # #     cpu: "2"
-  # # # # #     memory: "4Gi"
+  - role: control-plane
+    # name: control-plane-1
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+            node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
+            register-with-taints: "node-role.kubernetes.io/control-plane=:NoSchedule"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+    # resources:
+    #   limits:
+    #     cpu: "2"
+    #     memory: "4Gi"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+  - role: worker
+    # name: worker-1
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+            node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+    # resources:
+    #   limits:
+    #     cpu: "2"
+    #     memory: "4Gi"
+  - role: worker
+    # name: worker-2
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+            node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+    # resources:
+    #   limits:
+    #     cpu: "2"
+    #     memory: "4Gi"
+
+
+
+
+
 
 
 
@@ -127,6 +131,11 @@ nodes:
 #   make install_calico_cni
 
 #   echo "Kind cluster with Calico CNI setup complete."
+
+
+
+
+
 
 
 
