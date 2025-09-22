@@ -2,6 +2,8 @@
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
 # Cluster purpose: Local development environment with registry integration
+# VERSION: 1.0.0
+# LAST UPDATED: 2025-09-22
 networking:
   # WARNING: It is _strongly_ recommended that you keep this the default (127.0.0.1) for security reasons. However it is possible to change this.
   apiServerAddress: "127.0.0.1"
@@ -10,9 +12,10 @@ networking:
   apiServerPort: 10443
   # The default CNI will not be installed
   disableDefaultCNI: true
-  # TODO: to install Calico CNI, via Helm
-  # To install Calico CNI after cluster creation, follow the official guide: https://docs.projectcalico.org/getting-started/kubernetes/kind/
-  # See https://projectcalico.docs.tigera.io/getting-started/kubernetes/kind/ for installation instructions.
+  # Calico CNI Installation:
+  # After cluster creation, run: make install_calico_cni
+  # This will install Calico CNI using Helm with custom values from config/calico-values.yaml
+  # See https://projectcalico.docs.tigera.io/getting-started/kubernetes/kind/ for details
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
@@ -28,8 +31,7 @@ nodes:
     kind: InitConfiguration
     nodeRegistration:
         node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
-#         register-with-taints: "my-taint=presence:NoSchedule" 
-  # Add resource limits for more predictable performance
+        register-with-taints: "node-role.kubernetes.io/control-plane=:NoSchedule"
   extraMounts:
   - hostPath: /var/run/docker.sock
     containerPath: /var/run/docker.sock
@@ -50,9 +52,7 @@ nodes:
   - |
     kind: JoinConfiguration
     nodeRegistration:
-        node-labels: "role=worker,ingress-ready=true,node=worker-1"
-#         register-with-taints: "my-taint=presence:NoSchedule"
-  # Add resource limits for more predictable performance
+        node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
   extraMounts:
   - hostPath: /var/run/docker.sock
     containerPath: /var/run/docker.sock
@@ -66,9 +66,7 @@ nodes:
   - |
     kind: JoinConfiguration
     nodeRegistration:
-        node-labels: "role=worker,ingress-ready=true,node=worker-1"
-#         register-with-taints: "my-taint=presence:NoSchedule"
-  # Add resource limits for more predictable performance
+        node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
   extraMounts:
   - hostPath: /var/run/docker.sock
     containerPath: /var/run/docker.sock
