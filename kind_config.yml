@@ -46,8 +46,9 @@ nodes:
       - |
         kind: InitConfiguration
         nodeRegistration:
+          kubeletExtraArgs:
             node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
-            register-with-taints: "node-role.kubernetes.io/control-plane=:NoSchedule"
+            register-taints: "node-role.kubernetes.io/control-plane:NoSchedule"
     extraMounts:
       - hostPath: /var/run/docker.sock
         containerPath: /var/run/docker.sock
@@ -68,6 +69,7 @@ nodes:
       - |
         kind: JoinConfiguration
         nodeRegistration:
+          kubeletExtraArgs:
             node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
     extraMounts:
       - hostPath: /var/run/docker.sock
@@ -82,6 +84,7 @@ nodes:
       - |
         kind: JoinConfiguration
         nodeRegistration:
+          kubeletExtraArgs:
             node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
     extraMounts:
       - hostPath: /var/run/docker.sock

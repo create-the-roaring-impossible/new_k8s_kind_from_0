@@ -1,9 +1,8 @@
 #!/usr/bin/env make
 
 .PHONY:
-# install_kubelet \
-# install_helm \
-
+	install_kubectl \
+	install_helm \
 	install_kind \
 
 # install_vagrant \
@@ -38,13 +37,15 @@
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 
-# install_kubelet:
+install_kubectl:
+	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+	chmod +x kubectl && \
+	mv kubectl /usr/local/bin/kubectl
 
-
-
-# install_helm:
-
-
+install_helm:
+	curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+	chmod 700 get_helm.sh && \
+	./get_helm.sh
 
 install_kind:
 	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
