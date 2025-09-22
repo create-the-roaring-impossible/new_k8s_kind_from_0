@@ -44,13 +44,13 @@ containerdConfigPatches:
 nodes:
   - role: control-plane
     # # # name: control-plane-1
-    # kubeadmConfigPatches:
-    #   - |
-    #     kind: InitConfiguration
-    #     nodeRegistration:
-    #       kubeletExtraArgs:
-    #         node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
-    #         register-taints: "node-role.kubernetes.io/control-plane:NoSchedule"
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
+            register-taints: "node-role.kubernetes.io/control-plane:NoSchedule"
     # extraMounts:
     #   - hostPath: /var/run/docker.sock
     #     containerPath: /var/run/docker.sock
@@ -67,12 +67,12 @@ nodes:
         protocol: TCP
   - role: worker
     # # # name: worker-1
-    # kubeadmConfigPatches:
-    #   - |
-    #     kind: JoinConfiguration
-    #     nodeRegistration:
-    #       kubeletExtraArgs:
-    #         node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
     # extraMounts:
     #   - hostPath: /var/run/docker.sock
     #     containerPath: /var/run/docker.sock
@@ -82,12 +82,12 @@ nodes:
     # # #     memory: "4Gi"
   - role: worker
     # # # name: worker-2
-    # kubeadmConfigPatches:
-    #   - |
-    #     kind: JoinConfiguration
-    #     nodeRegistration:
-    #       kubeletExtraArgs:
-    #         node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
     # extraMounts:
     #   - hostPath: /var/run/docker.sock
     #     containerPath: /var/run/docker.sock
