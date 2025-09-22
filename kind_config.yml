@@ -1,3 +1,5 @@
+# # # # # => it causes issues with kind cluster creation
+# # # => to verify if is correct or not
 ---
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
@@ -20,9 +22,9 @@ containerdConfigPatches:
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
       endpoint = ["http://local-registry:5000"]
-featureGates:
-  # Enable specific Kubernetes features if needed
-  EphemeralContainers: true
+# # # # # featureGates:
+# # # # #   # Enable specific Kubernetes features if needed
+# # # # #   EphemeralContainers: true
 # # # Node Health Monitoring:
 # # # kubeletConfigPatches:
 # # #   - |
