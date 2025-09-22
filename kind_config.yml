@@ -23,9 +23,26 @@ containerdConfigPatches:
 featureGates:
   # Enable specific Kubernetes features if needed
   EphemeralContainers: true
+# Node Health Monitoring:
+# To implement advanced health monitoring, create a kubelet config patch:
+# # # # # kubeletConfigPatches:
+# # # # # - |
+# # # # #   apiVersion: kubelet.config.k8s.io/v1beta1
+# # # # #   kind: KubeletConfiguration
+# # # # #   evictionHard:
+# # # # #     memory.available: "200Mi"
+# # # # #     nodefs.available: "10%"
+# # # # #   healthzPort: 10248
+# # # # #   healthzBindAddress: "0.0.0.0"
+# # # # #   systemReserved:
+# # # # #     cpu: "200m"
+# # # # #     memory: "500Mi"
+# # # # #   kubeReserved:
+# # # # #     cpu: "200m"
+# # # # #     memory: "500Mi"
 nodes:
 - role: control-plane
-  name: control-plane-1
+  # # # # # name: control-plane-1
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -35,10 +52,10 @@ nodes:
   extraMounts:
   - hostPath: /var/run/docker.sock
     containerPath: /var/run/docker.sock
-  resources:
-    limits:
-      cpu: "2"
-      memory: "4Gi"
+  # # # # # resources:
+  # # # # #   limits:
+  # # # # #     cpu: "2"
+  # # # # #     memory: "4Gi"
   extraPortMappings:
   - containerPort: 80
     hostPort: 80
@@ -47,7 +64,7 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
-  name: worker-1
+  # # # # # name: worker-1
   kubeadmConfigPatches:
   - |
     kind: JoinConfiguration
@@ -56,12 +73,12 @@ nodes:
   extraMounts:
   - hostPath: /var/run/docker.sock
     containerPath: /var/run/docker.sock
-  resources:
-    limits:
-      cpu: "2"
-      memory: "4Gi"
+  # # # # # resources:
+  # # # # #   limits:
+  # # # # #     cpu: "2"
+  # # # # #     memory: "4Gi"
 - role: worker
-  name: worker-2
+  # # # # # name: worker-2
   kubeadmConfigPatches:
   - |
     kind: JoinConfiguration
@@ -70,7 +87,77 @@ nodes:
   extraMounts:
   - hostPath: /var/run/docker.sock
     containerPath: /var/run/docker.sock
-  resources:
-    limits:
-      cpu: "2"
-      memory: "4Gi"
+  # # # # # resources:
+  # # # # #   limits:
+  # # # # #     cpu: "2"
+  # # # # #     memory: "4Gi"
+
+
+
+
+
+# # This script will run after the cluster is created
+# postCreateHooks:
+# - |
+#   #!/bin/bash
+
+#   # DESCRIPTION: Creates a Kind cluster and installs Calico CNI
+#   # REQUIREMENTS: kind, kubectl, helm
+#   # USAGE: bash install_kind_with_calico.sh
+#   # EXAMPLE: bash install_kind_with_calico.sh
+#   # AUTHORS: GitHub Copilot
+#   # VERSION: 1.0.0
+#   # DATE: 2025-09-22
+
+#   # Validate requirements
+#   command -v kind >/dev/null 2>&1 || { echo "kind is required but not installed. Aborting."; exit 1; }
+#   command -v kubectl >/dev/null 2>&1 || { echo "kubectl is required but not installed. Aborting."; exit 1; }
+#   command -v helm >/dev/null 2>&1 || { echo "helm is required but not installed. Aborting."; exit 1; }
+
+#   # Create the cluster
+#   make create_kind_cluster_with_registry
+
+#   # Wait for the control plane to be ready
+#   echo "Waiting for control plane to be ready..."
+#   until kubectl get nodes | grep control-plane-1 | grep -q " Ready "; do
+#     sleep 2
+#   done
+
+#   # Install Calico CNI
+#   make install_calico_cni
+
+#   echo "Kind cluster with Calico CNI setup complete."
+
+
+
+
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: example-app
+# spec:
+#   selector:
+#     matchLabels:
+#       app: example
+#   template:
+#     metadata:
+#       labels:
+#         app: example
+#     spec:
+#       affinity:
+#         nodeAffinity:
+#           preferredDuringSchedulingIgnoredDuringExecution:
+#           - weight: 100
+#             preference:
+#               matchExpressions:
+#               - key: role
+#                 operator: In
+#                 values:
+#                 - worker
+#       # To override the NoSchedule taint on the control-plane:
+#       tolerations:
+#       - key: "node-role.kubernetes.io/control-plane"
+#         operator: "Exists"
+#         effect: "NoSchedule"

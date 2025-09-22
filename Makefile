@@ -1,7 +1,13 @@
 #!/usr/bin/env make
 
 .PHONY:
+# install_kubelet \
+# install_helm \
+
 	install_kind \
+
+# install_vagrant \
+
 	create_docker_registry \
 	connect_registry_to_kind_network \
 	disconnect_registry_to_kind_network \
@@ -15,14 +21,16 @@
 
 # install_metrics_server \
 # uninstall_metrics_server \
+
 # install_hashicorp_vault \
 # port_forward_hashicorp_vault \
 # uninstall_hashicorp_vault \
+
 # install_argo \
 # get_admin_password_argo \
 # port_forward_argo \
 # uninstall_argo \
-# install_vagrant \
+
 # install_flux \
 # get_admin_password_flux \
 # port_forward_flux \
@@ -30,10 +38,37 @@
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 
+# install_kubelet:
+
+
+
+# install_helm:
+
+
+
 install_kind:
 	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
 	chmod +x ./kind
 	sudo mv ./kind /usr/local/bin/kind
+
+
+
+# install_vagrant:
+# 	sudo apt install vagrant && \
+# 	sudo mkdir -p "/etc/vbox/" && \
+# 	echo "* 0.0.0.0/0 ::/0" | sudo tee -a /etc/vbox/networks.conf && \
+# 	git clone https://github.com/scriptcamp/vagrant-kubeadm-kubernetes.git && \
+# 	cd vagrant-kubeadm-kubernetes && \
+# 	vagrant plugin install virtualbox_WSL2 && \
+# 	export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1" && \
+# 	export VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH="/mnt/c/Users/m.cristiano/" && \
+# 	export PATH="$PATH:/mnt/c/Program Files/Oracle/VirtualBox" && \
+# 	export PATH="$PATH:/mnt/c/Windows/System32/WindowsPowerShell/v1.0" && \
+# 	export PATH="$PATH:/mnt/c/WINDOWS/system32" && \
+# 	VAGRANT_LOG="debug" && \
+# 	vagrant up
+
+
 
 create_docker_registry:
 	if ! docker ps | grep -q 'local-registry'; \
@@ -65,12 +100,8 @@ delete_kind_cluster: delete_docker_registry
 
 
 
-
-
 # which_is_my_external_ip:
 # 	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
-
-
 
 
 
@@ -81,8 +112,6 @@ delete_kind_cluster: delete_docker_registry
 
 # uninstall_metrics_server:
 # 	helm uninstall metrics-server -n default
-
-
 
 
 
@@ -97,8 +126,6 @@ delete_kind_cluster: delete_docker_registry
 
 # uninstall_hashicorp_vault:
 # 	helm uninstall vault -n vault
-
-
 
 
 
@@ -117,27 +144,6 @@ delete_kind_cluster: delete_docker_registry
 
 # uninstall_argo:
 # 	helm uninstall argo -n argo
-
-
-
-
-
-# install_vagrant:
-# 	sudo apt install vagrant && \
-# 	sudo mkdir -p "/etc/vbox/" && \
-# 	echo "* 0.0.0.0/0 ::/0" | sudo tee -a /etc/vbox/networks.conf && \
-# 	git clone https://github.com/scriptcamp/vagrant-kubeadm-kubernetes.git && \
-# 	cd vagrant-kubeadm-kubernetes && \
-# 	vagrant plugin install virtualbox_WSL2 && \
-# 	export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1" && \
-# 	export VAGRANT_WSL_WINDOWS_ACCESS_USER_HOME_PATH="/mnt/c/Users/m.cristiano/" && \
-# 	export PATH="$PATH:/mnt/c/Program Files/Oracle/VirtualBox" && \
-# 	export PATH="$PATH:/mnt/c/Windows/System32/WindowsPowerShell/v1.0" && \
-# 	export PATH="$PATH:/mnt/c/WINDOWS/system32" && \
-# 	VAGRANT_LOG="debug" && \
-# 	vagrant up
-
-
 
 
 
