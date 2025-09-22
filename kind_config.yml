@@ -1,4 +1,4 @@
-# # # # # => it causes issues with kind cluster creation
+# # => it causes issues with kind cluster creation
 # # # => to verify if is correct or not
 ---
 apiVersion: kind.x-k8s.io/v1alpha4
@@ -22,9 +22,9 @@ containerdConfigPatches:
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
       endpoint = ["http://local-registry:5000"]
-# # # # # featureGates:
-# # # # #   # Enable specific Kubernetes features if needed
-# # # # #   EphemeralContainers: true
+# # featureGates:
+# #   # Enable specific Kubernetes features if needed
+# #   EphemeralContainers: true
 # # # Node Health Monitoring:
 # # # kubeletConfigPatches:
 # # #   - |
@@ -50,10 +50,10 @@ nodes:
         nodeRegistration:
           kubeletExtraArgs:
             node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
-            register-taints: "node-role.kubernetes.io/control-plane:NoSchedule"
-    # extraMounts:
-    #   - hostPath: /var/run/docker.sock
-    #     containerPath: /var/run/docker.sock
+# #             register-taints: "node-role.kubernetes.io/control-plane:NoSchedule"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
     # # # resources:
     # # #   limits:
     # # #     cpu: "2"
@@ -73,9 +73,9 @@ nodes:
         nodeRegistration:
           kubeletExtraArgs:
             node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
-    # extraMounts:
-    #   - hostPath: /var/run/docker.sock
-    #     containerPath: /var/run/docker.sock
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
     # # # resources:
     # # #   limits:
     # # #     cpu: "2"
@@ -88,9 +88,9 @@ nodes:
         nodeRegistration:
           kubeletExtraArgs:
             node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
-    # extraMounts:
-    #   - hostPath: /var/run/docker.sock
-    #     containerPath: /var/run/docker.sock
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
     # # # resources:
     # # #   limits:
     # # #     cpu: "2"
