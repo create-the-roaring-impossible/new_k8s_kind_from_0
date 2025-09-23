@@ -24,9 +24,9 @@
 
 # install_ado_agents \
 # uninstall_keda \
-# install_gh_runners \
-# uninstall_gh_runners \
 
+	install_gh_runners \
+	uninstall_gh_runners \
 	install_gl_runners \
 	uninstall_gl_runners \
 
@@ -132,18 +132,29 @@ uninstall_keda:
 	helm uninstall keda -n keda
 
 # install_ado_agents:
-# 	asd
 # 	asd  # TODO: to specify version
 
 # uninstall_ado_agents:
 # 	helm uninstall asd -n devops
 
-# install_gh_runners:
-# 	asd
-# 	asd  # TODO: to specify version
+install_gh_runners:
+	@read -p "Enter release name: " RELEASE_NAME && \
+    echo "Using release name: $$RELEASE_NAME" && \
+	read -p "Enter GitHub url: " URL && \
+    echo "Using url: $$URL" && \
+	read -p "Enter GitHub token: " TOKEN && \
+    echo "Using token: $$TOKEN" && \
+	helm upgrade --install arc --namespace arc-systems --create-namespace oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
+	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
+		--set githubConfigUrl=$$URL \
+		--set githubConfigSecret.github_token=$$TOKEN \
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 
-# uninstall_gh_runners:
-# 	helm uninstall asd -n devops
+uninstall_gh_runners:
+	@read -p "Enter release name: " RELEASE_NAME && \
+    echo "Using token: $$RELEASE_NAME" && \
+	helm uninstall $$RELEASE_NAME -n devops && \
+	helm uninstall arc -n arc-systems
 
 install_gl_runners:
 	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
