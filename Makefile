@@ -22,6 +22,14 @@
 	install_keda \
 	uninstall_keda \
 
+# install_ado_agents \
+# uninstall_keda \
+
+	install_gh_runners \
+	uninstall_gh_runners \
+	install_gl_runners \
+	uninstall_gl_runners \
+
 # which_is_my_external_ip \
 
 # install_hashicorp_vault \
@@ -122,6 +130,30 @@ install_keda:
 
 uninstall_keda:
 	helm uninstall keda -n keda
+
+# install_ado_agents:
+# 	helm repo add kedacore https://kedacore.github.io/charts   && \
+# 	helm repo update && \
+# 	helm install keda kedacore/keda --namespace devops --create-namespace
+
+# uninstall_ado_agents:
+# 	helm uninstall keda -n devops
+
+install_gh_runners:
+	helm repo add kedacore https://kedacore.github.io/charts   && \
+	helm repo update && \
+	helm install keda kedacore/keda --namespace devops --create-namespace
+
+uninstall_gh_runners:
+	helm uninstall keda -n devops
+
+install_gl_runners:
+	helm repo add kedacore https://kedacore.github.io/charts   && \
+	helm repo update && \
+	helm install keda kedacore/keda --namespace devops --create-namespace
+
+uninstall_gl_runners:
+	helm uninstall keda -n devops
 
 
 
