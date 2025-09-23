@@ -1,0 +1,26 @@
+# name: 'SonarQube Scan'
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+# jobs:
+#   sonarQubeScan:
+#     name: SonarQube
+#     runs-on: 'docker' # TODO: to use the new runner group
+#     container:
+#       image: sennar19/sonar_cli:latest
+#       credentials:
+#         username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
+#         password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
+#       options: --user root
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       - name: SonarQube Scan
+#         uses: SonarSource/sonarqube-scan-action@v5
+#         env:
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
