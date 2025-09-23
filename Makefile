@@ -87,8 +87,7 @@ connect_registry_to_kind: connect_registry_to_kind_network
 
 create_kind_cluster: create_docker_registry
 	kind create cluster --name personal-kind --config ./kind_config.yml || true && \
-	kubectl get nodes -o wide && \
-	kubectl get pod -A -o wide --watch
+	kubectl get nodes -o wide
 
 create_kind_cluster_with_registry:
 	$(MAKE) create_kind_cluster && $(MAKE) connect_registry_to_kind
