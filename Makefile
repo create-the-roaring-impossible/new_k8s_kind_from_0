@@ -124,36 +124,38 @@ uninstall_metrics_server:
 	helm uninstall metrics-server -n default
 
 install_keda:
-	helm repo add kedacore https://kedacore.github.io/charts   && \
+	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
-	helm install keda kedacore/keda --namespace keda --create-namespace
+	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace
 
 uninstall_keda:
 	helm uninstall keda -n keda
 
 # install_ado_agents:
-# 	helm repo add kedacore https://kedacore.github.io/charts   && \
-# 	helm repo update && \
-# 	helm install keda kedacore/keda --namespace devops --create-namespace
+# 	asd
 
 # uninstall_ado_agents:
-# 	helm uninstall keda -n devops
+# 	helm uninstall asd -n devops
 
 install_gh_runners:
-	helm repo add kedacore https://kedacore.github.io/charts   && \
-	helm repo update && \
-	helm install keda kedacore/keda --namespace devops --create-namespace
+	asd
 
 uninstall_gh_runners:
-	helm uninstall keda -n devops
+	helm uninstall asd -n devops
 
 install_gl_runners:
-	helm repo add kedacore https://kedacore.github.io/charts   && \
+	helm repo add gitlab https://charts.gitlab.io && \
 	helm repo update && \
-	helm install keda kedacore/keda --namespace devops --create-namespace
+	helm upgrade --install gitlab-runner gitlab/gitlab-runner --namespace devops --create-namespace \
+		--set gitlabUrl="https://gitlab.com/" \
+		--set runnerRegistrationToken=ASDASDASD \
+		--set unregisterRunners=true \
+		--set rbac.create=true \
+		--set serviceAccount.create=true \
+		--set tags="ASDASDASD"
 
 uninstall_gl_runners:
-	helm uninstall keda -n devops
+	helm uninstall gitlab-runner -n devops
 
 
 
