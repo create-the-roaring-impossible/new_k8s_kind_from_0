@@ -24,9 +24,9 @@
 
 # install_ado_agents \
 # uninstall_keda \
+# install_gh_runners \
+# uninstall_gh_runners \
 
-	install_gh_runners \
-	uninstall_gh_runners \
 	install_gl_runners \
 	uninstall_gl_runners \
 
@@ -59,7 +59,7 @@ install_helm:
 	./get_helm.sh
 
 install_kind:
-	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
+	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64 # TODO: to parametrize "v0.30.0" version
 	chmod +x ./kind
 	sudo mv ./kind /usr/local/bin/kind
 
@@ -117,7 +117,7 @@ uninstall_calico:
 install_metrics_server:
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
 	helm repo update && \
-	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
+	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \ # TODO: to specify version
 	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 
 uninstall_metrics_server:
@@ -126,33 +126,37 @@ uninstall_metrics_server:
 install_keda:
 	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
-	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace
+	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace # TODO: to specify version
 
 uninstall_keda:
 	helm uninstall keda -n keda
 
 # install_ado_agents:
 # 	asd
+# 	asd  # TODO: to specify version
 
 # uninstall_ado_agents:
 # 	helm uninstall asd -n devops
 
-install_gh_runners:
-	asd
+# install_gh_runners:
+# 	asd
+# 	asd  # TODO: to specify version
 
-uninstall_gh_runners:
-	helm uninstall asd -n devops
+# uninstall_gh_runners:
+# 	helm uninstall asd -n devops
 
 install_gl_runners:
+	echo $REGISTRATION_TOKEN
+	echo $TAG
 	helm repo add gitlab https://charts.gitlab.io && \
 	helm repo update && \
 	helm upgrade --install gitlab-runner gitlab/gitlab-runner --namespace devops --create-namespace \
 		--set gitlabUrl="https://gitlab.com/" \
-		--set runnerRegistrationToken=ASDASDASD \
+		--set runnerRegistrationToken=$REGISTRATION_TOKEN\
 		--set unregisterRunners=true \
 		--set rbac.create=true \
 		--set serviceAccount.create=true \
-		--set tags="ASDASDASD"
+		--set tags="$TAG" # TODO: to specify version
 
 uninstall_gl_runners:
 	helm uninstall gitlab-runner -n devops
