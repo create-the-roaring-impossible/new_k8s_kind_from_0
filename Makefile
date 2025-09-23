@@ -147,18 +147,15 @@ uninstall_keda:
 
 install_gl_runners:
 	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
-    read -p "Enter runner tags (comma-separated): " TAG && \
     echo "Using registration token: $$REGISTRATION_TOKEN" && \
-    echo "Using tags: $$TAG" && \
 	helm repo add gitlab https://charts.gitlab.io && \
 	helm repo update && \
 	helm upgrade --install gitlab-runner gitlab/gitlab-runner --namespace devops --create-namespace \
 		--set gitlabUrl="https://gitlab.com/" \
-		--set runnerRegistrationToken=$$REGISTRATION_TOKEN\
+		--set runnerRegistrationToken=$$REGISTRATION_TOKEN \
 		--set unregisterRunners=true \
 		--set rbac.create=true \
-		--set serviceAccount.create=true \
-		--set tags="$$TAG" # TODO: to specify version
+		--set serviceAccount.create=true # TODO: to specify version
 
 uninstall_gl_runners:
 	helm uninstall gitlab-runner -n devops
