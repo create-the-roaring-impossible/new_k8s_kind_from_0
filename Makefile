@@ -19,6 +19,8 @@
 	uninstall_calico \
 	install_metrics_server \
 	uninstall_metrics_server \
+	install_keda \
+	uninstall_keda \
 
 # which_is_my_external_ip \
 
@@ -85,7 +87,8 @@ connect_registry_to_kind: connect_registry_to_kind_network
 
 create_kind_cluster: create_docker_registry
 	kind create cluster --name personal-kind --config ./kind_config.yml || true && \
-	kubectl get nodes
+	kubectl get nodes -o wide && \
+	kubectl get pod -A -o wide --watch
 
 create_kind_cluster_with_registry:
 	$(MAKE) create_kind_cluster && $(MAKE) connect_registry_to_kind
@@ -99,18 +102,27 @@ delete_kind_cluster: delete_docker_registry
 install_calico:
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
-	helm install calico projectcalico/tigera-operator --version v3.30.3 --namespace tigera-operator --create-namespace \
+	helm upgrade --install calico projectcalico/tigera-operator --version v3.30.3 --namespace tigera-operator --create-namespace
 
 uninstall_calico:
 	helm uninstall calico -n tigera-operator
 
 install_metrics_server:
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
+	helm repo update && \
 	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
 	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 
 uninstall_metrics_server:
 	helm uninstall metrics-server -n default
+
+install_keda:
+	helm repo add kedacore https://kedacore.github.io/charts   && \
+	helm repo update && \
+	helm install keda kedacore/keda --namespace keda --create-namespace
+
+uninstall_keda:
+	helm uninstall keda -n keda
 
 
 

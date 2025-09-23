@@ -20,9 +20,7 @@ containerdConfigPatches:
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
       endpoint = ["http://local-registry:5000"]
-# TODO: to investigate "featureGates"
-# featureGates:
-#   # Enable specific Kubernetes features if needed
+# featureGates: # TODO: to investigate
 #   EphemeralContainers: true
 nodes:
   - role: control-plane
