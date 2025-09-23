@@ -15,11 +15,12 @@
 	create_kind_cluster_with_registry \
 	delete_docker_registry \
 	delete_kind_cluster \
+	install_calico \
+	uninstall_calico \
+	install_metrics_server \
+	uninstall_metrics_server \
 
 # which_is_my_external_ip \
-
-# install_metrics_server \
-# uninstall_metrics_server \
 
 # install_hashicorp_vault \
 # port_forward_hashicorp_vault \
@@ -52,8 +53,6 @@ install_kind:
 	chmod +x ./kind
 	sudo mv ./kind /usr/local/bin/kind
 
-
-
 # install_vagrant:
 # 	sudo apt install vagrant && \
 # 	sudo mkdir -p "/etc/vbox/" && \
@@ -68,8 +67,6 @@ install_kind:
 # 	export PATH="$PATH:/mnt/c/WINDOWS/system32" && \
 # 	VAGRANT_LOG="debug" && \
 # 	vagrant up
-
-
 
 create_docker_registry:
 	if ! docker ps | grep -q 'local-registry'; \
@@ -99,20 +96,26 @@ delete_docker_registry:
 delete_kind_cluster: delete_docker_registry
 	kind delete cluster --name personal-kind
 
+install_calico:
+	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
+	helm repo update && \
+	helm install calico projectcalico/tigera-operator --version v3.30.3 --namespace tigera-operator --create-namespace \
+
+uninstall_calico:
+	helm uninstall calico -n tigera-operator
+
+install_metrics_server:
+	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
+	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
+	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+
+uninstall_metrics_server:
+	helm uninstall metrics-server -n default
+
 
 
 # which_is_my_external_ip:
 # 	@ifconfig | grep "inet " | grep -v  "127.0.0.1" | grep -v  "172.17" | awk -F " " '{print $$2}' | head -n1
-
-
-
-# install_metrics_server:
-# 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
-# 	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
-# 	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
-
-# uninstall_metrics_server:
-# 	helm uninstall metrics-server -n default
 
 
 
