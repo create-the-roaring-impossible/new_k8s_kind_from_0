@@ -148,6 +148,7 @@ install_gh_runners:
 	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
+		--set runnerScaleSetConfig.labels="{self-hosted,Linux,X64,DESKTOP-S8GLSE7,k8s,kind}" \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 
 uninstall_gh_runners:
