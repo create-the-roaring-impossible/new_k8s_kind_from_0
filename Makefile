@@ -141,15 +141,21 @@ install_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
     echo "Using release name: $$RELEASE_NAME" && \
 	read -p "Enter GitHub url: " URL && \
-    echo "Using url: $$URL" && \
+    echo "Using GitHub url: $$URL" && \
 	read -p "Enter GitHub token: " TOKEN && \
-    echo "Using token: $$TOKEN" && \
+    echo "Using GitHub token: $$TOKEN" && \
+	read -p "Enter GitHub runner group name: " RUNNER_GRP && \
+    echo "Using GitHub runner group name: $$RUNNER_GRP" && \
 	helm upgrade --install arc --namespace arc-systems --create-namespace oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
 	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
-		--set runnerScaleSetConfig.labels="{self-hosted,Linux,X64,DESKTOP-S8GLSE7,k8s,kind}" \
+		--set runnerGroup: "$$RUNNER_GRP" \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
+# --set runnerScaleSetConfig.labels="{self-hosted,Linux,X64,DESKTOP-S8GLSE7,k8s,kind}"
+# --set minRunners=0
+# --set maxRunners=5
+# --set runnerScaleSetName: "" # Defaults to the helm release name
 
 uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
