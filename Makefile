@@ -146,7 +146,8 @@ install_gh_runners:
 	echo "Using GitHub token: $$TOKEN" && \
 	read -p "Enter GitHub runner group name: " RUNNER_GRP && \
 	echo "Using GitHub runner group name: $$RUNNER_GRP" && \
-	helm upgrade --install arc --namespace arc-systems --create-namespace oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
+	helm upgrade --install arc --namespace arc-systems --create-namespace \
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
 	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
