@@ -165,9 +165,13 @@ install_gh_runners:
         --set ephemeralRunnerSet.resources.limits.memory=1Gi \
         --set ephemeralRunnerSet.resources.requests.cpu=250m \
         --set ephemeralRunnerSet.resources.requests.memory=512Mi \
-        --set template.spec.volumeClaimTemplates[0].metadata.name=work \
-        --set template.spec.volumeClaimTemplates[0].spec.accessModes[0]=ReadWriteOnce \
-        --set template.spec.volumeClaimTemplates[0].spec.resources.requests.storage=1Gi \
+        --set 'template.spec.ephemeralContainers=null' \
+        --set 'template.spec.volumes[0].name=work' \
+        --set 'template.spec.volumes[0].ephemeral.volumeClaimTemplate.metadata.name=work-volume-claim' \
+        --set 'template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.accessModes[0]=ReadWriteOnce' \
+        --set 'template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.resources.requests.storage=1Gi' \
+        --set 'template.spec.containers[0].volumeMounts[0].name=work' \
+        --set 'template.spec.containers[0].volumeMounts[0].mountPath=/home/runner/_work' \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 #test
 uninstall_gh_runners:
