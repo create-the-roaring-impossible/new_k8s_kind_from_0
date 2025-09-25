@@ -158,6 +158,9 @@ install_gh_runners:
 		--set runnerGroup="$$RUNNER_GRP" \
 		--set minRunners=1 \
 		--set maxRunners=2 \
+        --set containerMode.type=kubernetes \
+        --set template.spec.containers[0].image=ghcr.io/actions/runner:latest \
+        --set template.spec.containers[0].name=runner \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 #test
 uninstall_gh_runners:
