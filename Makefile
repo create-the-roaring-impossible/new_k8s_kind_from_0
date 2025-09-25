@@ -151,9 +151,9 @@ install_gh_runners:
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
 		--set runnerGroup: "$$RUNNER_GRP" \
+		--set minRunners=1
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 # --set runnerScaleSetConfig.labels="{self-hosted,Linux,X64,DESKTOP-S8GLSE7,k8s,kind}"
-# --set minRunners=0
 # --set maxRunners=5
 # --set runnerScaleSetName: "" # Defaults to the helm release name
 

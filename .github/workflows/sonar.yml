@@ -8,7 +8,7 @@ on:
 jobs:
   sonarQubeScan:
     name: SonarQube
-    runs-on: 'k8s'
+    runs-on: 'arc-desktop-s8glse7'
     container:
       image: sennar19/sonar_cli:latest
       credentials:
