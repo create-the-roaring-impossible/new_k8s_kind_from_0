@@ -158,20 +158,10 @@ install_gh_runners:
 		--set runnerGroup="$$RUNNER_GRP" \
 		--set minRunners=1 \
 		--set maxRunners=2 \
-        --set containerMode.type=kubernetes \
-        --set template.spec.containers[0].image=ghcr.io/actions/runner:latest \
-        --set template.spec.containers[0].name=runner \
-        --set ephemeralRunnerSet.resources.limits.cpu=500m \
-        --set ephemeralRunnerSet.resources.limits.memory=1Gi \
-        --set ephemeralRunnerSet.resources.requests.cpu=250m \
-        --set ephemeralRunnerSet.resources.requests.memory=512Mi \
-        --set 'template.spec.ephemeralContainers=null' \
-        --set 'template.spec.volumes[0].name=work' \
-        --set 'template.spec.volumes[0].ephemeral.volumeClaimTemplate.metadata.name=work-volume-claim' \
-        --set 'template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.accessModes[0]=ReadWriteOnce' \
-        --set 'template.spec.volumes[0].ephemeral.volumeClaimTemplate.spec.resources.requests.storage=1Gi' \
-        --set 'template.spec.containers[0].volumeMounts[0].name=work' \
-        --set 'template.spec.containers[0].volumeMounts[0].mountPath=/home/runner/_work' \
+        --set containerMode.type="kubernetes" \
+		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
+		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="dynamic-blob-storage" \ # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
+		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 #test
 uninstall_gh_runners:
