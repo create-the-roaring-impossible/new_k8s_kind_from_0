@@ -159,8 +159,6 @@ install_gh_runners:
 		--set minRunners=1 \
 		--set maxRunners=2 \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
-# --set runnerScaleSetName: "" # Defaults to the helm release name
-# --set runnerScaleSetConfig.labels="{self-hosted,Linux,X64,DESKTOP-S8GLSE7,k8s,kind}"
 
 uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
