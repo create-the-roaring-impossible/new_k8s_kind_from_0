@@ -161,6 +161,13 @@ install_gh_runners:
         --set containerMode.type=kubernetes \
         --set template.spec.containers[0].image=ghcr.io/actions/runner:latest \
         --set template.spec.containers[0].name=runner \
+        --set ephemeralRunnerSet.resources.limits.cpu=500m \
+        --set ephemeralRunnerSet.resources.limits.memory=1Gi \
+        --set ephemeralRunnerSet.resources.requests.cpu=250m \
+        --set ephemeralRunnerSet.resources.requests.memory=512Mi \
+        --set template.spec.volumeClaimTemplates[0].metadata.name=work \
+        --set template.spec.volumeClaimTemplates[0].spec.accessModes[0]=ReadWriteOnce \
+        --set template.spec.volumeClaimTemplates[0].spec.resources.requests.storage=1Gi \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 #test
 uninstall_gh_runners:
