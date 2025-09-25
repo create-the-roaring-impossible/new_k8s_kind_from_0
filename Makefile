@@ -159,7 +159,7 @@ install_gh_runners:
 		--set minRunners=1 \
 		--set maxRunners=2 \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
-
+#test
 uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using token: $$RELEASE_NAME" && \
