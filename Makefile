@@ -174,7 +174,8 @@ install_keda:
 	kubectl --namespace keda get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
-	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace # TODO: to specify version
+	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace \
+		--set imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_keda:
 	helm uninstall keda --namespace keda
@@ -195,7 +196,8 @@ install_open_ebs:
 	kubectl --namespace openebs get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	helm repo add openebs https://openebs.github.io/openebs && \
 	helm repo update && \
-	helm upgrade --install openebs --namespace openebs openebs/openebs --create-namespace # TODO: to specify version
+	helm upgrade --install openebs --namespace openebs openebs/openebs --create-namespace \
+		--set imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_open_ebs:
 	helm uninstall openebs --namespace openebs
