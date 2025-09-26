@@ -118,54 +118,93 @@ install_calico:
 	read -p "Enter Docker Hub email: " EMAIL && \
 	echo "Using Docker Hub email: $$EMAIL" && \
 	kubectl create ns tigera-operator && \
-	kubectl -n tigera-operator create secret docker-registry regcred \
+	kubectl --namespace tigera-operator create secret docker-registry regcred \
 		--docker-server=https://index.docker.io/v1/ \
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl -n tigera-operator get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	kubectl --namespace tigera-operator get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
 	helm upgrade --install calico projectcalico/tigera-operator --namespace tigera-operator --create-namespace \
-		--set installation.imagePullSecrets[0].name=regcred
+		--set installation.imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_calico:
-	helm uninstall calico -n tigera-operator
+	helm uninstall calico --namespace tigera-operator
 
 create_kind_cluster_with_registry_and_with_calico:
 	$(MAKE) create_kind_cluster_with_registry && $(MAKE) install_calico
 
 install_metrics_server:
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	kubectl --namespace default create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl --namespace default get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
 	helm repo update && \
-	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
-	kubectl patch deployment metrics-server -n default \
+	helm upgrade --install metrics-server --namespace default metrics-server/metrics-server
+		--set imagePullSecrets[0].name=regcred && \
+	kubectl patch deployment metrics-server --namespace default \
 		--type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]' # TODO: to specify version
 
 uninstall_metrics_server:
-	helm uninstall metrics-server -n default
+	helm uninstall metrics-server --namespace default
 
 install_keda:
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	kubectl create ns keda && \
+	kubectl --namespace keda create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl --namespace keda get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
 	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace # TODO: to specify version
 
 uninstall_keda:
-	helm uninstall keda -n keda
+	helm uninstall keda --namespace keda
 
 install_open_ebs:
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	kubectl create ns openebs && \
+	kubectl --namespace openebs create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl --namespace openebs get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	helm repo add openebs https://openebs.github.io/openebs && \
 	helm repo update && \
 	helm upgrade --install openebs --namespace openebs openebs/openebs --create-namespace # TODO: to specify version
 
 uninstall_open_ebs:
-	helm uninstall openebs -n openebs
+	helm uninstall openebs --namespace openebs
 
 # install_ado_agents:
 # 	asd  # TODO: to specify version
 
 # uninstall_ado_agents:
-# 	helm uninstall asd -n devops
+# 	helm uninstall asd --namespace devops
 
 install_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
@@ -197,8 +236,8 @@ install_gh_runners:
 uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using token: $$RELEASE_NAME" && \
-	helm uninstall $$RELEASE_NAME -n devops && \
-	helm uninstall arc -n arc-systems
+	helm uninstall $$RELEASE_NAME --namespace devops && \
+	helm uninstall arc --namespace arc-systems
 
 # install_gl_runners:
 # 	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
@@ -213,7 +252,7 @@ uninstall_gh_runners:
 # 		--set serviceAccount.create=true # TODO: to specify version
 
 # uninstall_gl_runners:
-# 	helm uninstall gitlab-runner -n devops
+# 	helm uninstall gitlab-runner --namespace devops
 
 
 
@@ -232,7 +271,7 @@ uninstall_gh_runners:
 # 	kubectl --namespace vault port-forward svc/vault 8300:8200
 
 # uninstall_hashicorp_vault:
-# 	helm uninstall vault -n vault
+# 	helm uninstall vault --namespace vault
 
 
 
@@ -250,7 +289,7 @@ uninstall_gh_runners:
 # 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
 
 # uninstall_argo:
-# 	helm uninstall argo -n argo
+# 	helm uninstall argo --namespace argo
 
 
 
@@ -268,4 +307,4 @@ uninstall_gh_runners:
 # 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
 
 # uninstall_flux:
-# 	helm uninstall flux -n flux
+# 	helm uninstall flux --namespace flux
