@@ -18,7 +18,6 @@
 	install_calico \
 	uninstall_calico \
 	create_kind_cluster_with_registry_and_with_calico \
-
 	install_metrics_server \
 	uninstall_metrics_server \
 	install_keda \
@@ -121,10 +120,6 @@ uninstall_calico:
 
 create_kind_cluster_with_registry_and_with_calico:
 	$(MAKE) create_kind_cluster_with_registry && $(MAKE) install_calico
-
-
-
-
 
 install_metrics_server:
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
