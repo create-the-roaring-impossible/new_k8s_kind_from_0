@@ -120,8 +120,9 @@ uninstall_calico:
 install_metrics_server:
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
 	helm repo update && \
-	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \ # TODO: to specify version
-	kubectl patch deployment metrics-server -n default --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+	helm upgrade --install metrics-server -n default metrics-server/metrics-server && \
+	kubectl patch deployment metrics-server -n default \
+		--type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]' # TODO: to specify version
 
 uninstall_metrics_server:
 	helm uninstall metrics-server -n default
