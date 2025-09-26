@@ -135,9 +135,9 @@ uninstall_keda:
 	helm uninstall keda -n keda
 
 install_open_ebs:
-	helm repo add openebs https://openebs.github.io/charts && \
+	helm repo add openebs https://openebs.github.io/openebs && \
 	helm repo update && \
-	helm install openebs --namespace openebs openebs/openebs --create-namespace # TODO: to specify version
+	helm upgrade --install openebs --namespace openebs openebs/openebs --create-namespace # TODO: to specify version
 
 uninstall_open_ebs:
 	helm uninstall openebs -n openebs
