@@ -113,7 +113,7 @@ delete_kind_cluster: delete_docker_registry
 install_calico:
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
-	helm upgrade --install calico projectcalico/tigera-operator --namespace tigera-operator --create-namespace
+	helm upgrade --install calico projectcalico/tigera-operator --namespace tigera-operator --create-namespace # TODO: to specify version
 
 uninstall_calico:
 	helm uninstall calico -n tigera-operator
