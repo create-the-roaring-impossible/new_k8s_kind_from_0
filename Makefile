@@ -27,8 +27,8 @@
 # install_ado_agents \
 # uninstall_keda \
 
-# install_gh_runners \
-# uninstall_gh_runners \
+	install_gh_runners \
+	uninstall_gh_runners \
 
 # install_gl_runners \
 # uninstall_gl_runners \
@@ -137,10 +137,10 @@ uninstall_keda:
 install_open_ebs:
 	helm repo add openebs https://openebs.github.io/charts && \
 	helm repo update && \
-	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace # TODO: to specify version
+	helm install openebs --namespace openebs openebs/openebs --create-namespace # TODO: to specify version
 
 uninstall_open_ebs:
-	helm uninstall keda -n keda
+	helm uninstall openebs -n openebs
 
 # install_ado_agents:
 # 	asd  # TODO: to specify version
@@ -148,38 +148,38 @@ uninstall_open_ebs:
 # uninstall_ado_agents:
 # 	helm uninstall asd -n devops
 
-# install_gh_runners:
-# 	@read -p "Enter release name: " RELEASE_NAME && \
-# 	echo "Using release name: $$RELEASE_NAME" && \
-# 	read -p "Enter GitHub url: " URL && \
-# 	echo "Using GitHub url: $$URL" && \
-# 	read -p "Enter GitHub token: " TOKEN && \
-# 	echo "Using GitHub token: $$TOKEN" && \
-# 	read -p "Enter GitHub runner group name: " RUNNER_GRP && \
-# 	echo "Using GitHub runner group name: $$RUNNER_GRP" && \
-# 	helm repo add actions-runner-controller https://actions-runner-controller.github.io/actions-runner-controller && \
-# 	helm repo update && \
-# 	helm upgrade --install arc --namespace arc-systems --create-namespace \
-# 		--set authSecret.create=true \
-# 		--set authSecret.github_token=$$TOKEN \
-# 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
-# 	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
-# 		--set githubConfigUrl=$$URL \
-# 		--set githubConfigSecret.github_token=$$TOKEN \
-# 		--set runnerGroup="$$RUNNER_GRP" \
-# 		--set minRunners=1 \
-# 		--set maxRunners=2 \
-#         --set containerMode.type="kubernetes" \
-# 		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
-# 		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="dynamic-blob-storage" \ # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
-# 		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
-# 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
+install_gh_runners:
+	@read -p "Enter release name: " RELEASE_NAME && \
+	echo "Using release name: $$RELEASE_NAME" && \
+	read -p "Enter GitHub url: " URL && \
+	echo "Using GitHub url: $$URL" && \
+	read -p "Enter GitHub token: " TOKEN && \
+	echo "Using GitHub token: $$TOKEN" && \
+	read -p "Enter GitHub runner group name: " RUNNER_GRP && \
+	echo "Using GitHub runner group name: $$RUNNER_GRP" && \
+	helm repo add actions-runner-controller https://actions-runner-controller.github.io/actions-runner-controller && \
+	helm repo update && \
+	helm upgrade --install arc --namespace arc-systems --create-namespace \
+		--set authSecret.create=true \
+		--set authSecret.github_token=$$TOKEN \
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
+	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
+		--set githubConfigUrl=$$URL \
+		--set githubConfigSecret.github_token=$$TOKEN \
+		--set runnerGroup="$$RUNNER_GRP" \
+		--set minRunners=1 \
+		--set maxRunners=2 \
+        --set containerMode.type="kubernetes" \
+		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
+		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="dynamic-blob-storage" \ # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
+		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 
-# uninstall_gh_runners:
-# 	@read -p "Enter release name: " RELEASE_NAME && \
-# 	echo "Using token: $$RELEASE_NAME" && \
-# 	helm uninstall $$RELEASE_NAME -n devops && \
-# 	helm uninstall arc -n arc-systems
+uninstall_gh_runners:
+	@read -p "Enter release name: " RELEASE_NAME && \
+	echo "Using token: $$RELEASE_NAME" && \
+	helm uninstall $$RELEASE_NAME -n devops && \
+	helm uninstall arc -n arc-systems
 
 # install_gl_runners:
 # 	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
