@@ -172,7 +172,7 @@ install_gh_runners:
 		--set maxRunners=2 \
         --set containerMode.type="kubernetes" \
 		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
-		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="dynamic-blob-storage" \ # For local testing, use https://github.com/openebs/dynamic-localpv-provisioner/blob/develop/docs/quickstart.md to provide dynamic provision volume with storageClassName: openebs-hostpath
+		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="dynamic-blob-storage" \
 		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 
