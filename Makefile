@@ -114,13 +114,26 @@ install_calico:
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
 	helm upgrade --install calico projectcalico/tigera-operator --namespace tigera-operator --create-namespace \
-		--set ASDASDASD=ASDASDASD # TODO: to specify version
+		--set installation.imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_calico:
 	helm uninstall calico -n tigera-operator
 
 create_kind_cluster_with_registry_and_with_calico:
-	$(MAKE) create_kind_cluster_with_registry && $(MAKE) install_calico
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	@read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	@read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	$(MAKE) create_kind_cluster_with_registry && \
+	kubectl create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	$(MAKE) install_calico
 
 install_metrics_server:
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
