@@ -222,14 +222,7 @@ install_gh_runners:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace arc-systems get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
-	kubectl create ns devops-gh && \
-	kubectl --namespace devops-gh create secret docker-registry regcred \
-		--docker-server=https://index.docker.io/v1/ \
-		--docker-username=$$USERNAME \
-		--docker-password=$$PASSWORD \
-		--docker-email=$$EMAIL && \
-	kubectl --namespace devops-gh get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
-	@read -p "Enter release name: " RELEASE_NAME && \
+	read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using release name: $$RELEASE_NAME" && \
 	read -p "Enter GitHub url: " URL && \
 	echo "Using GitHub url: $$URL" && \
@@ -242,8 +235,8 @@ install_gh_runners:
 	helm upgrade --install arc --namespace arc-systems --create-namespace \
 		--set authSecret.create=true \
 		--set authSecret.github_token=$$TOKEN \
---set imagePullSecrets[0].name=regcred \
-		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \ # TODO: to specify version
+		--set imagePullSecrets[0].name=regcred \
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
 	helm upgrade --install $$RELEASE_NAME --namespace devops-gh --create-namespace \
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
@@ -254,7 +247,6 @@ install_gh_runners:
 		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
 		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="openebs-hostpath" \
 		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
---set imagePullSecrets[0].name=regcred \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 
 uninstall_gh_runners:
