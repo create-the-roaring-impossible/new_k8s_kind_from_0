@@ -269,7 +269,7 @@ install_gl_runners:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace devops-gl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
-	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
+	read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
     echo "Using registration token: $$REGISTRATION_TOKEN" && \
 	helm repo add gitlab https://charts.gitlab.io && \
 	helm repo update && \
@@ -279,7 +279,7 @@ install_gl_runners:
 		--set unregisterRunners=true \
 		--set rbac.create=true \
 		--set serviceAccount.create=true \
-		--set serviceAccount.imagePullSecrets[0].name=regcred \ # TODO: to specify version
+		--set serviceAccount.imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_gl_runners:
 	helm uninstall gitlab-runner --namespace devops-gl
