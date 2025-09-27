@@ -24,15 +24,12 @@
 	uninstall_keda \
 	install_open_ebs \
 	uninstall_open_ebs \
-
-# install_ado_agents \
-# uninstall_keda \
-
+	install_ado_agents \
+	uninstall_keda \
 	install_gh_runners \
 	uninstall_gh_runners \
-
-# install_gl_runners \
-# uninstall_gl_runners \
+	install_gl_runners \
+	uninstall_gl_runners \
 
 # which_is_my_external_ip \
 
@@ -202,11 +199,27 @@ install_open_ebs:
 uninstall_open_ebs:
 	helm uninstall openebs --namespace openebs
 
-# install_ado_agents:
-# 	asd  # TODO: to specify version
+install_ado_agents:
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	kubectl create ns devops-ado && \
+	kubectl --namespace devops-ado create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl --namespace devops-ado get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+# 	helm repo add openebs https://openebs.github.io/openebs && \
+# 	helm repo update && \
+# 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace \
+# 		--set imagePullSecrets[0].name=regcred # TODO: to specify version
 
-# uninstall_ado_agents:
-# 	helm uninstall asd --namespace devops
+uninstall_ado_agents:
+	helm uninstall ado-agents --namespace devops-ado
 
 install_gh_runners:
 	@read -p "Enter Docker Hub username: " USERNAME && \
