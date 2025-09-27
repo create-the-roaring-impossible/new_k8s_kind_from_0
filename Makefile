@@ -209,6 +209,26 @@ uninstall_open_ebs:
 # 	helm uninstall asd --namespace devops
 
 install_gh_runners:
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	kubectl create ns arc-systems && \
+	kubectl --namespace arc-systems create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl --namespace arc-systems get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	kubectl create ns devops-gh && \
+	kubectl --namespace devops-gh create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	kubectl --namespace devops-gh get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	@read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using release name: $$RELEASE_NAME" && \
 	read -p "Enter GitHub url: " URL && \
@@ -222,23 +242,25 @@ install_gh_runners:
 	helm upgrade --install arc --namespace arc-systems --create-namespace \
 		--set authSecret.create=true \
 		--set authSecret.github_token=$$TOKEN \
-		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
-	helm upgrade --install $$RELEASE_NAME --namespace devops --create-namespace \
+--set imagePullSecrets[0].name=regcred \
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \ # TODO: to specify version
+	helm upgrade --install $$RELEASE_NAME --namespace devops-gh --create-namespace \
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
 		--set runnerGroup="$$RUNNER_GRP" \
-		--set minRunners=1 \
-		--set maxRunners=2 \
+		--set minRunners=0 \
+		--set maxRunners=3 \
         --set containerMode.type="kubernetes" \
 		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
 		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="openebs-hostpath" \
 		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
+--set imagePullSecrets[0].name=regcred \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
 
 uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using token: $$RELEASE_NAME" && \
-	helm uninstall $$RELEASE_NAME --namespace devops && \
+	helm uninstall $$RELEASE_NAME --namespace devops-gh && \
 	helm uninstall arc --namespace arc-systems
 
 # install_gl_runners:
