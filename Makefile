@@ -256,20 +256,7 @@ uninstall_gh_runners:
 	helm uninstall arc --namespace arc-systems
 
 install_gl_runners:
-	@read -p "Enter Docker Hub username: " USERNAME && \
-	echo "Using Docker Hub username: $$USERNAME" && \
-	read -p "Enter Docker Hub password: " PASSWORD && \
-	echo "Using Docker Hub password: $$PASSWORD" && \
-	read -p "Enter Docker Hub email: " EMAIL && \
-	echo "Using Docker Hub email: $$EMAIL" && \
-	kubectl create ns devops-gl && \
-	kubectl --namespace devops-gl create secret docker-registry regcred \
-		--docker-server=https://index.docker.io/v1/ \
-		--docker-username=$$USERNAME \
-		--docker-password=$$PASSWORD \
-		--docker-email=$$EMAIL && \
-	kubectl --namespace devops-gl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
-	read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
+	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
     echo "Using registration token: $$REGISTRATION_TOKEN" && \
 	helm repo add gitlab https://charts.gitlab.io && \
 	helm repo update && \
