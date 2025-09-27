@@ -20,15 +20,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      # - name: Create Sonar cache directory
-      #   run: |
-      #     mkdir -p /opt/sonar-scanner/.sonar/cache
-      #     chmod -R 777 /opt/sonar-scanner/.sonar
-      # - name: SonarQube Scan
-      #   uses: SonarSource/sonarqube-scan-action@v6
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_USER_HOME: ${{ github.workspace }}/.sonar
       - name: SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

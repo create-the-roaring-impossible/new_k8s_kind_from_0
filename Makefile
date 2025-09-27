@@ -279,7 +279,7 @@ install_gl_runners:
 		--set unregisterRunners=true \
 		--set rbac.create=true \
 		--set serviceAccount.create=true \
-		--set imagePullSecrets[0].name=regcred \ # TODO: to specify version
+		--set serviceAccount.imagePullSecrets[0].name=regcred \ # TODO: to specify version
 
 uninstall_gl_runners:
 	helm uninstall gitlab-runner --namespace devops-gl
