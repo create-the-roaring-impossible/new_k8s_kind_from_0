@@ -5,9 +5,9 @@ RUN apk update \
     # Install dependencies
     && apk add --no-cache \
        bash \
-       git
+       git \
     # Install Terraform
-RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
+    && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
     && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_linux_amd64.zip \
     && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS \
@@ -22,9 +22,9 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.13/tfsec-linux-amd64 \
     && chmod +x /usr/local/bin/tfsec \
     && apk del .deps \
-    && apk cache clean
-
-RUN addgroup tfsvc_grp \
+    && apk cache clean \
+    # Add user "tfsvc_usr" and give sudo permissions
+    && addgroup tfsvc_grp \
     && adduser -D -G tfsvc_grp tfsvc_usr \
     && mkdir -p /etc/sudoers.d \
     && echo "tfsvc_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tfsvc_usr
