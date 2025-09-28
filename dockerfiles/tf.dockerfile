@@ -5,6 +5,7 @@ RUN apk update \
     # Install dependencies
     && apk add --no-cache \
        bash \
+       curl \
        git \
     # Install Terraform
     && apk --no-cache add --update --virtual .deps --no-cache gnupg \
