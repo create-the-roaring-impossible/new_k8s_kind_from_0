@@ -1,0 +1,28 @@
+name: 'SonarQube Scan'
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sonarQubeScan:
+    name: SonarQube
+    runs-on: 'arc-desktop-s8glse7'
+    container:
+      image: sennar19/sonar_cli:latest
+      credentials:
+        username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
+        password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
+      options: --user root
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_USER_HOME: "${{ github.workspace }}/.sonar"
+        run: |
+          sonar-scanner -Dsonar.token=$SONAR_TOKEN -Dsonar.qualitygate.wait=true

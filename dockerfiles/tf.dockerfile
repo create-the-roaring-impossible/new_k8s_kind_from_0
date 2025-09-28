@@ -5,14 +5,16 @@ RUN apk update \
     # Install dependencies
     && apk add --no-cache \
        bash \
-       git
+       curl \
+       git \
     # Install Terraform
-RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
+    && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
-    && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_linux_amd64.zip \
-    && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS \
-    && wget https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS.sig \
-    && wget -qO- https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import \
+    && curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_linux_amd64.zip \
+    && curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS \
+    && curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS.sig \
+    && curl --proto "=https" --tlsv1.2 -sSf https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import \
+    # && wget -qO- https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import \
     && gpg --verify terraform_1.13.1_SHA256SUMS.sig terraform_1.13.1_SHA256SUMS \
     && grep terraform_1.13.1_linux_amd64.zip terraform_1.13.1_SHA256SUMS | sha256sum -c \
     && unzip /tmp/terraform_1.13.1_linux_amd64.zip -d /tmp \
@@ -22,8 +24,11 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.13/tfsec-linux-amd64 \
     && chmod +x /usr/local/bin/tfsec \
     && apk del .deps \
-    && apk cache clean
+    && apk cache clean \
+    # Add user "tfsvc_usr" and give sudo permissions
+    && addgroup tfsvc_grp \
+    && adduser -D -G tfsvc_grp tfsvc_usr \
+    && mkdir -p /etc/sudoers.d \
+    && echo "tfsvc_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tfsvc_usr
 
-RUN adduser -D tfsvcusr
-
-USER tfsvcusr
+USER tfsvc_usr

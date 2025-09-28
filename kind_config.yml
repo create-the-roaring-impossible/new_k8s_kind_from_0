@@ -1,58 +1,76 @@
+# This file is used by "kind" to create a local k8s cluster (see https://kind.sigs.k8s.io/docs/user/configuration/ for details)
+# See also configmap in "kind_configmap.yml", to configure local registry
+
 ---
+
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
+# Cluster purpose: Local development environment with registry integration
+# VERSION: 1.0.0
+# LAST UPDATED: 2025-09-22
 networking:
-  # WARNING: It is _strongly_ recommended that you keep this the default
-  # (127.0.0.1) for security reasons. However it is possible to change this.
+  # WARNING: It is _strongly_ recommended that you keep this the default (127.0.0.1) for security reasons.
   apiServerAddress: "127.0.0.1"
   # By default the API server listens on a random open port.
-  # You may choose a specific port but probably don't need to in most cases.
   # Using a random port makes it easier to spin up multiple clusters.
   apiServerPort: 10443
+  # The default CNI will not be installed
+  disableDefaultCNI: true
 containerdConfigPatches:
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
-    endpoint = ["http://local-registry:5000"]
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+      endpoint = ["http://local-registry:5000"]
+# featureGates: # TODO: to investigate
+#   EphemeralContainers: true
 nodes:
-- role: control-plane
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
-- role: worker
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
-- role: worker
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=control-plane,ingress-ready=true,node=control-plane-1"
+            register-with-taints: "node-role.kubernetes.io/control-plane:NoSchedule"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+  - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=worker,ingress-ready=true,node=worker-1,workload=general"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+      - hostPath: /run/udev
+        containerPath: /run/udev
+  - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=worker,ingress-ready=true,node=worker-2,workload=general"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+      - hostPath: /run/udev
+        containerPath: /run/udev
+  - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=worker,ingress-ready=true,node=worker-3,workload=general"
+    extraMounts:
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
+      - hostPath: /run/udev
+        containerPath: /run/udev
