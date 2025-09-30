@@ -213,10 +213,20 @@ install_ado_agents:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace devops-ado get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	read -p "Enter Azure DevOps url: " ADO_URL && \
+	echo "Using Azure DevOps url: $$ADO_URL" && \
+	read -p "Enter Azure DevOps token: " ADO_TOKEN && \
+	echo "Using Azure DevOps token: $$ADO_TOKEN" && \
+	read -p "Enter Azure DevOps pool: " ADO_POOL && \
+	echo "Using Azure DevOps pool: $$ADO_POOL" && \
+	helm upgrade ado-agent . --version 1.0.0 -i --atomic --cleanup-on-fail -n devops-ado --create-namespace --timeout 5m0s -f values.yaml -o yaml --debug \
+		--set image.tag="ado-1.2.0" \
+		--set env.secrets.ADO_URL="$$ADO_URL" \
+		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
+		--set env.secrets.ADO_POOL="$$ADO_POOL"
 # 	helm repo add openebs https://openebs.github.io/openebs && \
-# 	helm repo update && \
-# 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace \
-# 		--set imagePullSecrets[0].name=regcred # TODO: to specify version
+# 	helm repo update &&
+# 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
 
 uninstall_ado_agents:
 	helm uninstall ado-agents --namespace devops-ado
