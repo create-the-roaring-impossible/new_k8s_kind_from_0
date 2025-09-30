@@ -121,6 +121,7 @@ install_calico:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace tigera-operator get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	echo -e "\n" && \
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
 	helm upgrade --install calico projectcalico/tigera-operator --namespace tigera-operator --create-namespace \
@@ -145,6 +146,7 @@ install_metrics_server:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace default get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	echo -e "\n" && \
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
 	helm repo update && \
 	helm upgrade --install metrics-server --namespace default metrics-server/metrics-server
@@ -169,6 +171,7 @@ install_keda:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace keda get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	echo -e "\n" && \
 	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
 	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace \
@@ -191,6 +194,7 @@ install_open_ebs:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace openebs get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	echo -e "\n" && \
 	helm repo add openebs https://openebs.github.io/openebs && \
 	helm repo update && \
 	helm upgrade --install openebs --namespace openebs openebs/openebs --create-namespace \
@@ -213,6 +217,7 @@ install_ado_agents:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace devops-ado get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	echo -e "\n" && \
 	read -p "Enter Azure DevOps url: " ADO_URL && \
 	echo "Using Azure DevOps url: $$ADO_URL" && \
 	read -p "Enter Azure DevOps token: " ADO_TOKEN && \
@@ -254,6 +259,7 @@ install_gh_runners:
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
 	kubectl --namespace arc-systems get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
+	echo -e "\n" && \
 	read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using release name: $$RELEASE_NAME" && \
 	read -p "Enter GitHub url: " URL && \
