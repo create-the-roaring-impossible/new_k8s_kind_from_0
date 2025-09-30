@@ -231,7 +231,7 @@ install_ado_agents:
 		--set image.tag="latest" \
 		--set env.secrets.ADO_URL="$$ADO_URL" \
 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
-		--set env.secrets.ADO_POOL="$$ADO_POOL" \
+		--set env.secrets.ADO_POOL="$$ADO_POOL" && \
 	cd /mnt/e/Repositories/GitHub/new_k8s_kind_from_0
 # 	helm repo add openebs https://openebs.github.io/openebs && \
 # 	helm repo update &&
