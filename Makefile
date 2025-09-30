@@ -229,7 +229,7 @@ install_ado_agents:
 		--atomic \
 		--cleanup-on-fail \
 		--timeout 5m0s \
-		-f values.yaml \
+		-f ../../Azure_DevOps/personal-project/helm/ado-agent/values.yaml \
 		-o yaml \
 		--debug \
 		--set image.tag="latest" \
