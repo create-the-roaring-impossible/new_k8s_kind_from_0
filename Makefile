@@ -220,13 +220,19 @@ install_ado_agents:
 	read -p "Enter Azure DevOps pool: " ADO_POOL && \
 	echo "Using Azure DevOps pool: $$ADO_POOL" && \
 	cd ../../Azure_DevOps/personal-project/helm/ado-agent/ && \
-	ls -larth && \
+	helm upgrade --install ado-agent . -n devops-ado --create-namespace \
+		--version 1.0.0 \
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 5m0s \
+		-f values.yaml \
+		-o yaml \
+		--debug \
+		--set image.tag="latest" \
+		--set env.secrets.ADO_URL="$$ADO_URL" \
+		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
+		--set env.secrets.ADO_POOL="$$ADO_POOL" \
 	cd /mnt/e/Repositories/GitHub/new_k8s_kind_from_0
-# 	helm upgrade ado-agent . --version 1.0.0 -i --atomic --cleanup-on-fail -n devops-ado --create-namespace --timeout 5m0s -f values.yaml -o yaml --debug \
-# 		--set image.tag="ado-1.2.0" \
-# 		--set env.secrets.ADO_URL="$$ADO_URL" \
-# 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
-# 		--set env.secrets.ADO_POOL="$$ADO_POOL"
 # 	helm repo add openebs https://openebs.github.io/openebs && \
 # 	helm repo update &&
 # 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
