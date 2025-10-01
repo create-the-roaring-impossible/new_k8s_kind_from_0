@@ -244,7 +244,7 @@ install_ado_agents:
 # 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
 
 uninstall_ado_agents:
-	helm uninstall ado-agents --namespace devops-ado
+	helm uninstall ado-agent --namespace devops-ado
 
 install_gh_runners:
 	@read -p "Enter Docker Hub username: " USERNAME && \
