@@ -239,7 +239,7 @@ install_ado_agents:
 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
 		--set env.secrets.ADO_POOL="$$ADO_POOL" \
 		--set env.secrets.AGENT_NAME="$$AGENT_NAME" \
-		--set image.tag="1.3.3"
+		--set image.tag="1.3.4-20251001.2"
 # 	helm repo add openebs https://openebs.github.io/openebs && \
 # 	helm repo update &&
 # 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
