@@ -224,8 +224,8 @@ install_ado_agents:
 	echo "Using Azure DevOps token: $$ADO_TOKEN" && \
 	read -p "Enter Azure DevOps pool: " ADO_POOL && \
 	echo "Using Azure DevOps pool: $$ADO_POOL" && \
-	read -p "Enter Azure DevOps pool: " AGENT_NAME && \
-	echo "Using Azure DevOps pool: $$AGENT_NAME" && \
+	read -p "Enter Azure DevOps agent name: " AGENT_NAME && \
+	echo "Using Azure DevOps agent name: $$AGENT_NAME" && \
 	helm upgrade --install ado-agent ../../Azure_DevOps/personal-project/helm/ado-agent/ -n devops-ado --create-namespace \
 		--version 1.0.0 \
 		--atomic \
