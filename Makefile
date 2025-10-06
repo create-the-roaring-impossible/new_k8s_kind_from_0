@@ -212,7 +212,7 @@ install_ado_agents:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	echo -e "\n" && \
+	echo "\n" && \
 	read -p "Enter Azure DevOps url: " ADO_URL && \
 	echo "Using Azure DevOps url: $$ADO_URL" && \
 	read -p "Enter Azure DevOps token: " ADO_TOKEN && \
@@ -234,7 +234,7 @@ install_ado_agents:
 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
 		--set env.secrets.ADO_POOL="$$ADO_POOL" \
 		--set env.secrets.AGENT_NAME="$$AGENT_NAME" \
-		--set image.tag="1.3.4-20251006.1"
+		--set image.tag="1.3.4"
 # 	helm repo add openebs https://openebs.github.io/openebs && \
 # 	helm repo update &&
 # 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
