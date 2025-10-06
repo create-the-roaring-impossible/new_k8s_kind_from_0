@@ -120,7 +120,6 @@ install_calico:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl --namespace tigera-operator get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	echo -e "\n" && \
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
@@ -145,7 +144,6 @@ install_metrics_server:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl --namespace default get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	echo -e "\n" && \
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
 	helm repo update && \
@@ -170,7 +168,6 @@ install_keda:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl --namespace keda get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	echo -e "\n" && \
 	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
@@ -193,7 +190,6 @@ install_open_ebs:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl --namespace openebs get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	echo -e "\n" && \
 	helm repo add openebs https://openebs.github.io/openebs && \
 	helm repo update && \
@@ -216,7 +212,6 @@ install_ado_agents:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl --namespace devops-ado get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	echo -e "\n" && \
 	read -p "Enter Azure DevOps url: " ADO_URL && \
 	echo "Using Azure DevOps url: $$ADO_URL" && \
@@ -260,7 +255,6 @@ install_gh_runners:
 		--docker-username=$$USERNAME \
 		--docker-password=$$PASSWORD \
 		--docker-email=$$EMAIL && \
-	kubectl --namespace arc-systems get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode && \
 	echo -e "\n" && \
 	read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using release name: $$RELEASE_NAME" && \
