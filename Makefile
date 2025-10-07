@@ -127,7 +127,8 @@ install_calico:
 		--set installation.imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_calico:
-	helm uninstall calico --namespace tigera-operator
+	helm uninstall calico --namespace tigera-operator && \
+	kubectl delete ns tigera-operator
 
 create_kind_cluster_with_registry_and_with_calico:
 	$(MAKE) create_kind_cluster_with_registry && $(MAKE) install_calico
@@ -175,7 +176,8 @@ install_keda:
 		--set imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_keda:
-	helm uninstall keda --namespace keda
+	helm uninstall keda --namespace keda && \
+	kubectl delete ns keda
 
 install_open_ebs:
 	@read -p "Enter Docker Hub username: " USERNAME && \
@@ -197,7 +199,8 @@ install_open_ebs:
 		--set imagePullSecrets[0].name=regcred # TODO: to specify version
 
 uninstall_open_ebs:
-	helm uninstall openebs --namespace openebs
+	helm uninstall openebs --namespace openebs && \
+	kubectl delete ns openebs
 
 install_ado_agents:
 	@read -p "Enter Docker Hub username: " USERNAME && \
@@ -240,7 +243,8 @@ install_ado_agents:
 # 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
 
 uninstall_ado_agents:
-	helm uninstall ado-agent --namespace devops-ado
+	helm uninstall ado-agent --namespace devops-ado && \
+	kubectl delete ns devops-ado
 
 install_gh_runners:
 	@read -p "Enter Docker Hub username: " USERNAME && \
@@ -287,7 +291,9 @@ uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
 	echo "Using token: $$RELEASE_NAME" && \
 	helm uninstall $$RELEASE_NAME --namespace devops-gh && \
-	helm uninstall arc --namespace arc-systems
+	kubectl delete ns devops-gh && \
+	helm uninstall arc --namespace arc-systems && \
+	kubectl delete ns arc-systems
 
 install_gl_runners:
 	@read -p "Enter GitLab registration token: " REGISTRATION_TOKEN && \
@@ -302,7 +308,8 @@ install_gl_runners:
 		--set serviceAccount.create=true # TODO: to specify version
 
 uninstall_gl_runners:
-	helm uninstall gitlab-runner --namespace devops-gl
+	helm uninstall gitlab-runner --namespace devops-gl && \
+	kubectl delete ns devops-gl
 
 
 
