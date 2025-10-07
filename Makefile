@@ -232,7 +232,6 @@ install_ado_agents:
 		-f ../../Azure_DevOps/personal-project/helm/ado-agent/values.yaml \
 		-o yaml \
 		--debug \
-		--set image.tag="latest" \
 		--set env.secrets.ADO_URL="$$ADO_URL" \
 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
 		--set env.secrets.ADO_POOL="$$ADO_POOL" \
