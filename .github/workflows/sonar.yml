@@ -1,4 +1,3 @@
-#test
 name: 'SonarQube Scan'
 on:
   push:
