@@ -5,8 +5,29 @@ RUN apk update \
     # Install dependencies
     && apk add --no-cache \
        bash \
+       ca-certificates \
        curl \
        git \
+       icu-libs \
+       krb5-libs \
+       less \
+       libgcc \
+       libintl \
+       libssl3 \
+       libstdc++ \
+       ncurses-terminfo-base \
+       tzdata \
+       userspace-rcu \
+       zlib \
+    # Install PowerShell
+    && apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache \
+       lttng-ust \
+       openssh-client \
+    && curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.5.3/powershell-7.5.3-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz \
+    && sudo mkdir -p /opt/microsoft/powershell/7 \
+    && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+    && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
+    && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
     # Install AWS CLI
     # TODO: to install AWS CLI
     # Install Azure CLI
