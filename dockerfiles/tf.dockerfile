@@ -16,6 +16,7 @@ RUN apk update \
        libssl3 \
        libstdc++ \
        ncurses-terminfo-base \
+       sudo \
        tzdata \
        userspace-rcu \
        zlib \
