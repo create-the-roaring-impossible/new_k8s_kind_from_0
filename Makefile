@@ -30,17 +30,16 @@
 	uninstall_gh_runners \
 	install_gl_runners \
 	uninstall_gl_runners \
+	install_argo \
+	get_admin_password_argo \
+	port_forward_argo \
+	uninstall_argo \
 
 # which_is_my_external_ip \
 
 # install_hashicorp_vault \
 # port_forward_hashicorp_vault \
 # uninstall_hashicorp_vault \
-
-# install_argo \
-# get_admin_password_argo \
-# port_forward_argo \
-# uninstall_argo \
 
 # install_flux \
 # get_admin_password_flux \
@@ -124,7 +123,13 @@ install_calico:
 	helm repo add projectcalico https://docs.tigera.io/calico/charts && \
 	helm repo update && \
 	helm upgrade --install calico projectcalico/tigera-operator --namespace tigera-operator --create-namespace \
-		--set installation.imagePullSecrets[0].name=regcred # TODO: to specify version
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
+		--set installation.imagePullSecrets[0].name=regcred
 
 uninstall_calico:
 	helm uninstall calico --namespace tigera-operator && \
@@ -148,10 +153,16 @@ install_metrics_server:
 	echo -e "\n" && \
 	helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/ && \
 	helm repo update && \
-	helm upgrade --install metrics-server --namespace default metrics-server/metrics-server
+	helm upgrade --install metrics-server --namespace default metrics-server/metrics-server --create-namespace \
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
 		--set imagePullSecrets[0].name=regcred && \
 	kubectl patch deployment metrics-server --namespace default \
-		--type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]' # TODO: to specify version
+		--type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
 
 uninstall_metrics_server:
 	helm uninstall metrics-server --namespace default
@@ -173,7 +184,13 @@ install_keda:
 	helm repo add kedacore https://kedacore.github.io/charts && \
 	helm repo update && \
 	helm upgrade --install keda kedacore/keda --namespace keda --create-namespace \
-		--set imagePullSecrets[0].name=regcred # TODO: to specify version
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
+		--set imagePullSecrets[0].name=regcred
 
 uninstall_keda:
 	helm uninstall keda --namespace keda && \
@@ -196,7 +213,13 @@ install_open_ebs:
 	helm repo add openebs https://openebs.github.io/openebs && \
 	helm repo update && \
 	helm upgrade --install openebs --namespace openebs openebs/openebs --create-namespace \
-		--set imagePullSecrets[0].name=regcred # TODO: to specify version
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
+		--set imagePullSecrets[0].name=regcred
 
 uninstall_open_ebs:
 	helm uninstall openebs --namespace openebs && \
@@ -225,21 +248,34 @@ install_ado_agents:
 	read -p "Enter Azure DevOps agent name: " AGENT_NAME && \
 	echo "Using Azure DevOps agent name: $$AGENT_NAME" && \
 	helm upgrade --install ado-agent ../../Azure_DevOps/personal-project/helm/ado-agent/ -n devops-ado --create-namespace \
+		-f ../../Azure_DevOps/personal-project/helm/ado-agent/values.yaml \
 		--version 1.0.0 \
 		--atomic \
 		--cleanup-on-fail \
 		--timeout 5m0s \
-		-f ../../Azure_DevOps/personal-project/helm/ado-agent/values.yaml \
-		-o yaml \
 		--debug \
+		-o yaml \
 		--set env.secrets.ADO_URL="$$ADO_URL" \
 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
 		--set env.secrets.ADO_POOL="$$ADO_POOL" \
 		--set env.secrets.AGENT_NAME="$$AGENT_NAME" \
-		--set image.tag="1.4.0"
-# 	helm repo add openebs https://openebs.github.io/openebs && \
+		--set image.tag="1.4.0" \
+		--set imagePullSecrets[0].name=regcred
+# 	helm repo add ado-agent https://<url> && \
 # 	helm repo update &&
-# 	helm upgrade --install ado-agents --namespace devops-ado openebs/openebs --create-namespace # TODO: to specify version
+# 	helm upgrade --install ado-agent --namespace devops-ado ado-agent --create-namespace \
+# 		--version 1.0.0 \ # TODO: to specify version
+# 		--atomic \
+# 		--cleanup-on-fail \
+# 		--timeout 10m0s \
+# 		--debug \
+# 		-o yaml \
+# 		--set env.secrets.ADO_URL="$$ADO_URL" \
+# 		--set env.secrets.ADO_TOKEN="$$ADO_TOKEN" \
+# 		--set env.secrets.ADO_POOL="$$ADO_POOL" \
+# 		--set env.secrets.AGENT_NAME="$$AGENT_NAME" \
+# 		--set image.tag="1.4.0" \
+# 		--set imagePullSecrets[0].name=regcred
 
 uninstall_ado_agents:
 	helm uninstall ado-agent --namespace devops-ado && \
@@ -270,11 +306,23 @@ install_gh_runners:
 	helm repo add actions-runner-controller https://actions-runner-controller.github.io/actions-runner-controller && \
 	helm repo update && \
 	helm upgrade --install arc --namespace arc-systems --create-namespace \
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
 		--set authSecret.create=true \
 		--set authSecret.github_token=$$TOKEN \
 		--set imagePullSecrets[0].name=regcred \
 		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller && \
 	helm upgrade --install $$RELEASE_NAME --namespace devops-gh --create-namespace \
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
 		--set githubConfigUrl=$$URL \
 		--set githubConfigSecret.github_token=$$TOKEN \
 		--set runnerGroup="$$RUNNER_GRP" \
@@ -284,7 +332,7 @@ install_gh_runners:
 		--set containerMode.kubernetesModeWorkVolumeClaim.accessModes[0]=ReadWriteOnce \
 		--set containerMode.kubernetesModeWorkVolumeClaim.storageClassName="openebs-hostpath" \
 		--set containerMode.kubernetesModeWorkVolumeClaim.resources.requests.storage=1Gi \
-		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set # TODO: to specify version
+		oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 
 uninstall_gh_runners:
 	@read -p "Enter release name: " RELEASE_NAME && \
@@ -300,15 +348,55 @@ install_gl_runners:
 	helm repo add gitlab https://charts.gitlab.io && \
 	helm repo update && \
 	helm upgrade --install gitlab-runner gitlab/gitlab-runner --namespace devops-gl --create-namespace \
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
 		--set gitlabUrl="https://gitlab.com/" \
 		--set runnerRegistrationToken=$$REGISTRATION_TOKEN \
 		--set unregisterRunners=true \
 		--set rbac.create=true \
-		--set serviceAccount.create=true # TODO: to specify version
+		--set serviceAccount.create=true
 
 uninstall_gl_runners:
 	helm uninstall gitlab-runner --namespace devops-gl && \
 	kubectl delete ns devops-gl
+
+install_argo:
+	@read -p "Enter Docker Hub username: " USERNAME && \
+	echo "Using Docker Hub username: $$USERNAME" && \
+	read -p "Enter Docker Hub password: " PASSWORD && \
+	echo "Using Docker Hub password: $$PASSWORD" && \
+	read -p "Enter Docker Hub email: " EMAIL && \
+	echo "Using Docker Hub email: $$EMAIL" && \
+	kubectl create ns argo && \
+	kubectl --namespace argo create secret docker-registry regcred \
+		--docker-server=https://index.docker.io/v1/ \
+		--docker-username=$$USERNAME \
+		--docker-password=$$PASSWORD \
+		--docker-email=$$EMAIL && \
+	echo -e "\n" && \
+	helm repo add argo https://charts.argo.io && \
+	helm repo update && \
+	helm upgrade --install argo argo/argo --namespace argo --create-namespace \
+# 		--version 1.0.0 \ # TODO: to specify version
+		--atomic \
+		--cleanup-on-fail \
+		--timeout 10m0s \
+		--debug \
+		-o yaml \
+		--set imagePullSecrets[0].name=regcred \
+
+get_admin_password_argo:
+# 	kubectl exec --namespace argo -it svc/argo -c argo -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+
+port_forward_argo: get_admin_password_argo
+# 	kubectl --namespace argo port-forward svc/argo 8081:8080
+
+uninstall_argo:
+	helm uninstall argo --namespace argo
 
 
 
@@ -328,24 +416,6 @@ uninstall_gl_runners:
 
 # uninstall_hashicorp_vault:
 # 	helm uninstall vault --namespace vault
-
-
-
-# install_argo:
-# 	helm repo add jenkins https://charts.jenkins.io && \
-# 	helm repo update && \
-# 	helm upgrade --install jenkins jenkins/jenkins \
-# 	--create-namespace --namespace jenkins \
-# 	--timeout 600s
-
-# get_admin_password_argo:
-# 	kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
-
-# port_forward_argo: get_admin_password_jenkins
-# 	kubectl --namespace jenkins port-forward svc/jenkins 8081:8080
-
-# uninstall_argo:
-# 	helm uninstall argo --namespace argo
 
 
 
