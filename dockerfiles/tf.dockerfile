@@ -7,6 +7,10 @@ RUN apk update \
        bash \
        curl \
        git \
+    # Install AWS CLI
+    # TODO: to install AWS CLI
+    # Install Azure CLI
+    # TODO: to install Azure CLI
     # Install Terraform
     && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
