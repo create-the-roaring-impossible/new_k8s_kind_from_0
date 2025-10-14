@@ -37,16 +37,16 @@ RUN apk update \
     && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
     && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
-    # Install AWS CLI
+    # Prepare Python env
     && python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
-    && pip3 install --upgrade pip3 \
-    && pip3 install awscli --upgrade \
+    && pip install --upgrade pip \
+    # Install AWS CLI
+    && pip install awscli --upgrade \
     && echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc \
     && source ~/.bashrc \
     && aws --version \
     # Install Azure CLI
-    && pip install --upgrade pip \
     && pip install --no-cache-dir azure-cli \
     && deactivate \
     && apk del \
