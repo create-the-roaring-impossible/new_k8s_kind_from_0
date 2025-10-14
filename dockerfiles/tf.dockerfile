@@ -30,9 +30,20 @@ RUN apk update \
     && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
     && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
     # Install AWS CLI
-    # TODO: to install AWS CLI
+    && apk --no-cache add --update --virtual .aws-cli --no-cache python3 py3-pip \
+    && pip3 install awscli \
+    && apk del .aws-cli \
     # Install Azure CLI
-    # TODO: to install Azure CLI
+    && apk --no-cache add --update --virtual .azure-cli --no-cache \
+      bash-completion \
+      libffi \
+      libssl1.1 \
+      python3 \
+      py3-cryptography \
+      py3-openssl \
+      py3-pip \
+      py3-setuptools \
+      py3-wheel \
     # Install Terraform
     && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
