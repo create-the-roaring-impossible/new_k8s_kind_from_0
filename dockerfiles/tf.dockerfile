@@ -40,23 +40,23 @@ RUN curl --proto "=https" --tlsv1.2 -sSf -L https://github.com/PowerShell/PowerS
     # Activate Python env
 RUN python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
-    && pip install --upgrade pip
+    && pip install --upgrade pip \
     # Install AWS CLI
-# RUN pip install awscli --upgrade
-#     # Install Azure CLI
-# RUN pip install --no-cache-dir azure-cli
-#     # Deactivate Python env
-# RUN /opt/venv/bin/deactivate \
-#     && apk del \
-#        cargo \
-#        gcc \
-#        libffi-dev \
-#        make \
-#        musl-dev \
-#        python3-dev \
-#        openssl-dev \
-#     && rm -rf /var/cache/apk/* \
-#     # Install Terraform
+    && pip install awscli --upgrade \
+    # Install Azure CLI
+    && pip install --no-cache-dir azure-cli \
+    # Deactivate Python env
+    && /opt/venv/bin/deactivate \
+    && apk del \
+       cargo \
+       gcc \
+       libffi-dev \
+       make \
+       musl-dev \
+       python3-dev \
+       openssl-dev \
+    && rm -rf /var/cache/apk/*
+    # Install Terraform
 #     && apk --no-cache add --update --virtual .deps --no-cache gnupg \
 #     && cd /tmp \
 #     && curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_linux_amd64.zip \
