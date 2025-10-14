@@ -38,6 +38,9 @@ RUN apk update \
     && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
     && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
     # Install AWS CLI
+    && python3 -m venv /opt/venv \
+    && . /opt/venv/bin/activate \
+    && pip3 install --upgrade pip3 \
     && pip3 install awscli --upgrade \
     && echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc \
     && source ~/.bashrc \
