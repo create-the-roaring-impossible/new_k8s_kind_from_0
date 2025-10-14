@@ -79,9 +79,9 @@ RUN addgroup tfsvc_grp \
     && mkdir -p /etc/sudoers.d \
     && echo "tfsvc_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tfsvc_usr
 
-# ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH"
 
-# USER tfsvc_usr
+USER tfsvc_usr
 
-# RUN aws --version
-# RUN az --version
+RUN aws --version
+RUN az --version
