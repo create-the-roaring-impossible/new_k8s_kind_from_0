@@ -37,17 +37,15 @@ RUN apk update \
     && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
     && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
-    # Prepare Python env
+    # Activate Python env
     && python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
     && pip install --upgrade pip \
     # Install AWS CLI
     && pip install awscli --upgrade \
-    && echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc \
-    && source ~/.bashrc \
-    && aws --version \
     # Install Azure CLI
     && pip install --no-cache-dir azure-cli \
+    # Deactivate Python env
     && deactivate \
     && apk del \
        cargo \
@@ -58,7 +56,6 @@ RUN apk update \
        python3-dev \
        openssl-dev \
     && rm -rf /var/cache/apk/* \
-    && az --version \
     # Install Terraform
     && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
