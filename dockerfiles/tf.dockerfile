@@ -32,7 +32,7 @@ RUN apk update \
        userspace-rcu \
        zlib \
     # Install PowerShell
-    && curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.5.3/powershell-7.5.3-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz \
+    && curl --proto "=https" --tlsv1.2 -sSf -L https://github.com/PowerShell/PowerShell/releases/download/v7.5.3/powershell-7.5.3-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz \
     && sudo mkdir -p /opt/microsoft/powershell/7 \
     && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
