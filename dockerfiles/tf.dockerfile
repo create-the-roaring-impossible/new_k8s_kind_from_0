@@ -82,6 +82,3 @@ RUN addgroup tfsvc_grp \
 ENV PATH="/opt/venv/bin:$PATH"
 
 USER tfsvc_usr
-
-RUN aws --version
-RUN az --version
