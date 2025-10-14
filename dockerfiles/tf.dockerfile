@@ -46,8 +46,6 @@ RUN apk update \
     && source ~/.bashrc \
     && aws --version \
     # Install Azure CLI
-    && python3 -m venv /opt/venv \
-    && . /opt/venv/bin/activate \
     && pip install --upgrade pip \
     && pip install --no-cache-dir azure-cli \
     && deactivate \
