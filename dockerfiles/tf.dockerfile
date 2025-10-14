@@ -30,15 +30,15 @@ RUN apk update \
        sudo \
        tzdata \
        userspace-rcu \
-       zlib
+       zlib \
     # Install PowerShell
-RUN curl --proto "=https" --tlsv1.2 -sSf -L https://github.com/PowerShell/PowerShell/releases/download/v7.5.3/powershell-7.5.3-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz \
+    && curl --proto "=https" --tlsv1.2 -sSf -L https://github.com/PowerShell/PowerShell/releases/download/v7.5.3/powershell-7.5.3-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz \
     && sudo mkdir -p /opt/microsoft/powershell/7 \
     && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
-    && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+    && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
     # Activate Python env
-RUN python3 -m venv /opt/venv \
+    && python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
     && pip install --upgrade pip \
     # Install AWS CLI
@@ -55,9 +55,9 @@ RUN python3 -m venv /opt/venv \
        musl-dev \
        python3-dev \
        openssl-dev \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
     # Install Terraform
-RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
+    && apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && cd /tmp \
     && curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_linux_amd64.zip \
     && curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/1.13.1/terraform_1.13.1_SHA256SUMS \
@@ -67,14 +67,14 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg \
     && grep terraform_1.13.1_linux_amd64.zip terraform_1.13.1_SHA256SUMS | sha256sum -c \
     && unzip /tmp/terraform_1.13.1_linux_amd64.zip -d /tmp \
     && mv /tmp/terraform /usr/local/bin/terraform \
-    && rm -f /tmp/terraform_1.13.1_linux_amd64.zip terraform_1.13.1_SHA256SUMS terraform_1.13.1_SHA256SUMS.sig
+    && rm -f /tmp/terraform_1.13.1_linux_amd64.zip terraform_1.13.1_SHA256SUMS terraform_1.13.1_SHA256SUMS.sig \
     # Install tfsec
-RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.13/tfsec-linux-amd64 \
+    && wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.13/tfsec-linux-amd64 \
     && chmod +x /usr/local/bin/tfsec \
     && apk del .deps \
-    && apk cache clean
+    && apk cache clean \
     # Add user "tfsvc_usr" and give sudo permissions
-RUN addgroup tfsvc_grp \
+    && addgroup tfsvc_grp \
     && adduser -D -G tfsvc_grp tfsvc_usr \
     && mkdir -p /etc/sudoers.d \
     && echo "tfsvc_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tfsvc_usr
