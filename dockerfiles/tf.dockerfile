@@ -46,7 +46,7 @@ RUN apk update \
     # Install Azure CLI
     && pip install --no-cache-dir azure-cli \
     # Deactivate Python env
-    && deactivate \
+    && /opt/venv/bin/deactivate \
     && apk del \
        cargo \
        gcc \
@@ -82,6 +82,3 @@ RUN apk update \
 ENV PATH="/opt/venv/bin:$PATH"
 
 USER tfsvc_usr
-
-RUN aws --version
-RUN az --version
