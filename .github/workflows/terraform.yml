@@ -1,0 +1,53 @@
+# trigger:
+#   branches:
+#     include:
+#       - main
+
+# pr:
+#   branches:
+#     include:
+#       - main
+#   drafts: false
+
+# pool:
+#   name: 'Docker' # TODO: to use the correct pool
+
+# resources:
+#   containers:
+#     - container: SonarCli
+#       image: sennar19/sonar_cli:latest
+#       trigger: none
+#       localImage: false
+#       endpoint: 'Docker Hub - sennar19'
+#       mapDockerSocket: false
+#       options: --user root
+
+# stages:
+#   - stage: SonarQubeCLIScan
+#     jobs:
+#       - job: SonarQubeCLIScan
+#         container: SonarCli
+#         steps:
+#           - checkout: self
+#             persistCredentials: true
+#             fetchDepth: 0
+#             displayName: 'Repository Checkout'
+#           - task: SonarCloudPrepare@3
+#             inputs:
+#               SonarQube: 'SonarQube Cloud - personal-project'
+#               organization: 'sennar19'
+#               scannerMode: 'cli'
+#               configMode: 'file'
+#               configFile: 'sonar-project.properties'
+#             displayName: 'SonarCloud Prepare'
+#           - task: SonarCloudAnalyze@3
+#             inputs:
+#               jdkversion: 'JAVA_HOME_21_X64'
+#             displayName: 'SonarCloud Analyze'
+#           - task: SonarCloudPublish@3
+#             inputs:
+#               pollingTimeoutSec: '300'
+#               debugMode: false
+#             displayName: 'SonarCloud Publish'
+#         displayName: 'SonarQube CLI Scan'
+#     displayName: 'SonarQube CLI Scan'
