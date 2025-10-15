@@ -47,7 +47,7 @@ Set-Location -Path "$Path\$Env"
 # Run terraform init, with -backend-config options
 Write-Output "############################## Initializing Terraform ##############################"
 # TODO: to fix "<TO_SET>" values
-terraform init -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate"
+terraform init -input=false -no-color -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate"
 if ($LASTEXITCODE -ne 0) {
   Write-Output "ERROR: Terraform Initializing failed."
   exit 1
@@ -62,7 +62,7 @@ Write-Output "##################################################################
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
-terraform validate
+terraform validate -no-color
 if ($LASTEXITCODE -ne 0) {
   Write-Output "ERROR: Terraform Validating failed."
   exit 1
@@ -86,15 +86,15 @@ switch ($Action) {
     # Run terraform plan, and output to plan.output
     # TODO: to investigate if to add "-detailed-exitcode" flag
     if ($Targets -eq 'default_value') {
-      terraform plan -input=false -out='plan.output'
+      terraform plan -input=false -no-color -out='plan.output'
     } else {
-      terraform plan -input=false $Targets -out="plan.output"
+      terraform plan -input=false -no-color $Targets -out="plan.output"
     }
   }
   'apply' {
     Write-Output "############################## Applying Terraform changes ##############################"
     # Run terraform apply
-    terraform apply -input=false -auto-approve 'plan.output'
+    terraform apply -input=false -no-color -auto-approve 'plan.output'
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
@@ -103,7 +103,7 @@ switch ($Action) {
     # Replace all spaces in $Id with empty string
     $Id = $Id -replace ' ', ''
     # Run terraform import
-    terraform import -input=false $Address $Id
+    terraform import -input=false -no-color $Address $Id
   }
   'remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
