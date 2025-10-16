@@ -11,7 +11,7 @@ jobs:
     name: Terraform
     runs-on: 'arc-desktop-s8glse7'
     container:
-      image: sennar19/sonar_cli:latest ######################################################################################################################################################
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
     #   credentials:
     #     username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
     #     password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
