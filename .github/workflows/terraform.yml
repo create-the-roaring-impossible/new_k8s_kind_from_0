@@ -10,7 +10,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      options: --user root
+    #   options: --user root
     steps:
       - name: TEST
         run: |
