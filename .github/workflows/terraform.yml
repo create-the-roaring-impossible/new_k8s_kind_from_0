@@ -1,53 +1,28 @@
-# trigger:
-#   branches:
-#     include:
-#       - main
-
-# pr:
-#   branches:
-#     include:
-#       - main
-#   drafts: false
-
-# pool:
-#   name: 'Docker' # TODO: to use the correct pool
-
-# resources:
-#   containers:
-#     - container: SonarCli
-#       image: sennar19/sonar_cli:latest
-#       trigger: none
-#       localImage: false
-#       endpoint: 'Docker Hub - sennar19'
-#       mapDockerSocket: false
-#       options: --user root
-
-# stages:
-#   - stage: SonarQubeCLIScan
-#     jobs:
-#       - job: SonarQubeCLIScan
-#         container: SonarCli
-#         steps:
-#           - checkout: self
-#             persistCredentials: true
-#             fetchDepth: 0
-#             displayName: 'Repository Checkout'
-#           - task: SonarCloudPrepare@3
-#             inputs:
-#               SonarQube: 'SonarQube Cloud - personal-project'
-#               organization: 'sennar19'
-#               scannerMode: 'cli'
-#               configMode: 'file'
-#               configFile: 'sonar-project.properties'
-#             displayName: 'SonarCloud Prepare'
-#           - task: SonarCloudAnalyze@3
-#             inputs:
-#               jdkversion: 'JAVA_HOME_21_X64'
-#             displayName: 'SonarCloud Analyze'
-#           - task: SonarCloudPublish@3
-#             inputs:
-#               pollingTimeoutSec: '300'
-#               debugMode: false
-#             displayName: 'SonarCloud Publish'
-#         displayName: 'SonarQube CLI Scan'
-#     displayName: 'SonarQube CLI Scan'
+name: 'Terraform CI\CD'
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: 'arc-desktop-s8glse7'
+    container:
+      image: sennar19/sonar_cli:latest ######################################################################################################################################################
+    #   credentials:
+    #     username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
+    #     password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
+      options: --user root
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_USER_HOME: "${{ github.workspace }}/.sonar"
+        run: |
+          sonar-scanner -Dsonar.token=$SONAR_TOKEN -Dsonar.qualitygate.wait=true
