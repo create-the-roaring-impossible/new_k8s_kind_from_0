@@ -15,14 +15,14 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-    #   options: --user 0 # root
+      options: --user 0 # root
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v4
         with:
-          clean: false
-          set-safe-directory: false
           fetch-depth: 0
+        #   clean: false
+        #   set-safe-directory: false
       - name: Terraform Init
         run: |
           terraform --version
