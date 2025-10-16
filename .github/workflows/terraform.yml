@@ -6,7 +6,7 @@ jobs:
     name: Terraform
     runs-on: 'arc-desktop-s8glse7'
     container:
-      image: ghcr.io/create-the-roaring-impossible/tf:1.2.1
+      image: ghcr.io/create-the-roaring-impossible/tf:1.2.1-97
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
