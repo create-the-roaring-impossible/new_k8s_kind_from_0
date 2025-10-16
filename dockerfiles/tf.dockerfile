@@ -73,12 +73,12 @@ RUN apk update \
     && chmod +x /usr/local/bin/tfsec \
     && apk del .deps \
     && apk cache clean \
-    # Add user "tfsvc_usr" and give sudo permissions
-    && addgroup tfsvc_grp \
-    && adduser -D -G tfsvc_grp tfsvc_usr \
+    # Add user "tf_usr" and give sudo permissions
+    && addgroup tf_grp \
+    && adduser -D -u 1001 -G tf_grp tf_usr \
     && mkdir -p /etc/sudoers.d \
-    && echo "tfsvc_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tfsvc_usr
+    && echo "tf_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tf_usr
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-USER tfsvc_usr
+USER tf_usr
