@@ -17,13 +17,13 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
       options: --user 1001
     steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-        #   clean: false
-        #   set-safe-directory: false
       - name: Terraform Init
         run: |
           terraform --version
           ls -larth
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+        #   clean: false
+        #   set-safe-directory: false
