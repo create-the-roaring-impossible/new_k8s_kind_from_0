@@ -20,7 +20,7 @@ jobs:
       - name: Terraform Init
         run: |
           terraform --version
-          ls -larth
+          ls -larth /__w/_temp/_runner_file_commands/
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
         with:
