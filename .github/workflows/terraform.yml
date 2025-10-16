@@ -17,9 +17,12 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
       options: --user 1001
     steps:
-      - name: Terraform Init
+      - name: TEST
         run: |
-          terraform --version
+          ls -larth /__w/
+          ls -larth /__w/_temp/
+          ls -larth /__w/_temp/_runner_file_commands/
+          chmod 777 /__w/_temp/_runner_file_commands/
           ls -larth /__w/
           ls -larth /__w/_temp/
           ls -larth /__w/_temp/_runner_file_commands/
@@ -29,3 +32,9 @@ jobs:
           fetch-depth: 0
         #   clean: false
         #   set-safe-directory: false
+      - name: Terraform Init
+        run: |
+          terraform --version
+          ls -larth /__w/
+          ls -larth /__w/_temp/
+          ls -larth /__w/_temp/_runner_file_commands/
