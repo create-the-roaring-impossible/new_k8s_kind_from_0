@@ -1,11 +1,6 @@
 name: 'Terraform CI\CD'
 on:
   workflow_dispatch:
-#   push:
-#     branches:
-#       - master
-#   pull_request:
-#     types: [opened, synchronize, reopened]
 jobs:
   terraform:
     name: Terraform
@@ -15,7 +10,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      options: --user 1001
+      options: --user root
     steps:
       - name: TEST
         run: |
@@ -23,6 +18,7 @@ jobs:
           ls -larth /__w/_temp/
           ls -larth /__w/_temp/_runner_file_commands/
           sudo chmod 777 /__w/_temp/_runner_file_commands/
+          sudo chown root:root /__w/_temp/_runner_file_commands/
           ls -larth /__w/
           ls -larth /__w/_temp/
           ls -larth /__w/_temp/_runner_file_commands/
@@ -30,8 +26,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-        #   clean: false
-        #   set-safe-directory: false
       - name: Terraform Init
         run: |
           terraform --version
