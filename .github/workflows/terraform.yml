@@ -1,0 +1,29 @@
+name: 'Terraform CI\CD'
+on:
+  workflow_dispatch:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: 'arc-desktop-s8glse7'
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+    #   credentials:
+    #     username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
+    #     password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
+    #   options: --user root
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Terraform Init
+        # env:
+        #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        #   SONAR_USER_HOME: "${{ github.workspace }}/.sonar"
+        run: |
+          terraform --version
