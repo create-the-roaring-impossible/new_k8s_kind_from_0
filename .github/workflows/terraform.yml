@@ -15,13 +15,9 @@ jobs:
       - name: TEST
         run: |
           ls -larth /__w/
-          ls -larth /__w/_temp/
-          ls -larth /__w/_temp/_runner_file_commands/
-          sudo chmod 777 /__w/_temp/_runner_file_commands/
-          sudo chown root:root /__w/_temp/_runner_file_commands/
+          sudo chmod 777 /__w/
+          sudo chown root:root /__w/
           ls -larth /__w/
-          ls -larth /__w/_temp/
-          ls -larth /__w/_temp/_runner_file_commands/
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
         with:
