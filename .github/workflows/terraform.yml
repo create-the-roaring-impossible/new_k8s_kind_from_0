@@ -24,3 +24,4 @@ jobs:
       - name: Terraform Init
         run: |
           terraform --version
+          ls -larth
