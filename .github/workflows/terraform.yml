@@ -12,12 +12,6 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
     #   options: --user root
     steps:
-      - name: TEST
-        run: |
-          ls -larth /__w/
-          # sudo chmod 777 /__w/
-          # sudo chown root:root /__w/
-          ls -larth /__w/
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
         with:
@@ -25,3 +19,4 @@ jobs:
       - name: Terraform Init
         run: |
           terraform --version
+          ls -larth
