@@ -57,14 +57,14 @@ RUN curl --proto "=https" --tlsv1.2 -sSf -L \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
     sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && \
-# Activate Python env
+# Activate Python env and upgrade PIP
     python3 -m venv /opt/venv && \
     . /opt/venv/bin/activate && \
-    pip install --upgrade pip && \
+    pip install --upgrade --no-cache-dir pip && \
 # Install AWS CLI
-    pip install awscli --upgrade && \
+    pip install --upgrade --no-cache-dir awscli && \
 # Install Azure CLI
-    pip install --no-cache-dir azure-cli && \
+    pip install  --upgrade --no-cache-dir azure-cli && \
 # Install Terraform
 ARG TF_VERSION=1.13.4
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
@@ -87,7 +87,7 @@ RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases
     rm -f /tmp/tfsec_checksums.txt && \
 # Deactivate Python env
     deactivate && \
-    apk del \
+    apk del .deps \
         cargo \
         gcc \
         libffi-dev \
@@ -95,7 +95,6 @@ RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases
         musl-dev \
         openssl-dev \
         python3-dev && \
-    apk del .deps && \
     apk cache clean && \
     rm -rf /var/cache/apk/* /tmp/* /root/.cache
 
