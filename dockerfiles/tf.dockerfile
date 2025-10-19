@@ -64,7 +64,9 @@ RUN curl --proto "=https" --tlsv1.2 -sSf -L \
 # Install AWS CLI
     pip install --upgrade --no-cache-dir awscli && \
 # Install Azure CLI
-    pip install  --upgrade --no-cache-dir azure-cli
+    pip install  --upgrade --no-cache-dir azure-cli && \
+# Deactivate Python env
+    deactivate
 # Install Terraform
 ARG TF_VERSION=1.13.4
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
@@ -82,8 +84,6 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
 ARG TFSEC_VERSION=1.28.13
 RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 && \
     chmod +x /usr/local/bin/tfsec && \
-# Deactivate Python env
-    deactivate && \
     apk del .deps \
         cargo \
         gcc \
