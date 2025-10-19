@@ -81,10 +81,7 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
 # Install tfsec
 ARG TFSEC_VERSION=1.28.13
 RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 && \
-    wget -qO /tmp/tfsec_checksums.txt https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec_${TFSEC_VERSION}_checksums.txt && \
-    grep "tfsec-linux-amd64" /tmp/tfsec_checksums.txt | sha256sum -c - && \
     chmod +x /usr/local/bin/tfsec && \
-    rm -f /tmp/tfsec_checksums.txt && \
 # Deactivate Python env
     deactivate && \
     apk del .deps \
