@@ -50,10 +50,11 @@ FROM base AS tools
 
 # Install PowerShell
 ARG POWERSHELL_VERSION=7.5.3
-RUN curl --proto "=https" --tlsv1.2 -sSf -L \
-      https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz \
-      -o /tmp/powershell.tar.gz && \
-    sudo mkdir -p /opt/microsoft/powershell/7 && \
+ADD https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz /tmp/powershell.tar.gz
+# RUN curl --proto "=https" --tlsv1.2 -sSf -L \
+#       https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz \
+#       -o /tmp/powershell.tar.gz && \
+RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
     sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && \
