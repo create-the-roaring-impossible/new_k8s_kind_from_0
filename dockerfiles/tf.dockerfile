@@ -73,13 +73,44 @@ RUN apk update \
     && wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.13/tfsec-linux-amd64 \
     && chmod +x /usr/local/bin/tfsec \
     && apk del .deps \
-    && apk cache clean \
-    # Add user "tf_usr" and give sudo permissions
-    && addgroup tf_grp \
-    && adduser -D -u 1001 -G tf_grp tf_usr \
-    && mkdir -p /etc/sudoers.d \
-    && echo "tf_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tf_usr
+    && apk cache clean
 
 ENV PATH="/opt/venv/bin:$PATH"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Add user "tf_usr" and give sudo permissions
+RUN addgroup tf_grp && \
+    adduser -D -u 1001 -G tf_grp tf_usr && \
+    mkdir -p /etc/sudoers.d && \
+    echo "tf_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tf_usr
 
 USER tf_usr
