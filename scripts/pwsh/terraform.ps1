@@ -9,8 +9,8 @@
   Path: The path to the Terraform scripts. (Mandatopry)
   Env: The environment to use (e.g., local, dev, test, prod). (Mandatory)
   Scope: The scope to use (e.g., 'desktop-s8glse7'). (Mandatory)
-  Action: The action to perform (e.g., init, plan, apply, import, remove, move, list). (Mandatory)
-  LogLevel: The log level to use (e.g., TRACE, DEBUG, INFO, WARN, ERROR). (Optional)
+  Action: The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
+  LogLevel: The log level to use (e.g., INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
   Targets: The targets to use for the plan action. (Optional)
   Address: The address of the resource to import, remove or move. (Optional)
   Id: The ID of the resource to import. (Optional)
@@ -57,7 +57,15 @@ param (
 # Change directory to $Path\$Env
 Set-Location -Path "$Path\$Env"
 
-Set-Variable TF_LOG=TRACE # TODO: to set dinamically
+# Set TF_LOG environment variable, default to INFO if LogLevel is not provided
+if ([string]::IsNullOrWhiteSpace($LogLevel)) {
+  $env:TF_LOG = 'INFO'
+} else {
+  $env:TF_LOG = $LogLevel
+}
+
+# Set TF_LOG_PATH environment variable
+Set-Variable TF_LOG_PATH="$Path\$Env\terraform.log"
 
 # # Run terraform init, with -backend-config options
 # Write-Output "############################## Initializing Terraform ##############################"
