@@ -7,9 +7,9 @@
 
 .PARAMETER [ParameterName]
   Path: The path to the Terraform scripts. (Mandatopry)
-  Env: The environment to use (e.g., dev, prod). (Mandatory)
-  Scope: The scope to use (e.g., project name). (Mandatory)
-  Action: The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
+  Env: The environment to use (e.g., local, dev, test, prod). (Mandatory)
+  Scope: The scope to use (e.g., 'desktop-s8glse7'). (Mandatory)
+  Action: The action to perform (e.g., init, plan, apply, import, remove, move, list). (Mandatory)
   LogLevel: The log level to use (e.g., TRACE, DEBUG, INFO, WARN, ERROR). (Optional)
   Targets: The targets to use for the plan action. (Optional)
   Address: The address of the resource to import, remove or move. (Optional)

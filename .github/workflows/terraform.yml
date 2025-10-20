@@ -9,6 +9,26 @@ on:
         default: 'local'
         options:
           - 'local'
+      scope:
+        description: 'Set the scope'
+        type: choice
+        required: true
+        default: 'desktop-s8glse7'
+        options:
+          - 'desktop-s8glse7'
+      action:
+        description: 'Set the action to do'
+        type: choice
+        required: true
+        default: 'nothing'
+        options:
+          - 'nothing'
+          - 'plan'
+          - 'apply'
+          - 'import'
+          - 'remove'
+          - 'move'
+          - 'list'
       # tag:
       #   description: 'Set the tag to build'
       #   type: string
@@ -35,4 +55,4 @@ jobs:
           fetch-depth: 0
       - name: Terraform Init
         run: |
-          pwsh scripts/pwsh/terraform.ps1 'terraform/desktop-s8glse7' '${{ github.event.inputs.env }}'
+          pwsh scripts/pwsh/terraform.ps1 'terraform/${{ github.event.inputs.scope }}' '${{ github.event.inputs.env }}' '${{ github.event.inputs.scope }}' '${{ github.event.inputs.action }}'
