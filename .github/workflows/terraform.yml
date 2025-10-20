@@ -35,4 +35,4 @@ jobs:
           fetch-depth: 0
       - name: Terraform Init
         run: |
-          pwsh scripts/pwsh/terraform.ps1 terraform/desktop-s8glse7/${{ github.event.inputs.env }}
+          pwsh scripts/pwsh/terraform.ps1 'terraform/desktop-s8glse7' '${{ github.event.inputs.env }}'
