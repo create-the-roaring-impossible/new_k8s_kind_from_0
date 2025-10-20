@@ -37,6 +37,4 @@ jobs:
           fetch-depth: 0
       - name: Terraform Init
         run: |
-          terraform --version
-          ls -larth
-          ls -larth scripts/pwsh
+          pwsh scripts/pwsh/terraform.ps1
