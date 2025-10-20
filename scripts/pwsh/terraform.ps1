@@ -51,22 +51,22 @@ param (
   [string]$Destination
 )
 
-# Copy variables.tf from $Path to $Path\$Env
-Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
+# # Copy variables.tf from $Path to $Path\$Env
+# Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
 
 # Change directory to $Path\$Env
 Set-Location -Path "$Path\$Env"
 
 Set-Variable TF_LOG=TRACE # TODO: to set dinamically
 
-# Run terraform init, with -backend-config options
-Write-Output "############################## Initializing Terraform ##############################"
-# TODO: to fix "<TO_SET>" values
-terraform init -input=false -no-color -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate"
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Initializing failed."
-  exit 1
-}
+# # Run terraform init, with -backend-config options
+# Write-Output "############################## Initializing Terraform ##############################"
+# # TODO: to fix "<TO_SET>" values
+# terraform init -input=false -no-color -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate"
+# if ($LASTEXITCODE -ne 0) {
+#   Write-Output "ERROR: Terraform Initializing failed."
+#   exit 1
+# }
 
 # Get path and sub-paths
 Write-Output "##########################################################################################"
@@ -75,13 +75,13 @@ Write-Output "##################################################################
 Get-ChildItem ../
 Write-Output "##########################################################################################"
 
-# Run terraform validate
-Write-Output "############################## Validating Terraform scripts ##############################"
-terraform validate -no-color
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Validating failed."
-  exit 1
-}
+# # Run terraform validate
+# Write-Output "############################## Validating Terraform scripts ##############################"
+# terraform validate -no-color
+# if ($LASTEXITCODE -ne 0) {
+#   Write-Output "ERROR: Terraform Validating failed."
+#   exit 1
+# }
 
 switch ($Action) {
   'plan' {
@@ -149,5 +149,5 @@ switch ($Action) {
   }
 }
 
-# Delete variables.tf from $Path\$Env
-Remove-Item -Path "variables.tf" -Force
+# # Delete variables.tf from $Path\$Env
+# Remove-Item -Path "variables.tf" -Force
