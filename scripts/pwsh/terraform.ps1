@@ -1,18 +1,29 @@
 <#
 .SYNOPSIS
-  This script is used to run Terraform commands, such as init, plan, apply, import, remove, move, and list.
+  This script is used to run Terraform commands, such as init, plan, apply, import, remove, move and list.
 
 .DESCRIPTION
-  The script is used to run Terraform commands, such as init, plan, apply, import, remove, move, and list.
+  The script is used to run Terraform commands, such as init, plan, apply, import, remove, move and list.
+
+.PARAMETER [ParameterName]
+  Path: The path to the Terraform scripts. (Mandatopry)
+  Env: The environment to use (e.g., dev, prod). (Mandatory)
+  Scope: The scope to use (e.g., project name). (Mandatory)
+  Action: The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
+  LogLevel: The log level to use (e.g., TRACE, DEBUG, INFO, WARN, ERROR). (Optional)
+  Targets: The targets to use for the plan action. (Optional)
+  Address: The address of the resource to import, remove or move. (Optional)
+  Id: The ID of the resource to import. (Optional)
+  Source: The source address of the resource to move. (Optional)
+  Destination: The destination address of the resource to move. (Optional)
 
 .EXAMPLE
-  .\terraform.ps1 <path> <env> <scope> <action> -target=<something.something..>
-  This example runs the script, and runs the 'plan' action, with the specified targets.
-  # TODO: to add these inputs => "<address>" "<id>" "<source>" "<destination>"
+  .\terraform.ps1 <Path> <Env> <Scope> <Action> <LogLevel> -target=<Targets>
+  This example runs the 'plan' action, with the specified targets.
 
 .NOTES
   Authors: Matteo Cristiano
-  Date: 15/10/2025
+  Date: 20/10/2025
   Version: 1.0.0
 #>
 
@@ -26,6 +37,8 @@ param (
   [string]$Scope,
   [Parameter(Mandatory=$true)]
   [string]$Action,
+  [Parameter(Mandatory=$false)]
+  [string]$LogLevel,
   [Parameter(Mandatory=$false)]
   [string]$Targets,
   [Parameter(Mandatory=$false)]
@@ -43,6 +56,8 @@ Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
 
 # Change directory to $Path\$Env
 Set-Location -Path "$Path\$Env"
+
+Set-Variable TF_LOG=TRACE # TODO: to set dinamically
 
 # Run terraform init, with -backend-config options
 Write-Output "############################## Initializing Terraform ##############################"

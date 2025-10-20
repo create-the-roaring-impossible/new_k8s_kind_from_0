@@ -1,6 +1,26 @@
 name: 'Terraform CI\CD'
 on:
   workflow_dispatch:
+    inputs:
+      env:
+        description: 'Set the environment'
+        type: choice
+        required: true
+        default: 'dev'
+        options:
+          - 'dev'
+          - 'test'
+          - 'prod'
+      # tag:
+      #   description: 'Set the tag to build'
+      #   type: string
+      #   required: true
+      #   default: '1.0.0'
+      # isRC:
+      #   description: 'Is this a Release Candidate?'
+      #   type: boolean
+      #   required: true
+      #   default: true
 jobs:
   terraform:
     name: Terraform
@@ -19,3 +39,4 @@ jobs:
         run: |
           terraform --version
           ls -larth
+          ls -larth scripts/pwsh
