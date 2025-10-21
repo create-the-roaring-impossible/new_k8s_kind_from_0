@@ -26,9 +26,9 @@ on:
           - 'plan'
           - 'apply'
           - 'import'
-          - 'remove'
-          - 'move'
-          - 'list'
+          - 'state remove'
+          - 'state move'
+          - 'state list'
       logLevel:
         description: 'Set the log level (optional)'
         type: choice
@@ -43,6 +43,26 @@ on:
           - 'TRACE'
       targets:
         description: 'Set the targets (optional, comma-separated) [only for "plan" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
+        type: string
+        required: false
+        default: ''
+      address:
+        description: 'Set the address (optional) [only for "import", "remove" and "move" actions]. Example: aws_instance.web'
+        type: string
+        required: false
+        default: ''
+      id:
+        description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
+        type: string
+        required: false
+        default: ''
+      source:
+        description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
+        type: string
+        required: false
+        default: ''
+      destination:
+        description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
         type: string
         required: false
         default: ''

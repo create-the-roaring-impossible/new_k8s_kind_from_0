@@ -124,34 +124,34 @@ switch ($Action) {
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
-    # # Replace all spaces in $Address with empty string
-    # $Address = $Address -replace ' ', ''
-    # # Replace all spaces in $Id with empty string
-    # $Id = $Id -replace ' ', ''
-    # # Run terraform import
+    # Replace all spaces in $Address with empty string
+    $Address = $Address -replace ' ', ''
+    # Replace all spaces in $Id with empty string
+    $Id = $Id -replace ' ', ''
+    # Run terraform import
     # terraform import -input=false -no-color $Address $Id
   }
-  'remove' {
+  'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
-    # # Replace all spaces in $Address with empty string
-    # $Address = $Address -replace ' ', ''
-    # # Run terraform state rm
+    # Replace all spaces in $Address with empty string
+    $Address = $Address -replace ' ', ''
+    # Run terraform state rm
     # terraform state rm $Address
     # # TODO: to consider to set "-dry-run"
   }
-  'move' {
+  'state move' {
     Write-Output "############################## Moving a resource into Terraform State ##############################"
-    # # Replace all spaces in $Source with empty string
-    # $Source = $Source -replace ' ', ''
-    # # Replace all spaces in $Destination with empty string
-    # $Destination = $Destination -replace ' ', ''
-    # # Run terraform move
+    # Replace all spaces in $Source with empty string
+    $Source = $Source -replace ' ', ''
+    # Replace all spaces in $Destination with empty string
+    $Destination = $Destination -replace ' ', ''
+    # Run terraform move
     # terraform state mv $Source $Destination
     # # TODO: to consider to set "-dry-run"
   }
-  'list' {
+  'state list' {
     Write-Output "############################## Listing Terraform State ##############################"
-    # # Run terraform state list
+    # Run terraform state list
     # terraform state list
   }
   default {
