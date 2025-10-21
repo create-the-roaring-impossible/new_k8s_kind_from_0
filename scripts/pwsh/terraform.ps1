@@ -92,8 +92,8 @@ Write-Output "############################## Validating Terraform scripts ######
 switch ($Action) {
   'plan' {
     Write-Output "############################## Planning Terraform changes ##############################"
-    # Replace all spaces in $Targets with empty string
-    $Targets = $Targets -replace ' ', ''
+    # Trim $Targets
+    $Targets = $Targets.Trim()
     # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
@@ -124,27 +124,27 @@ switch ($Action) {
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
-    # Replace all spaces in $Address with empty string
-    $Address = $Address -replace ' ', ''
-    # Replace all spaces in $Id with empty string
-    $Id = $Id -replace ' ', ''
+    # Trim $Address
+    $Address = $Address.Trim()
+    # Trim $Id
+    $Id = $Id.Trim()
     # Run terraform import
     # terraform import -input=false -no-color $Address $Id
   }
   'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
-    # Replace all spaces in $Address with empty string
-    $Address = $Address -replace ' ', ''
+    # Trim $Address
+    $Address = $Address.Trim()
     # Run terraform state rm
     # terraform state rm $Address
     # # TODO: to consider to set "-dry-run"
   }
   'state move' {
     Write-Output "############################## Moving a resource into Terraform State ##############################"
-    # Replace all spaces in $Source with empty string
-    $Source = $Source -replace ' ', ''
-    # Replace all spaces in $Destination with empty string
-    $Destination = $Destination -replace ' ', ''
+    # Trim $Source
+    $Source = $Source.Trim()
+    # Trim $Destination
+    $Destination = $Destination.Trim()
     # Run terraform move
     # terraform state mv $Source $Destination
     # # TODO: to consider to set "-dry-run"
