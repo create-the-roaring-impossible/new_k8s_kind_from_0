@@ -42,7 +42,7 @@ on:
           - 'DEBUG'
           - 'TRACE'
       targets:
-        description: 'Set the targets (optional) [only if you use "plan" action]'
+        description: 'Set the targets (optional, comma-separated) [only for "plan" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
         type: string
         required: false
         default: ''

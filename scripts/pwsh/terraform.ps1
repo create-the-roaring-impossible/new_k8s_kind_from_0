@@ -23,7 +23,7 @@
 
 .NOTES
   Authors: Matteo Cristiano
-  Date: 20/10/2025
+  Date: 22/10/2025
   Version: 1.0.0
 #>
 
@@ -76,12 +76,10 @@ Write-Output "############################## Initializing Terraform ############
 #   exit 1
 # }
 
-# Get path and sub-paths
+# TEST
 Write-Output "##########################################################################################"
 Get-ChildItem
 Write-Output "##########################################################################################"
-# Get-ChildItem ../
-# Write-Output "##########################################################################################"
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
@@ -96,23 +94,27 @@ switch ($Action) {
     Write-Output "############################## Planning Terraform changes ##############################"
     # Replace all spaces in $Targets with empty string
     $Targets = $Targets -replace ' ', ''
-    # Define a regex pattern to match the -target flag
-    $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
-    # Check if $Targets matches $pattern, or is equal to 'default_value'
-    if ($Targets -match $pattern -or $Targets -eq '') {
-      Write-Output "The Targets parameter is valid."
-    } else {
-      Write-Output "ERROR: The Targets parameter is not valid. Check it: $Targets"
-      exit 1
-    }
-    # Run terraform plan, and output to plan.output
-    # TODO: to investigate if to add "-detailed-exitcode" flag
+    # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
       # terraform plan -input=false -no-color -out='plan.output'
     } else {
-      Write-Output "Plan with targets"
-      # terraform plan -input=false -no-color $Targets -out="plan.output"
+      # Split multiple targets by comma and validate each
+      $targetArray = $Targets -split ','
+      $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
+      $validTargets = @()
+      foreach ($target in $targetArray) {
+        $target = $target.Trim()
+        if ($target -match $pattern) {
+          $validTargets += $target
+        } else {
+          Write-Output "ERROR: Invalid target format: $target"
+          Write-Output "Expected format: -target=resource_type.resource_name[..]"
+          exit 1
+        }
+      }
+      Write-Output "Plan with targets: $($validTargets -join ' ')"
+      # terraform plan -input=false -no-color $validTargets -out="plan.output"
     }
   }
   'apply' {
