@@ -92,4 +92,8 @@ jobs:
                                           '${{ github.event.inputs.scope }}' \
                                           '${{ github.event.inputs.action }}' \
                                           '${{ github.event.inputs.logLevel }}' \
-                                          '${{ github.event.inputs.targets }}'
+                                          '${{ github.event.inputs.targets }}' \
+                                          '${{ github.event.inputs.address }}' \
+                                          '${{ github.event.inputs.id }}' \
+                                          '${{ github.event.inputs.source }}' \
+                                          '${{ github.event.inputs.destination }}'
