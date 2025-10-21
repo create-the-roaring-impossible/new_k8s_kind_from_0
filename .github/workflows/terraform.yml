@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Terraform Init
+      - name: Terraform
         run: |
           pwsh scripts/pwsh/terraform.ps1 'terraform/${{ github.event.inputs.scope }}' \
                                           '${{ github.event.inputs.env }}' \
