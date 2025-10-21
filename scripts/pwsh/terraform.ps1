@@ -97,8 +97,7 @@ switch ($Action) {
     # Replace all spaces in $Targets with empty string
     $Targets = $Targets -replace ' ', ''
     # Define a regex pattern to match the -target flag
-    # TODO: to fix "<TO_SET>" values
-    $pattern = '^-target=<TO_SET>[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+$'
+    $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+$'
     # Check if $Targets matches $pattern, or is equal to 'default_value'
     if ($Targets -match $pattern -or $Targets -eq 'default_value') {
       Write-Output "The Targets parameter is valid."
