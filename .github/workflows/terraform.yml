@@ -32,9 +32,10 @@ on:
       logLevel:
         description: 'Set the log level (optional)'
         type: choice
-        required: true
+        required: false
         default: ''
         options:
+          - ''
           - 'INFO'
           - 'WARN'
           - 'ERROR'
@@ -43,7 +44,7 @@ on:
       targets:
         description: 'Set the targets (optional)'
         type: string
-        required: true
+        required: false
         default: ''
       # isRC:
       #   description: 'Is this a Release Candidate?'
