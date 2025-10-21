@@ -7,10 +7,10 @@
 
 .PARAMETER [ParameterName]
   Path: The path to the Terraform scripts. (Mandatopry)
-  Env: The environment to use (e.g., local, dev, test, prod). (Mandatory)
+  Env: The environment to use (e.g., local). (Mandatory)
   Scope: The scope to use (e.g., 'desktop-s8glse7'). (Mandatory)
   Action: The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
-  LogLevel: The log level to use (e.g., INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
+  LogLevel: The log level to use (INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
   Targets: The targets to use for the plan action. (Optional)
   Address: The address of the resource to import, remove or move. (Optional)
   Id: The ID of the resource to import. (Optional)
@@ -59,7 +59,7 @@ Set-Location -Path "$Path\$Env"
 
 # Set TF_LOG environment variable, default to INFO if LogLevel is not provided
 if ([string]::IsNullOrWhiteSpace($LogLevel)) {
-  $env:TF_LOG = 'INFO'
+  $env:TF_LOG = 'ERROR'
 } else {
   $env:TF_LOG = $LogLevel
 }
