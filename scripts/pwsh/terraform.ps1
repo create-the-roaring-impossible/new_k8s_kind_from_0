@@ -92,8 +92,8 @@ Write-Output "############################## Validating Terraform scripts ######
 switch ($Action) {
   'plan' {
     Write-Output "############################## Planning Terraform changes ##############################"
-    # Trim $Targets
-    $Targets = $Targets.Trim()
+    # Trim and remove all whitespace from $Targets
+    $Targets = $Targets.Trim() -replace '\s+', ''
     # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
@@ -124,27 +124,27 @@ switch ($Action) {
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
-    # Trim $Address
-    $Address = $Address.Trim()
-    # Trim $Id
-    $Id = $Id.Trim()
+    # Trim and remove all whitespace from $Address
+    $Address = $Address.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $Id
+    $Id = $Id.Trim() -replace '\s+', ''
     # Run terraform import
     # terraform import -input=false -no-color $Address $Id
   }
   'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
-    # Trim $Address
-    $Address = $Address.Trim()
+    # Trim and remove all whitespace from $Address
+    $Address = $Address.Trim() -replace '\s+', ''
     # Run terraform state rm
     # terraform state rm $Address
     # # TODO: to consider to set "-dry-run"
   }
   'state move' {
     Write-Output "############################## Moving a resource into Terraform State ##############################"
-    # Trim $Source
-    $Source = $Source.Trim()
-    # Trim $Destination
-    $Destination = $Destination.Trim()
+    # Trim and remove all whitespace from $Source
+    $Source = $Source.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $Destination
+    $Destination = $Destination.Trim() -replace '\s+', ''
     # Run terraform move
     # terraform state mv $Source $Destination
     # # TODO: to consider to set "-dry-run"
