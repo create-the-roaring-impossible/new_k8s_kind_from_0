@@ -108,10 +108,10 @@ switch ($Action) {
     # Run terraform plan, and output to plan.output
     # TODO: to investigate if to add "-detailed-exitcode" flag
     if ($Targets -eq '') {
-      Write-Output "NO TARGETS"
+      Write-Output "Plan with NO targets"
       # terraform plan -input=false -no-color -out='plan.output'
     } else {
-      Write-Output "TARGETS"
+      Write-Output "Plan with targets"
       # terraform plan -input=false -no-color $Targets -out="plan.output"
     }
   }

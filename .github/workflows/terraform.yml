@@ -22,7 +22,7 @@ on:
         required: true
         default: 'plan'
         options:
-          - 'nothing'
+          - 'nothing (only for test purposes)'
           - 'plan'
           - 'apply'
           - 'import'
@@ -42,7 +42,7 @@ on:
           - 'DEBUG'
           - 'TRACE'
       targets:
-        description: 'Set the targets (optional)'
+        description: 'Set the targets (optional) [only if you use "plan" action]'
         type: string
         required: false
         default: ''
