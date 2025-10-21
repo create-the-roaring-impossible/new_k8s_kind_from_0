@@ -20,7 +20,7 @@ on:
         description: 'Set the action to do'
         type: choice
         required: true
-        default: 'nothing'
+        default: 'plan'
         options:
           - 'nothing'
           - 'plan'
@@ -33,9 +33,9 @@ on:
         description: 'Set the log level (optional)'
         type: choice
         required: false
-        default: ''
+        default: 'ERROR'
         options:
-          - ''
+          - 'NONE'
           - 'INFO'
           - 'WARN'
           - 'ERROR'
