@@ -99,7 +99,7 @@ switch ($Action) {
     # Define a regex pattern to match the -target flag
     $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+$'
     # Check if $Targets matches $pattern, or is equal to 'default_value'
-    if ($Targets -match $pattern -or $Targets -eq 'default_value') {
+    if ($Targets -match $pattern -or $Targets -eq '') {
       Write-Output "The Targets parameter is valid."
     } else {
       Write-Output "ERROR: The Targets parameter is not valid. Check it: $Targets"
@@ -107,9 +107,11 @@ switch ($Action) {
     }
     # Run terraform plan, and output to plan.output
     # TODO: to investigate if to add "-detailed-exitcode" flag
-    if ($Targets -eq 'default_value') {
+    if ($Targets -eq '') {
+      Write-Output "NO TARGETS"
       # terraform plan -input=false -no-color -out='plan.output'
     } else {
+      Write-Output "TARGETS"
       # terraform plan -input=false -no-color $Targets -out="plan.output"
     }
   }
