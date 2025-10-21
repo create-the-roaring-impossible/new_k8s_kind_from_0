@@ -30,21 +30,21 @@ on:
           - 'move'
           - 'list'
       logLevel:
-        description: 'Set the level log'
+        description: 'Set the log level (optional)'
         type: choice
         required: true
-        default: 'INFO'
+        default: ''
         options:
           - 'INFO'
           - 'WARN'
           - 'ERROR'
           - 'DEBUG'
           - 'TRACE'
-      # tag:
-      #   description: 'Set the tag to build'
-      #   type: string
-      #   required: true
-      #   default: '1.0.0'
+      targets:
+        description: 'Set the targets (optional)'
+        type: string
+        required: true
+        default: ''
       # isRC:
       #   description: 'Is this a Release Candidate?'
       #   type: boolean
@@ -66,4 +66,9 @@ jobs:
           fetch-depth: 0
       - name: Terraform Init
         run: |
-          pwsh scripts/pwsh/terraform.ps1 'terraform/${{ github.event.inputs.scope }}' '${{ github.event.inputs.env }}' '${{ github.event.inputs.scope }}' '${{ github.event.inputs.action }}' '${{ github.event.inputs.logLevel }}'
+          pwsh scripts/pwsh/terraform.ps1 'terraform/${{ github.event.inputs.scope }}' \
+                                          '${{ github.event.inputs.env }}' \
+                                          '${{ github.event.inputs.scope }}' \
+                                          '${{ github.event.inputs.action }}' \
+                                          '${{ github.event.inputs.logLevel }}' \
+                                          '${{ github.event.inputs.targets }}'
