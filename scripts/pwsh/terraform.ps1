@@ -93,7 +93,9 @@ switch ($Action) {
   'plan' {
     Write-Output "############################## Planning Terraform changes ##############################"
     # Trim and remove all whitespace from $Targets
+    Write-Output "$Targets"
     $Targets = $Targets.Trim() -replace '\s+', ''
+    Write-Output "$Targets"
     # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
