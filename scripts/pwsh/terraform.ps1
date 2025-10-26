@@ -75,14 +75,14 @@ Set-Variable TF_LOG_PATH="$Path\$Env\terraform.log"
 # Run terraform init, with -backend-config options
 Write-Output "############################## Initializing Terraform ##############################"
 $env:TF_STATE_NAME="${Scope}-${Env}"
-terraform init \
-  -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" \
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" \
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" \
-  -backend-config="username=${GITLAB_USER}" \
-  -backend-config="password=${GITLAB_TOKEN}" \
-  -backend-config="lock_method=POST" \
-  -backend-config="unlock_method=DELETE" \
+terraform init `
+  -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="username=${GITLAB_USER}" `
+  -backend-config="password=${GITLAB_TOKEN}" `
+  -backend-config="lock_method=POST" `
+  -backend-config="unlock_method=DELETE" `
   -backend-config="retry_wait_min=5"
 # if ($LASTEXITCODE -ne 0) {
 #   Write-Output "ERROR: Terraform Initializing failed."
@@ -91,7 +91,7 @@ terraform init \
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
-# terraform validate -no-color ######################################################################################################################################################
+terraform validate -no-color
 # if ($LASTEXITCODE -ne 0) {
 #   Write-Output "ERROR: Terraform Validating failed."
 #   exit 1
