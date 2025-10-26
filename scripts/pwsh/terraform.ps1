@@ -23,7 +23,7 @@
 
 .NOTES
   Authors: Matteo Cristiano
-  Date: 26/10/2025
+  Date: 27/10/2025
   Version: 1.0.0
 #>
 
@@ -168,5 +168,10 @@ switch ($Action) {
   }
 }
 
-# Delete variables.tf from $Path\$Env
+# Delete backend.tf and variables.tf from $Path\$Env
+Remove-Item -Path "backend.tf" -Force
 Remove-Item -Path "variables.tf" -Force
+
+# TEST
+Get-ChildItem
+Get-ChildItem -Path "$Path\$Env"
