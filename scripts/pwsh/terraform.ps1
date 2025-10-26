@@ -75,12 +75,9 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 # Set TF_LOG_PATH environment variable
 $env:TF_LOG_PATH="$Path\$Env\terraform.log"
 
-# Validate GitLab credentials are set
-if ([string]::IsNullOrWhiteSpace($env:GITLAB_USER) -or [string]::IsNullOrWhiteSpace($env:GITLAB_TOKEN)) {
-  Write-Output "ERROR: GITLAB_USER and GITLAB_TOKEN environment variables must be set."
-  Write-Output "Please set them before running this script:"
-  Write-Output "  export GITLAB_USER='your-username'"
-  Write-Output "  export GITLAB_TOKEN='your-personal-access-token'"
+# Validate GitLab credentials
+if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
+  Write-Output "ERROR: GitLabUser and GitLabToken environment variables must be set, please set them before running this script."
   exit 1
 }
 
