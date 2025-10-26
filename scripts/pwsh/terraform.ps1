@@ -51,11 +51,12 @@ param (
   [string]$Destination
 )
 
-# TEST
-Get-ChildItem
-
 # Copy variables.tf from $Path to $Path\$Env
 Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
+
+# TEST
+Get-ChildItem
+Get-ChildItem -Path "$Path\$Env"
 
 # Change directory to $Path\$Env
 Set-Location -Path "$Path\$Env"
