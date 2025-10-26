@@ -18,12 +18,12 @@
   Destination: The destination address of the resource to move. (Optional)
 
 .EXAMPLE
-  .\terraform.ps1 <Path> <Env> <Scope> <Action> <LogLevel> -target=<Targets>
+  .\terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' -target=<Targets> ######################################################################################################################################################
   This example runs the 'plan' action, with the specified targets.
 
 .NOTES
   Authors: Matteo Cristiano
-  Date: 22/10/2025
+  Date: 26/10/2025
   Version: 1.0.0
 #>
 
@@ -51,8 +51,11 @@ param (
   [string]$Destination
 )
 
-# # Copy variables.tf from $Path to $Path\$Env
-# Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
+# TEST
+Get-ChildItem
+
+# Copy variables.tf from $Path to $Path\$Env
+Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
 
 # Change directory to $Path\$Env
 Set-Location -Path "$Path\$Env"
@@ -70,24 +73,19 @@ Set-Variable TF_LOG_PATH="$Path\$Env\terraform.log"
 # Run terraform init, with -backend-config options
 Write-Output "############################## Initializing Terraform ##############################"
 # TODO: to fix "<TO_SET>" values
-# terraform init -input=false -no-color -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate"
-# if ($LASTEXITCODE -ne 0) {
-#   Write-Output "ERROR: Terraform Initializing failed."
-#   exit 1
-# }
-
-# TEST
-Write-Output "##########################################################################################"
-Get-ChildItem
-Write-Output "##########################################################################################"
+# terraform init -input=false -no-color -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate" ######################################################################################################################################################
+if ($LASTEXITCODE -ne 0) {
+  Write-Output "ERROR: Terraform Initializing failed."
+  exit 1
+}
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
-# terraform validate -no-color
-# if ($LASTEXITCODE -ne 0) {
-#   Write-Output "ERROR: Terraform Validating failed."
-#   exit 1
-# }
+# terraform validate -no-color ######################################################################################################################################################
+if ($LASTEXITCODE -ne 0) {
+  Write-Output "ERROR: Terraform Validating failed."
+  exit 1
+}
 
 switch ($Action) {
   'plan' {
@@ -97,7 +95,7 @@ switch ($Action) {
     # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
-      # terraform plan -input=false -no-color -out='plan.output'
+      # terraform plan -input=false -no-color -out='plan.output' ######################################################################################################################################################
     } else {
       # Split multiple targets by comma and validate each
       $targetArray = $Targets -split ','
@@ -114,13 +112,13 @@ switch ($Action) {
         }
       }
       Write-Output "Plan with targets: $($validTargets -join ' ')"
-      # terraform plan -input=false -no-color $validTargets -out="plan.output"
+      # terraform plan -input=false -no-color $validTargets -out="plan.output" ######################################################################################################################################################
     }
   }
   'apply' {
     Write-Output "############################## Applying Terraform changes ##############################"
-    # # Run terraform apply
-    # terraform apply -input=false -no-color -auto-approve 'plan.output'
+    # Run terraform apply
+    # terraform apply -input=false -no-color -auto-approve 'plan.output' ######################################################################################################################################################
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
@@ -129,15 +127,15 @@ switch ($Action) {
     # Trim and remove all whitespace from $Id
     $Id = $Id.Trim() -replace '\s+', ''
     # Run terraform import
-    # terraform import -input=false -no-color $Address $Id
+    # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
   }
   'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
     # Trim and remove all whitespace from $Address
     $Address = $Address.Trim() -replace '\s+', ''
     # Run terraform state rm
-    # terraform state rm $Address
-    # # TODO: to consider to set "-dry-run"
+    # TODO: to consider to set "-dry-run"
+    # terraform state rm $Address ######################################################################################################################################################
   }
   'state move' {
     Write-Output "############################## Moving a resource into Terraform State ##############################"
@@ -146,13 +144,13 @@ switch ($Action) {
     # Trim and remove all whitespace from $Destination
     $Destination = $Destination.Trim() -replace '\s+', ''
     # Run terraform move
-    # terraform state mv $Source $Destination
-    # # TODO: to consider to set "-dry-run"
+    # TODO: to consider to set "-dry-run"
+    # terraform state mv $Source $Destination ######################################################################################################################################################
   }
   'state list' {
     Write-Output "############################## Listing Terraform State ##############################"
     # Run terraform state list
-    # terraform state list
+    # terraform state list ######################################################################################################################################################
   }
   default {
     Write-Output "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move'"
@@ -160,5 +158,5 @@ switch ($Action) {
   }
 }
 
-# # Delete variables.tf from $Path\$Env
-# Remove-Item -Path "variables.tf" -Force
+# Delete variables.tf from $Path\$Env
+Remove-Item -Path "variables.tf" -Force
