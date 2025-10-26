@@ -51,7 +51,8 @@ param (
   [string]$Destination
 )
 
-# Copy variables.tf from $Path to $Path\$Env
+# Copy backend.tf and variables.tf, from $Path to $Path\$Env
+Copy-Item -Path "$Path\backend.tf" -Destination "$Path\$Env\backend.tf"
 Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
 
 # TEST
@@ -73,20 +74,28 @@ Set-Variable TF_LOG_PATH="$Path\$Env\terraform.log"
 
 # Run terraform init, with -backend-config options
 Write-Output "############################## Initializing Terraform ##############################"
-# TODO: to fix "<TO_SET>" values
-# terraform init -input=false -no-color -backend-config="<TO_SET>" -backend-config="key=${Scope}-${Env}.tfstate" ######################################################################################################################################################
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Initializing failed."
-  exit 1
-}
+$env:TF_STATE_NAME="${Scope}-${Env}"
+terraform init \
+  -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" \
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" \
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" \
+  -backend-config="username=${GITLAB_USER}" \
+  -backend-config="password=${GITLAB_TOKEN}" \
+  -backend-config="lock_method=POST" \
+  -backend-config="unlock_method=DELETE" \
+  -backend-config="retry_wait_min=5"
+# if ($LASTEXITCODE -ne 0) {
+#   Write-Output "ERROR: Terraform Initializing failed."
+#   exit 1
+# }
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
 # terraform validate -no-color ######################################################################################################################################################
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Validating failed."
-  exit 1
-}
+# if ($LASTEXITCODE -ne 0) {
+#   Write-Output "ERROR: Terraform Validating failed."
+#   exit 1
+# }
 
 switch ($Action) {
   'plan' {
