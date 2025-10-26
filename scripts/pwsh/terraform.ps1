@@ -4,6 +4,7 @@
 
 .DESCRIPTION
   The script is used to run Terraform commands, such as init, plan, apply, import, remove, move and list.
+  It will be used GitLab, to store the Terraform state remotely.
 
 .PARAMETER [ParameterName]
   Path: The path to the Terraform scripts. (Mandatopry)
@@ -16,9 +17,11 @@
   Id: The ID of the resource to import. (Optional)
   Source: The source address of the resource to move. (Optional)
   Destination: The destination address of the resource to move. (Optional)
+  GitLabUser: The GitLab user to use for authentication. (Mandatory)
+  GitLabToken: The GitLab token to use for authentication. (Mandatory)
 
 .EXAMPLE
-  .\terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name'
+  .\terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
   This example runs the 'plan' action, with the specified targets.
 
 .NOTES
@@ -48,7 +51,11 @@ param (
   [Parameter(Mandatory=$false)]
   [string]$Source,
   [Parameter(Mandatory=$false)]
-  [string]$Destination
+  [string]$Destination,
+  [Parameter(Mandatory=$true)]
+  [string]$GitLabUser,
+  [Parameter(Mandatory=$true)]
+  [string]$GitLabToken
 )
 
 # Copy backend.tf and variables.tf, from $Path to $Path\$Env
@@ -84,8 +91,8 @@ terraform init `
   -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
   -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
   -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
-  -backend-config="username=${GITLAB_USER}" `
-  -backend-config="password=${GITLAB_TOKEN}" `
+  -backend-config="username=${GitLabUser}" `
+  -backend-config="password=${GitLabToken}" `
   -backend-config="lock_method=POST" `
   -backend-config="unlock_method=DELETE" `
   -backend-config="retry_wait_min=5"

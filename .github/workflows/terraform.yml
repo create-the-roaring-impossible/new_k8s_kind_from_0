@@ -96,4 +96,6 @@ jobs:
                                           -Address '${{ github.event.inputs.address }}' \
                                           -Id '${{ github.event.inputs.id }}' \
                                           -Source '${{ github.event.inputs.source }}' \
-                                          -Destination '${{ github.event.inputs.destination }}'
+                                          -Destination '${{ github.event.inputs.destination }}' \
+                                          -GitLabUser ${{ secrets.GITLAB_USER }} \
+                                          -GitLabToken ${{ secrets.GITLAB_TOKEN }}
