@@ -68,7 +68,7 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 # Set TF_LOG_PATH environment variable
 $env:TF_LOG_PATH="$Path\$Env\terraform.log"
 
-# Run terraform init, with -backend-config options
+# Run terraform init
 Write-Output "############################## Initializing Terraform ##############################"
 $env:TF_STATE_NAME="${Scope}-${Env}"
 terraform init `
@@ -94,6 +94,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 switch ($Action) {
+  # Run terraform plan
   'plan' {
     Write-Output "############################## Planning Terraform changes ##############################"
     # Trim and remove all whitespace from $Targets
@@ -102,6 +103,7 @@ switch ($Action) {
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
       terraform plan -input=false -no-color -out='plan.output'
+      Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     } else {
       # Split multiple targets by comma and validate each
       $targetArray = $Targets -split ','
@@ -119,11 +121,12 @@ switch ($Action) {
       }
       Write-Output "Plan with targets: $($validTargets -join ' ')"
       terraform plan -input=false -no-color $validTargets -out="plan.output"
+      Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     }
   }
+  # Run terraform apply
   'apply' {
     Write-Output "############################## Applying Terraform changes ##############################"
-    # Run terraform apply
     # terraform apply -input=false -no-color -auto-approve 'plan.output' ######################################################################################################################################################
   }
   'import' {
