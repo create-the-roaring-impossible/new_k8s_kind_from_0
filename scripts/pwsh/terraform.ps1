@@ -18,7 +18,7 @@
   Destination: The destination address of the resource to move. (Optional)
 
 .EXAMPLE
-  .\terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' -target=<Targets> ######################################################################################################################################################
+  .\terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name'
   This example runs the 'plan' action, with the specified targets.
 
 .NOTES
@@ -55,10 +55,6 @@ param (
 Copy-Item -Path "$Path\backend.tf" -Destination "$Path\$Env\backend.tf"
 Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
 
-# TEST
-Get-ChildItem
-Get-ChildItem -Path "$Path\$Env"
-
 # Change directory to $Path\$Env
 Set-Location -Path "$Path\$Env"
 
@@ -70,7 +66,7 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 }
 
 # Set TF_LOG_PATH environment variable
-Set-Variable TF_LOG_PATH="$Path\$Env\terraform.log"
+$env:TF_LOG_PATH="$Path\$Env\terraform.log"
 
 # Run terraform init, with -backend-config options
 Write-Output "############################## Initializing Terraform ##############################"
@@ -84,18 +80,18 @@ terraform init `
   -backend-config="lock_method=POST" `
   -backend-config="unlock_method=DELETE" `
   -backend-config="retry_wait_min=5"
-# if ($LASTEXITCODE -ne 0) {
-#   Write-Output "ERROR: Terraform Initializing failed."
-#   exit 1
-# }
+if ($LASTEXITCODE -ne 0) {
+  Write-Output "ERROR: Terraform Initializing failed."
+  exit 1
+}
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
-# if ($LASTEXITCODE -ne 0) {
-#   Write-Output "ERROR: Terraform Validating failed."
-#   exit 1
-# }
+if ($LASTEXITCODE -ne 0) {
+  Write-Output "ERROR: Terraform Validating failed."
+  exit 1
+}
 
 switch ($Action) {
   'plan' {
@@ -105,7 +101,7 @@ switch ($Action) {
     # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
       Write-Output "Plan with NO targets"
-      # terraform plan -input=false -no-color -out='plan.output' ######################################################################################################################################################
+      terraform plan -input=false -no-color -out='plan.output'
     } else {
       # Split multiple targets by comma and validate each
       $targetArray = $Targets -split ','
@@ -122,7 +118,7 @@ switch ($Action) {
         }
       }
       Write-Output "Plan with targets: $($validTargets -join ' ')"
-      # terraform plan -input=false -no-color $validTargets -out="plan.output" ######################################################################################################################################################
+      terraform plan -input=false -no-color $validTargets -out="plan.output"
     }
   }
   'apply' {
@@ -168,10 +164,12 @@ switch ($Action) {
   }
 }
 
-# Delete backend.tf and variables.tf from $Path\$Env
+# Delete backend.tf and variables.tf, from $Path\$Env
 Remove-Item -Path "backend.tf" -Force
 Remove-Item -Path "variables.tf" -Force
 
-# TEST
-Get-ChildItem
-Get-ChildItem -Path "$Path\$Env"
+Write-Output "######################################################################################################################################################"
+Get-Content $env:TF_LOG_PATH
+Write-Output "######################################################################################################################################################"
+Get-Content plan.output
+Write-Output "######################################################################################################################################################"
