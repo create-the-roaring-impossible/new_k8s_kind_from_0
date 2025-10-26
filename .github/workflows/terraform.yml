@@ -20,7 +20,7 @@ on:
         description: 'Set the action to do'
         type: choice
         required: true
-        default: 'nothing (only for test purposes)'
+        default: 'plan'
         options:
           - 'nothing (only for test purposes)'
           - 'plan'
