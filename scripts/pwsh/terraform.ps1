@@ -62,7 +62,7 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$Scope,
   [Parameter(Mandatory=$true)]
-  [ValidateSet('plan', 'apply', 'import', 'state remove', 'state move', 'state list')]
+  [ValidateSet('plan+apply', 'import', 'state remove', 'state move', 'state list')]
   [string]$Action,
   [Parameter(Mandatory=$false)]
   [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
@@ -138,7 +138,7 @@ if ($LASTEXITCODE -ne 0) {
 
 switch ($Action) {
   # Run terraform plan
-  'plan' {
+  'plan+apply' {
     Write-Output "############################## Planning Terraform changes ##############################"
     # Trim and remove all whitespace from $Targets
     $Targets = $Targets.Trim() -replace '\s+', ''
@@ -169,16 +169,15 @@ switch ($Action) {
       Write-Output "ERROR: Terraform Planning failed."
       exit 1
     }
-  }
-  # Run terraform apply
-  'apply' {
+
+    # Run terraform apply
     Write-Output "############################## Applying Terraform changes ##############################"
     # terraform apply -input=false -no-color -auto-approve 'plan.output' ######################################################################################################################################################
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Applying failed."
-      exit 1
-    }
+    # if ($LASTEXITCODE -ne 0) {
+    #   Write-Output "ERROR: Terraform Applying failed."
+    #   exit 1
+    # }
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"

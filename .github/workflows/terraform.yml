@@ -20,11 +20,10 @@ on:
         description: 'Set the action to do'
         type: choice
         required: true
-        default: 'plan'
+        default: 'plan+apply'
         options:
           - 'nothing (only for test purposes)'
-          - 'plan'
-          - 'apply'
+          - 'plan+apply'
           - 'import'
           - 'state remove'
           - 'state move'
