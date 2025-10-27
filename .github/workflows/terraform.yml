@@ -79,11 +79,22 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    env:
+      TF_PLUGIN_CACHE_DIR: $HOME/.terraform.d/plugin-cache
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+      - name: ensure the dir exists
+        run: mkdir -p "$HOME/.terraform.d/plugin-cache"
+      - name: restore OR create the cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key:  ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
       - name: Terraform
         run: |
           pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \

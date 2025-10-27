@@ -100,6 +100,10 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 # Set TF_LOG_PATH environment variable
 $env:TF_LOG_PATH="tf.log"
 
+# # Set TF_PLUGIN_CACHE_DIR environment variable
+# $env:TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+Write-Output "${TF_PLUGIN_CACHE_DIR}"
+
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
   Write-Output "ERROR: GitLabUser and GitLabToken environment variables must be set, please set them before running this script."
@@ -112,7 +116,7 @@ $TfStateName="${Scope}-${Env}"
 # TODO: to pass "GitLabProjectId" as variable
 $GitLabProjectId="65547687"
 
-terraform init `
+terraform init -upgrade `
   -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" `
   -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
   -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
