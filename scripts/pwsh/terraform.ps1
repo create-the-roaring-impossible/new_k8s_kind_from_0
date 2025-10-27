@@ -97,8 +97,8 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
   $env:TF_LOG = $LogLevel
 }
 
-# Set TF_LOG_PATH environment variable
-$env:TF_LOG_PATH="$Path/$Env"
+# # Set TF_LOG_PATH environment variable
+# $env:TF_LOG_PATH="$Path/$Env/terraform.log"
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
@@ -165,8 +165,12 @@ switch ($Action) {
       }
       Write-Output "Plan with targets: $($validTargets -join ' ')"
       terraform plan -input=false -no-color $validTargets -out="plan.output"
-      Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     }
+
+    if ($LASTEXITCODE -ne 0) {
+    Write-Output "ERROR: Terraform Planning failed."
+    exit 1
+  }
   }
   # Run terraform apply
   'apply' {
