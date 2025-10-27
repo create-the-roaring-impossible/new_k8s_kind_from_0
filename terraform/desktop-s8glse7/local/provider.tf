@@ -1,5 +1,35 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "6.18.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "4.50.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.38.0"
+    }
+  }
+}
+
 provider "aws" {
-  region     = "us-west-2"
-  access_key = "your_access_key"
-  secret_key = "your_secret_key"
+  # Configuration options
+  # https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+}
+
+provider "azurerm" {
+  # Configuration options
+  # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
+}
+
+provider "kubernetes" {
+  # Configuration options
+  # https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs
+  # config_paths = [
+  #   "/path/to/config_a.yaml"
+  # ]
+  # config_context = "my-context"
 }
