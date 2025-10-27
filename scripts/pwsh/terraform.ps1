@@ -62,10 +62,10 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$Scope,
   [Parameter(Mandatory=$true)]
-  # [ValidateSet('plan', 'apply', 'import', 'state remove', 'state move', 'state list')]
+  [ValidateSet('plan', 'apply', 'import', 'state remove', 'state move', 'state list')]
   [string]$Action,
   [Parameter(Mandatory=$false)]
-  # [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
+  [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
   [string]$LogLevel,
   [Parameter(Mandatory=$false)]
   [string]$Targets,
@@ -97,8 +97,8 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
   $env:TF_LOG = $LogLevel
 }
 
-# # Set TF_LOG_PATH environment variable
-# $env:TF_LOG_PATH="$Path/$Env/terraform.log"
+# Set TF_LOG_PATH environment variable
+$env:TF_LOG_PATH="tf.log"
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
@@ -108,12 +108,14 @@ if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace
 
 # Run terraform init
 Write-Output "############################## Initializing Terraform ##############################"
-$TF_STATE_NAME="${Scope}-${Env}"
+$TfStateName="${Scope}-${Env}"
+# TODO: to pass "GitLabProjectId" as variable
+$GitLabProjectId="65547687"
 
 terraform init `
-  -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" `
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
   -backend-config="username=${GitLabUser}" `
   -backend-config="password=${GitLabToken}" `
   -backend-config="lock_method=POST" `
@@ -128,6 +130,7 @@ if ($LASTEXITCODE -ne 0) {
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
+
 if ($LASTEXITCODE -ne 0) {
   Write-Output "ERROR: Terraform Validating failed."
   exit 1
@@ -141,9 +144,7 @@ switch ($Action) {
     $Targets = $Targets.Trim() -replace '\s+', ''
     # Check if $Targets is empty (no targets specified)
     if ($Targets -eq '') {
-      Write-Output "Plan with NO targets"
       terraform plan -input=false -no-color -out='plan.output'
-      Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     } else {
       # Split multiple targets by comma and validate each
       $targetArray = $Targets -split ','
@@ -159,14 +160,13 @@ switch ($Action) {
           exit 1
         }
       }
-      Write-Output "Plan with targets: $($validTargets -join ' ')"
       terraform plan -input=false -no-color $validTargets -out="plan.output"
     }
 
     if ($LASTEXITCODE -ne 0) {
-    Write-Output "ERROR: Terraform Planning failed."
-    exit 1
-  }
+      Write-Output "ERROR: Terraform Planning failed."
+      exit 1
+    }
   }
   # Run terraform apply
   'apply' {
