@@ -80,7 +80,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
     env:
-      TF_PLUGIN_CACHE_DIR: $HOME/.terraform.d/plugin-cache
+      TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
       # TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
     steps:
       - name: 'Repository Checkout'
@@ -88,11 +88,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Create the cache directory
-        run: mkdir -p "$HOME/.terraform.d/plugin-cache"
+        run: mkdir -p "~/.terraform.d/plugin-cache"
       - name: Cache Terraform plugins
         uses: actions/cache@v4
         with:
-          path: $HOME/.terraform.d/plugin-cache # ~/.terraform.d/plugin-cache
+          path: ~/.terraform.d/plugin-cache # ~/.terraform.d/plugin-cache
           key:  ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
           restore-keys: |
             ${{ runner.os }}-terraform-
