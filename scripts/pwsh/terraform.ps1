@@ -109,20 +109,16 @@ if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace
 # Run terraform init
 Write-Output "############################## Initializing Terraform ##############################"
 $TF_STATE_NAME="${Scope}-${Env}"
-$gitlabProject = "create-the-roaring-impossible%2Fnew_k8s_kind_from_0"
 
 terraform init `
-  -backend-config="address=https://gitlab.com/api/v4/projects/${gitlabProject}/terraform/state/${TF_STATE_NAME}" `
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${gitlabProject}/terraform/state/${TF_STATE_NAME}/lock" `
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${gitlabProject}/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
   -backend-config="username=${GitLabUser}" `
   -backend-config="password=${GitLabToken}" `
   -backend-config="lock_method=POST" `
   -backend-config="unlock_method=DELETE" `
   -backend-config="retry_wait_min=5"
-  # -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
-  # -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
-  # -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
 
 if ($LASTEXITCODE -ne 0) {
   Write-Output "ERROR: Terraform Initializing failed."
