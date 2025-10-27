@@ -143,6 +143,7 @@ switch ($Action) {
     # Trim and remove all whitespace from $Targets
     $Targets = $Targets.Trim() -replace '\s+', ''
     # Check if $Targets is empty (no targets specified)
+
     if ($Targets -eq '') {
       terraform plan -input=false -no-color -out='plan.output'
     } else {
@@ -160,6 +161,7 @@ switch ($Action) {
           exit 1
         }
       }
+
       terraform plan -input=false -no-color $validTargets -out="plan.output"
     }
 
@@ -172,6 +174,11 @@ switch ($Action) {
   'apply' {
     Write-Output "############################## Applying Terraform changes ##############################"
     # terraform apply -input=false -no-color -auto-approve 'plan.output' ######################################################################################################################################################
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Applying failed."
+      exit 1
+    }
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
@@ -179,16 +186,28 @@ switch ($Action) {
     $Address = $Address.Trim() -replace '\s+', ''
     # Trim and remove all whitespace from $Id
     $Id = $Id.Trim() -replace '\s+', ''
+
     # Run terraform import
     # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Importing failed."
+      exit 1
+    }
   }
   'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
     # Trim and remove all whitespace from $Address
     $Address = $Address.Trim() -replace '\s+', ''
+
     # Run terraform state rm
     # TODO: to consider to set "-dry-run"
     # terraform state rm $Address ######################################################################################################################################################
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Removing failed."
+      exit 1
+    }
   }
   'state move' {
     Write-Output "############################## Moving a resource into Terraform State ##############################"
@@ -196,14 +215,26 @@ switch ($Action) {
     $Source = $Source.Trim() -replace '\s+', ''
     # Trim and remove all whitespace from $Destination
     $Destination = $Destination.Trim() -replace '\s+', ''
+
     # Run terraform move
     # TODO: to consider to set "-dry-run"
     # terraform state mv $Source $Destination ######################################################################################################################################################
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Moving failed."
+      exit 1
+    }
   }
   'state list' {
     Write-Output "############################## Listing Terraform State ##############################"
+
     # Run terraform state list
     # terraform state list ######################################################################################################################################################
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Listing failed."
+      exit 1
+    }
   }
   default {
     Write-Output "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move'"
@@ -214,9 +245,3 @@ switch ($Action) {
 # Delete backend.tf and variables.tf
 Remove-Item -Path "backend.tf" -Force
 Remove-Item -Path "variables.tf" -Force
-
-# Write-Output "######################################################################################################################################################"
-# Get-Content $env:TF_LOG_PATH
-# Write-Output "######################################################################################################################################################"
-# Get-Content plan.output
-# Write-Output "######################################################################################################################################################"
