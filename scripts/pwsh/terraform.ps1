@@ -83,7 +83,7 @@ if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace
 
 # Run terraform init
 Write-Output "############################## Initializing Terraform ##############################"
-$env:TF_STATE_NAME=default # "${Scope}-${Env}"
+$env:TF_STATE_NAME="default" # "${Scope}-${Env}"
 terraform init `
   -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
   -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
