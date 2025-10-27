@@ -6,28 +6,51 @@
   The script is used to run Terraform commands, such as init, plan, apply, import, remove, move and list.
   It will be used GitLab, to store the Terraform state remotely.
 
-.PARAMETER [ParameterName]
-  Path: The path to the Terraform scripts. (Mandatopry)
+.PARAMETER Path
+  Path: The path to the Terraform scripts. (Mandatory)
+.PARAMETER Env
   Env: The environment to set (e.g., local). (Mandatory)
+.PARAMETER Scope
   Scope: The scope to set (e.g., 'desktop-s8glse7'). (Mandatory)
+.PARAMETER Action
   Action: The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
+.PARAMETER LogLevel
   LogLevel: The log level to set (INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
+.PARAMETER Targets
   Targets: The targets to use for the plan action. (Optional)
+.PARAMETER Address
   Address: The address of the resource to import, remove or move. (Optional)
+.PARAMETER Id
   Id: The ID of the resource to import. (Optional)
+.PARAMETER Source
   Source: The source address of the resource to move. (Optional)
+.PARAMETER Destination
   Destination: The destination address of the resource to move. (Optional)
+.PARAMETER GitLabUser
   GitLabUser: The GitLab user to use for authentication. (Mandatory)
+.PARAMETER GitLabToken
   GitLabToken: The GitLab token to use for authentication. (Mandatory)
 
+.REQUIREMENTS
+  - Terraform CLI installed
+  - GitLab access token with api permissions
+  - Valid GitLab project path
+
+.USAGE
+  pwsh terraform.ps1 -Path <path> -Env <env> -Scope <scope> -Action <action> [-LogLevel <level>] [-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
+
 .EXAMPLE
-  pwsh terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
+  pwsh terraform.ps1 -Path 'terraform/local' -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
   This example runs the 'plan' action, with the specified targets.
 
-.NOTES
-  Authors: Matteo Cristiano
-  Date: 27/10/2025
-  Version: 1.0.0
+.AUTHORS
+  Matteo Cristiano
+
+.VERSION
+  1.1.0
+
+.DATE
+  27/10/2025
 #>
 
 # Inputs
@@ -39,8 +62,10 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$Scope,
   [Parameter(Mandatory=$true)]
+  # [ValidateSet('plan', 'apply', 'import', 'state remove', 'state move', 'state list')]
   [string]$Action,
   [Parameter(Mandatory=$false)]
+  # [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
   [string]$LogLevel,
   [Parameter(Mandatory=$false)]
   [string]$Targets,
@@ -84,13 +109,15 @@ if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace
 # Run terraform init
 Write-Output "############################## Initializing Terraform ##############################"
 $env:TF_STATE_NAME="${Scope}-${Env}"
+$gitlabProject = "create-the-roaring-impossible%2Fnew_k8s_kind_from_0"
+
 terraform init `
   # -backend-config="address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}" `
   # -backend-config="lock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
   # -backend-config="unlock_address=https://gitlab.com/api/v4/projects/65547687/terraform/state/${TF_STATE_NAME}/lock" `
-  -backend-config="address=https://gitlab.com/api/v4/projects/create-the-roaring-impossible%2Fnew_k8s_kind_from_0/terraform/state/${TF_STATE_NAME}" `
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/create-the-roaring-impossible%2Fnew_k8s_kind_from_0/terraform/state/${TF_STATE_NAME}/lock" `
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/create-the-roaring-impossible%2Fnew_k8s_kind_from_0/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="address=https://gitlab.com/api/v4/projects/${gitlabProject}/terraform/state/${TF_STATE_NAME}" `
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${gitlabProject}/terraform/state/${TF_STATE_NAME}/lock" `
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${gitlabProject}/terraform/state/${TF_STATE_NAME}/lock" `
   -backend-config="username=${GitLabUser}" `
   -backend-config="password=${GitLabToken}" `
   -backend-config="lock_method=POST" `
