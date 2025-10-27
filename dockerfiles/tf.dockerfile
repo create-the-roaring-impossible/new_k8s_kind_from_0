@@ -42,6 +42,7 @@ RUN apk update && \
         python3 \
         python3-dev \
         sudo \
+        tar \
         tzdata \
         userspace-rcu \
         zlib
