@@ -86,12 +86,12 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: ensure the dir exists
+      - name: Create the cache directory
         run: mkdir -p "$HOME/.terraform.d/plugin-cache"
-      - name: restore OR create the cache
+      - name: Cache Terraform plugins
         uses: actions/cache@v4
         with:
-          path: ~/.terraform.d/plugin-cache
+          path: $HOME/.terraform.d/plugin-cache # ~/.terraform.d/plugin-cache
           key:  ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
           restore-keys: |
             ${{ runner.os }}-terraform-

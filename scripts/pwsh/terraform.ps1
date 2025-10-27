@@ -102,7 +102,9 @@ $env:TF_LOG_PATH="tf.log"
 
 # # Set TF_PLUGIN_CACHE_DIR environment variable
 # $env:TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 Write-Output "${TF_PLUGIN_CACHE_DIR}"
+Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
