@@ -21,7 +21,7 @@
   GitLabToken: The GitLab token to use for authentication. (Mandatory)
 
 .EXAMPLE
-  .\terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
+  pwsh terraform.ps1 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
   This example runs the 'plan' action, with the specified targets.
 
 .NOTES
@@ -58,12 +58,12 @@ param (
   [string]$GitLabToken
 )
 
-# Copy backend.tf and variables.tf, from $Path to $Path\$Env
-Copy-Item -Path "$Path\backend.tf" -Destination "$Path\$Env\backend.tf"
-Copy-Item -Path "$Path\variables.tf" -Destination "$Path\$Env\variables.tf"
+# Copy backend.tf and variables.tf, from $Path to $Path/$Env
+Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"
+Copy-Item -Path "$Path/variables.tf" -Destination "$Path/$Env/variables.tf"
 
-# Change directory to $Path\$Env
-Set-Location -Path "$Path\$Env"
+# Change directory to $Path/$Env
+Set-Location -Path "$Path/$Env"
 
 # Set TF_LOG environment variable, default to INFO if LogLevel is not provided
 if ([string]::IsNullOrWhiteSpace($LogLevel)) {
@@ -73,7 +73,7 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 }
 
 # Set TF_LOG_PATH environment variable
-$env:TF_LOG_PATH="$Path\$Env\terraform.log"
+$env:TF_LOG_PATH="$Path/$Env/terraform.log"
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
@@ -180,7 +180,7 @@ switch ($Action) {
   }
 }
 
-# Delete backend.tf and variables.tf, from $Path\$Env
+# Delete backend.tf and variables.tf
 Remove-Item -Path "backend.tf" -Force
 Remove-Item -Path "variables.tf" -Force
 
