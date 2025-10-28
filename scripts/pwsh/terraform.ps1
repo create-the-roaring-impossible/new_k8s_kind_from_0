@@ -96,11 +96,9 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 } else {
   $env:TF_LOG = $LogLevel
 }
-Write-Output "Terraform Log Level set to: $env:TF_LOG"
 
 # Set TF_LOG_PATH environment variable
 $env:TF_LOG_PATH="tf.log"
-Write-Output "Terraform Log Path set to: $env:TF_LOG_PATH"
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
