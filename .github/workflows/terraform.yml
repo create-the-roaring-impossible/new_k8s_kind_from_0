@@ -87,9 +87,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Add build dependencies to container
-      #   run: |
-      #     sudo apk add --update --no-progress tar
       - name: Create Terraform Plugin Cache Dir
         run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       - name: Cache Terraform plugins
@@ -97,7 +94,6 @@ jobs:
         with:
           path: ${{ env.TF_PLUGIN_CACHE_DIR }}
           key:  ${{ runner.os }}-terraform-${{ github.event.inputs.scope }}-${{ github.event.inputs.env }}
-# hashFiles('**/.terraform.lock.hcl') }}
           restore-keys: |
             ${{ runner.os }}-terraform-${{ github.event.inputs.scope }}-${{ github.event.inputs.env }}
       - name: Terraform
