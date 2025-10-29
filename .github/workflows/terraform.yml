@@ -96,7 +96,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          key:  ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          key:  ${{ runner.os }}-terraform-${{ github.event.inputs.scope }}-${{ github.event.inputs.env }} # ${{ hashFiles('**/.terraform.lock.hcl') }}
           restore-keys: |
             ${{ runner.os }}-terraform-
       - name: Terraform
