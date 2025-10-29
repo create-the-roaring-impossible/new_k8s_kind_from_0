@@ -94,8 +94,9 @@ jobs:
         with:
           path: ${{ env.TF_PLUGIN_CACHE_DIR }}
           key:  ${{ runner.os }}-terraform-${{ github.event.inputs.scope }}-${{ github.event.inputs.env }}
+# hashFiles('**/.terraform.lock.hcl') }}
           restore-keys: |
-            ${{ runner.os }}-terraform-${{ github.event.inputs.scope }}-${{ github.event.inputs.env }}
+            ${{ runner.os }}-terraform-
       - name: Terraform
         run: |
           pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
