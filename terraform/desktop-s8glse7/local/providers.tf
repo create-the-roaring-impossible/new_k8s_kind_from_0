@@ -1,5 +1,9 @@
 terraform {
   required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "3.7.2"
+    }
     aws = {
       source  = "hashicorp/aws"
       version = "6.19.0"
@@ -17,6 +21,11 @@ terraform {
       version = "2.38.0"
     }
   }
+}
+
+provider "random" {
+  # Configuration options
+  # https://registry.terraform.io/providers/hashicorp/random/latest/docs
 }
 
 provider "aws" {
