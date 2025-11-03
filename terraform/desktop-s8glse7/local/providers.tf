@@ -2,11 +2,15 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.18.0"
+      version = "6.19.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "4.50.0"
+      version = "4.51.0"
+    }
+    google = {
+      source  = "hashicorp/google"
+      version = "7.9.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -23,6 +27,11 @@ provider "aws" {
 provider "azurerm" {
   # Configuration options
   # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
+}
+
+provider "google" {
+  # Configuration options
+  # https://registry.terraform.io/providers/hashicorp/google/latest/docs
 }
 
 provider "kubernetes" {
