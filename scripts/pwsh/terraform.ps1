@@ -259,3 +259,6 @@ switch ($Action) {
 # Delete backend.tf and variables.tf
 Remove-Item -Path "backend.tf" -Force
 Remove-Item -Path "variables.tf" -Force
+
+New-Item -ItemType Directory -Path "$Path/$Env/tf_temp" -Force
+terraform providers mirror "$Path/$Env/tf_temp"
