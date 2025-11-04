@@ -79,9 +79,6 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-    env:
-      TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
-      TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -103,6 +100,8 @@ jobs:
                                           -Scope '${{ github.event.inputs.scope }}' \
                                           -Action '${{ github.event.inputs.action }}' \
                                           -LogLevel '${{ github.event.inputs.logLevel }}' \
+                                          -PluginCacheDir '${{ github.workspace }}/.terraform.d/plugin-cache' \
+                                          -PluginCacheMayBreakDependencyLockFile 'true' \
                                           -Targets '${{ github.event.inputs.targets }}' \
                                           -Address '${{ github.event.inputs.address }}' \
                                           -Id '${{ github.event.inputs.id }}' \

@@ -7,29 +7,33 @@
   It will be used GitLab, to store the Terraform state remotely.
 
 .PARAMETER Path
-  Path: The path to the Terraform scripts. (Mandatory)
+  The path to the Terraform scripts. (Mandatory)
 .PARAMETER Env
-  Env: The environment to set (e.g., local). (Mandatory)
+  The environment to set (e.g., local). (Mandatory)
 .PARAMETER Scope
-  Scope: The scope to set (e.g., 'desktop-s8glse7'). (Mandatory)
+  The scope to set (e.g., 'desktop-s8glse7'). (Mandatory)
 .PARAMETER Action
-  Action: The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
+  The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
 .PARAMETER LogLevel
-  LogLevel: The log level to set (INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
+  The log level to set (INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
+.PARAMETER PluginCacheDir
+  The directory to use for the Terraform plugin cache. (Optional)
+.PARAMETER PluginCacheMayBreakDependencyLockFile
+  Whether the plugin cache may break the dependency lock file. (Optional)
 .PARAMETER Targets
-  Targets: The targets to use for the plan action. (Optional)
+  The targets to use for the plan action. (Optional)
 .PARAMETER Address
-  Address: The address of the resource to import, remove or move. (Optional)
+  The address of the resource to import, remove or move. (Optional)
 .PARAMETER Id
-  Id: The ID of the resource to import. (Optional)
+  The ID of the resource to import. (Optional)
 .PARAMETER Source
-  Source: The source address of the resource to move. (Optional)
+  The source address of the resource to move. (Optional)
 .PARAMETER Destination
-  Destination: The destination address of the resource to move. (Optional)
+  The destination address of the resource to move. (Optional)
 .PARAMETER GitLabUser
-  GitLabUser: The GitLab user to use for authentication. (Mandatory)
+  The GitLab user to use for authentication. (Mandatory)
 .PARAMETER GitLabToken
-  GitLabToken: The GitLab token to use for authentication. (Mandatory)
+  The GitLab token to use for authentication. (Mandatory)
 
 .REQUIREMENTS
   - Terraform CLI installed
@@ -37,7 +41,7 @@
   - Valid GitLab project path
 
 .USAGE
-  pwsh terraform.ps1 -Path <path> -Env <env> -Scope <scope> -Action <action> [-LogLevel <level>] [-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
+  pwsh terraform.ps1 -Path <path> -Env <env> -Scope <scope> -Action <action> [-LogLevel <level>] [-PluginCacheDir <dir>] [-PluginCacheMayBreakDependencyLockFile <true|false>] [-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
 
 .EXAMPLE
   pwsh terraform.ps1 -Path 'terraform/local' -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
@@ -47,10 +51,10 @@
   Matteo Cristiano
 
 .VERSION
-  1.1.0
+  1.2.0
 
 .DATE
-  27/10/2025
+  04/11/2025
 #>
 
 # Inputs
@@ -67,6 +71,11 @@ param (
   [Parameter(Mandatory=$false)]
   [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
   [string]$LogLevel,
+  [Parameter(Mandatory=$false)]
+  [string]$PluginCacheDir,
+  [Parameter(Mandatory=$false)]
+  [ValidateSet('true', 'false')]
+  [string]$PluginCacheMayBreakDependencyLockFile,
   [Parameter(Mandatory=$false)]
   [string]$Targets,
   [Parameter(Mandatory=$false)]
@@ -99,6 +108,12 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 
 # Set TF_LOG_PATH environment variable
 $env:TF_LOG_PATH="tf.log"
+
+# Set TF_PLUGIN_CACHE_DIR and TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE environment variables, if $PluginCacheDir is provided
+if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
+  $env:TF_PLUGIN_CACHE_DIR = $PluginCacheDir
+  $env:TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE = $PluginCacheMayBreakDependencyLockFile
+}
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
