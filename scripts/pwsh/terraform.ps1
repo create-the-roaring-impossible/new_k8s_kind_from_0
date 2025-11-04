@@ -93,11 +93,11 @@ param (
 )
 
 # Copy backend.tf and variables.tf, from $Path to $Path/$Env
-Copy-Item -Path '$Path/backend.tf' -Destination '$Path/$Env/backend.tf'
-Copy-Item -Path '$Path/variables.tf' -Destination '$Path/$Env/variables.tf'
+Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"
+Copy-Item -Path "$Path/variables.tf" -Destination "$Path/$Env/variables.tf"
 
 # Change directory to $Path/$Env
-Set-Location -Path '$Path/$Env'
+Set-Location -Path "$Path/$Env"
 
 # Set TF_LOG environment variable, default to INFO if LogLevel is not provided
 if ([string]::IsNullOrWhiteSpace($LogLevel)) {
@@ -107,7 +107,7 @@ if ([string]::IsNullOrWhiteSpace($LogLevel)) {
 }
 
 # Set TF_LOG_PATH environment variable
-$env:TF_LOG_PATH='tf.log'
+$env:TF_LOG_PATH="tf.log"
 
 # Set TF_PLUGIN_CACHE_DIR and TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE environment variables, if $PluginCacheDir is provided
 if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
@@ -117,44 +117,44 @@ if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
 
 # Validate GitLab credentials
 if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
-  Write-Output 'ERROR: GitLabUser and GitLabToken environment variables must be set, please set them before running this script.'
+  Write-Output "ERROR: GitLabUser and GitLabToken environment variables must be set, please set them before running this script."
   exit 1
 }
 
 # Run terraform init
-Write-Output '############################## Initializing Terraform ##############################'
-$TfStateName='${Scope}-${Env}'
-# TODO: to pass 'GitLabProjectId' as variable
-$GitLabProjectId='65547687'
+Write-Output "############################## Initializing Terraform ##############################"
+$TfStateName="${Scope}-${Env}"
+# TODO: to pass "GitLabProjectId" as variable
+$GitLabProjectId="65547687"
 
 terraform init -upgrade `
-  -backend-config='address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}' `
-  -backend-config='lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock' `
-  -backend-config='unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock' `
-  -backend-config='username=${GitLabUser}' `
-  -backend-config='password=${GitLabToken}' `
-  -backend-config='lock_method=POST' `
-  -backend-config='unlock_method=DELETE' `
-  -backend-config='retry_wait_min=5'
+  -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" `
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
+  -backend-config="username=${GitLabUser}" `
+  -backend-config="password=${GitLabToken}" `
+  -backend-config="lock_method=POST" `
+  -backend-config="unlock_method=DELETE" `
+  -backend-config="retry_wait_min=5"
 
 if ($LASTEXITCODE -ne 0) {
-  Write-Output 'ERROR: Terraform Initializing failed.'
+  Write-Output "ERROR: Terraform Initializing failed."
   exit 1
 }
 
 # Run terraform validate
-Write-Output '############################## Validating Terraform scripts ##############################'
+Write-Output "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
 
 if ($LASTEXITCODE -ne 0) {
-  Write-Output 'ERROR: Terraform Validating failed.'
+  Write-Output "ERROR: Terraform Validating failed."
   exit 1
 }
 
 switch ($Action) {
   # Run terraform plan
   'plan+apply' {
-    Write-Output '############################## Planning Terraform changes ##############################'
+    Write-Output "############################## Planning Terraform changes ##############################"
     # Trim and remove all whitespace from $Targets
     $Targets = $Targets.Trim() -replace '\s+', ''
     # Check if $Targets is empty (no targets specified)
@@ -171,31 +171,31 @@ switch ($Action) {
         if ($target -match $pattern) {
           $validTargets += $target
         } else {
-          Write-Output 'ERROR: Invalid target format: $target'
-          Write-Output 'Expected format: -target=resource_type.resource_name[..]'
+          Write-Output "ERROR: Invalid target format: $target"
+          Write-Output "Expected format: -target=resource_type.resource_name[..]"
           exit 1
         }
       }
 
-      terraform plan -input=false -no-color $validTargets -out='plan.output'
+      terraform plan -input=false -no-color $validTargets -out="plan.output"
     }
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output 'ERROR: Terraform Planning failed.'
+      Write-Output "ERROR: Terraform Planning failed."
       exit 1
     }
 
     # Run terraform apply
-    Write-Output '############################## Applying Terraform changes ##############################'
+    Write-Output "############################## Applying Terraform changes ##############################"
     terraform apply -input=false -no-color -auto-approve 'plan.output'
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output 'ERROR: Terraform Applying failed.'
+      Write-Output "ERROR: Terraform Applying failed."
       exit 1
     }
   }
   'import' {
-    Write-Output '############################## Importing a resource into Terraform State ##############################'
+    Write-Output "############################## Importing a resource into Terraform State ##############################"
     # Trim and remove all whitespace from $Address
     $Address = $Address.Trim() -replace '\s+', ''
     # Trim and remove all whitespace from $Id
@@ -205,60 +205,60 @@ switch ($Action) {
     # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output 'ERROR: Terraform Importing failed.'
+      Write-Output "ERROR: Terraform Importing failed."
       exit 1
     }
   }
   'state remove' {
-    Write-Output '############################## Removing a resource into Terraform State ##############################'
+    Write-Output "############################## Removing a resource into Terraform State ##############################"
     # Trim and remove all whitespace from $Address
     $Address = $Address.Trim() -replace '\s+', ''
 
     # Run terraform state rm
-    # TODO: to consider to set '-dry-run'
+    # TODO: to consider to set "-dry-run"
     # terraform state rm $Address ######################################################################################################################################################
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output 'ERROR: Terraform Removing failed.'
+      Write-Output "ERROR: Terraform Removing failed."
       exit 1
     }
   }
   'state move' {
-    Write-Output '############################## Moving a resource into Terraform State ##############################'
+    Write-Output "############################## Moving a resource into Terraform State ##############################"
     # Trim and remove all whitespace from $Source
     $Source = $Source.Trim() -replace '\s+', ''
     # Trim and remove all whitespace from $Destination
     $Destination = $Destination.Trim() -replace '\s+', ''
 
     # Run terraform move
-    # TODO: to consider to set '-dry-run'
+    # TODO: to consider to set "-dry-run"
     # terraform state mv $Source $Destination ######################################################################################################################################################
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output 'ERROR: Terraform Moving failed.'
+      Write-Output "ERROR: Terraform Moving failed."
       exit 1
     }
   }
   'state list' {
-    Write-Output '############################## Listing Terraform State ##############################'
+    Write-Output "############################## Listing Terraform State ##############################"
 
     # Run terraform state list
     # terraform state list ######################################################################################################################################################
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output 'ERROR: Terraform Listing failed.'
+      Write-Output "ERROR: Terraform Listing failed."
       exit 1
     }
   }
   default {
-    Write-Output 'ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move''
+    Write-Output "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move'"
     exit 1
   }
 }
 
 # Delete backend.tf and variables.tf
-Remove-Item -Path 'backend.tf' -Force
-Remove-Item -Path 'variables.tf' -Force
+Remove-Item -Path "backend.tf" -Force
+Remove-Item -Path "variables.tf" -Force
 
-New-Item -ItemType Directory -Path '$Path/$Env/tf_temp' -Force
-terraform providers mirror '$Path/$Env/tf_temp'
+New-Item -ItemType Directory -Path "$Path/$Env/tf_temp" -Force
+terraform providers mirror "$Path/$Env/tf_temp"
