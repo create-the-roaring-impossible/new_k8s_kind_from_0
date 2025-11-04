@@ -102,7 +102,6 @@ jobs:
                                           -Scope '${{ github.event.inputs.scope }}' \
                                           -Action '${{ github.event.inputs.action }}' \
                                           -LogLevel '${{ github.event.inputs.logLevel }}' \
-                                          -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
                                           -PluginCacheMayBreakDependencyLockFile 'true' \
                                           -Targets '${{ github.event.inputs.targets }}' \
                                           -Address '${{ github.event.inputs.address }}' \
@@ -111,3 +110,4 @@ jobs:
                                           -Destination '${{ github.event.inputs.destination }}' \
                                           -GitLabUser ${{ secrets.GITLAB_USER }} \
                                           -GitLabToken ${{ secrets.GITLAB_TOKEN }}
+                                          # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
