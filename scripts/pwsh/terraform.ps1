@@ -113,6 +113,8 @@ $env:TF_LOG_PATH="tf.log"
 if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
   $env:TF_PLUGIN_CACHE_DIR = $PluginCacheDir
   $env:TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE = $PluginCacheMayBreakDependencyLockFile
+} else {
+  Write-Output "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 }
 
 # Validate GitLab credentials
