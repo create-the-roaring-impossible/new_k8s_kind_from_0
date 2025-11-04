@@ -81,7 +81,7 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
     env:
       TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
-      TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: ${{ github.workspace }}/.terraform.d/plugin-cache
+      TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
