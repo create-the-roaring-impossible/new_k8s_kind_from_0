@@ -123,7 +123,7 @@ if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace
 
 # Run terraform init
 Write-Output "############################## Initializing Terraform ##############################"
-$TfStateName="${Scope}-${Env}"
+$TfStateName="github-${Scope}-${Env}"
 # TODO: to pass "GitLabProjectId" as variable
 $GitLabProjectId="65547687"
 
