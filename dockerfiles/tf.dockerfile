@@ -3,7 +3,7 @@
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
-# VERSION: 1.3.0
+# VERSION: 1.4.0
 # DATE: 2025-10-19
 
 FROM alpine:3.22 AS base
@@ -11,7 +11,7 @@ FROM alpine:3.22 AS base
 # Add metadata labels
 LABEL description="Terraform container with non-root user setup"
 LABEL maintainer="Matteo Cristiano"
-LABEL version="1.3.0"
+LABEL version="1.4.0"
 
 USER root
 
@@ -36,6 +36,8 @@ RUN apk update && \
         make \
         musl-dev \
         ncurses-terminfo-base \
+        nodejs \
+        npm \
         openssh-client \
         openssl-dev \
         py3-pip \
