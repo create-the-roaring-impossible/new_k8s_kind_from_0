@@ -53,6 +53,7 @@ CMakeUserPresets.json
 
 ### Ansible ###
 *.retry
+.ansible/.lock
 
 ### Vagrant ###
 .vagrant/
