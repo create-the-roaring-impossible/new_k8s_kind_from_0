@@ -97,6 +97,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}${{ runner.arch }}-terraform-
       - name: Terraform
+        env:
+          GL_USER: ${{ secrets.GITLAB_USER }}
+          GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
           pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
                                           -Env '${{ github.event.inputs.env }}' \
@@ -108,7 +111,7 @@ jobs:
                                           -Id '${{ github.event.inputs.id }}' \
                                           -Source '${{ github.event.inputs.source }}' \
                                           -Destination '${{ github.event.inputs.destination }}' \
-                                          -GitLabUser ${{ secrets.GITLAB_USER }} \
-                                          -GitLabToken ${{ secrets.GITLAB_TOKEN }}
+                                          -GitLabUser $GL_USER \
+                                          -GitLabToken $GL_TOKEN
                                           # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
                                           # -PluginCacheMayBreakDependencyLockFile 'true' \
