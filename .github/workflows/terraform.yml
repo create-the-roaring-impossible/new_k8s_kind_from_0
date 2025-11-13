@@ -115,3 +115,5 @@ jobs:
                                           -GitLabToken $GL_TOKEN
                                           # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
                                           # -PluginCacheMayBreakDependencyLockFile 'true' \
+      # TODO: to add 'manual validation' job
+      # TODO: to add 'apply' job
