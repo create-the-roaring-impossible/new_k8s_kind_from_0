@@ -41,7 +41,7 @@ on:
           - 'DEBUG'
           - 'TRACE'
       targets:
-        description: 'Set the targets (optional, comma-separated) [only for "plan" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
+        description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
         type: string
         required: false
         default: ''
@@ -71,9 +71,10 @@ on:
       #   required: true
       #   default: true
 jobs:
-  terraform:
-    name: Terraform
+  terraformPlanApply:
+    name: 'Terraform Plan+Apply'
     runs-on: 'arc-desktop-s8glse7'
+    # TODO. to run only if 'plan+apply'
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -104,7 +105,7 @@ jobs:
           pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
                                           -Env '${{ github.event.inputs.env }}' \
                                           -Scope '${{ github.event.inputs.scope }}' \
-                                          -Action '${{ github.event.inputs.action }}' \
+                                          -Action 'plan' \
                                           -LogLevel '${{ github.event.inputs.logLevel }}' \
                                           -Targets '${{ github.event.inputs.targets }}' \
                                           -Address '${{ github.event.inputs.address }}' \
@@ -115,5 +116,6 @@ jobs:
                                           -GitLabToken $GL_TOKEN
                                           # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
                                           # -PluginCacheMayBreakDependencyLockFile 'true' \
-      # TODO: to add 'manual validation' job
-      # TODO: to add 'apply' job
+      # TODO: to add 'publish artifact' step
+  # TODO: to add 'manual validation' job
+  # TODO: to add 'apply' job
