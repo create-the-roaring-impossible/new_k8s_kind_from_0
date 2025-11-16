@@ -132,11 +132,11 @@ jobs:
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ github.event.inputs.action == 'plan+apply' }} && success('terraformPlan')
     needs: terraformPlan
-    # container:
-    #   image: ghcr.io/create-the-roaring-impossible/tf:latest
-    #   credentials:
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.DOCKER_TOKEN }}
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.DOCKER_TOKEN }}
     timeout-minutes: 15
     permissions:
       issues: write
