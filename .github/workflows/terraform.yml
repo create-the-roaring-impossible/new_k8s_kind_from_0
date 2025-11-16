@@ -117,6 +117,15 @@ jobs:
                                           -GitLabToken $GL_TOKEN
                                           # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
                                           # -PluginCacheMayBreakDependencyLockFile 'true' \
-      # TODO: to add 'publish artifact' step
+      - name: Publish plan.output Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'planOutput'
+          path: '$(System.DefaultWorkingDirectory)/terraform/${{ parameters.scope }}/${{ parameters.env }}/plan.output'
+          if-no-files-found: 'error'
+          retention-days: 0 # 0 means using repository retention settings
+          compression-level: 6
+          overwrite: true
+          include-hidden-files: false
   # TODO: to add 'manual validation' job
   # TODO: to add 'apply' job
