@@ -130,23 +130,25 @@ jobs:
   ManualTerraformPlanValidation:
     name: 'ManualTerraformPlanValidation'
     runs-on: 'arc-desktop-s8glse7'
-    if: success('terraformPlan')
+    if: ${{ github.event.inputs.action == 'plan+apply' }} && success('terraformPlan')
     needs: terraformPlan
     # container:
     #   image: ghcr.io/create-the-roaring-impossible/tf:latest
     #   credentials:
     #     username: ${{ github.actor }}
     #     password: ${{ secrets.DOCKER_TOKEN }}
+    timeout-minutes: 15
+    permissions:
+      issues: write
     steps:
       - name: Publish plan.output Artifact
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: user1,user2,org-team1
+          approvers: Sennar19 # Admin
           minimum-approvals: 1
-          issue-title: "Deploying v1.3.5 to prod from staging"
-          issue-body: "Please approve or deny the deployment of version v1.3.5."
-          issue-body-file-path: relative/file_path/wrt/repo/root
+          issue-title: "Terraform Plan - Manual Approval Required"
+          issue-body: "Validate Terraform plan"
           exclude-workflow-initiator-as-approver: false
           fail-on-denial: true
           additional-approved-words: ''
