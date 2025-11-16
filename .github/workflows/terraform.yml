@@ -1,3 +1,4 @@
+#TODO: to define from a template
 name: 'Terraform CI\CD'
 on:
   workflow_dispatch:
