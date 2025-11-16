@@ -1,5 +1,4 @@
-#TODO: to define from a template
-name: 'Terraform CI\CD'
+name: 'Terraform CI\CD' # TODO: to define from a template
 on:
   workflow_dispatch:
     inputs:
