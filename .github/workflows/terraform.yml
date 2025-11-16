@@ -121,7 +121,7 @@ jobs:
         with:
           name: 'planOutput'
           path: '${{ github.workspace }}/terraform/${{ parameters.scope }}/${{ parameters.env }}/plan.output'
-          if-no-files-found: 'error'
+          if-no-files-found: error
           retention-days: 0 # 0 means using repository retention settings
           compression-level: 6
           overwrite: true
