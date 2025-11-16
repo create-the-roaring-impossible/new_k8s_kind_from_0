@@ -1,4 +1,5 @@
-name: 'Terraform CI\CD' # TODO: to define from a template
+# TODO: to define from a template
+name: 'Terraform CI\CD'
 on:
   workflow_dispatch:
     inputs:
@@ -120,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'planOutput'
-          path: '${{ github.workspace }}/terraform/${{ parameters.scope }}/${{ parameters.env }}/plan.output'
+          path: '${{ github.workspace }}/terraform/${{ github.event.inputs.scope }}/${{ github.event.inputs.env }}/plan.output'
           if-no-files-found: error
           retention-days: 0 # 0 means using repository retention settings
           compression-level: 6
