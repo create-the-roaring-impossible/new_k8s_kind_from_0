@@ -141,11 +141,18 @@ jobs:
     permissions:
       issues: write
     steps:
+      # TODO: to check section 'Org team approver', to 'https://github.com/marketplace/actions/manual-workflow-approval' url
+      # - name: Generate token
+      #   id: generate_token
+      #   uses: actions/create-github-app-token@v2
+      #   with:
+      #     app-id: ${{ secrets.APP_ID }}
+      #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Publish plan.output Artifact
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: Sennar19 # Admin
+          approvers: Sennar19 # TODO: to set 'Admin'
           minimum-approvals: 1
           issue-title: "Terraform Plan - Manual Approval Required"
           issue-body: "Validate Terraform plan"
