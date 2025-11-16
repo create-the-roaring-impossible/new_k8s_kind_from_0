@@ -72,10 +72,10 @@ on:
       #   required: true
       #   default: true
 jobs:
-  terraformPlanApply:
-    name: 'Terraform Plan+Apply'
+  terraformPlan:
+    name: 'Terraform Plan'
     runs-on: 'arc-desktop-s8glse7'
-    # TODO. to run only if 'plan+apply'
+    if: ${{ github.event.inputs.action == 'plan+apply' }}
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -127,5 +127,82 @@ jobs:
           compression-level: 6
           overwrite: true
           include-hidden-files: false
-  # TODO: to add 'manual validation' job
-  # TODO: to add 'apply' job
+  ManualTerraformPlanValidation:
+    name: 'ManualTerraformPlanValidation'
+    runs-on: 'arc-desktop-s8glse7'
+    if: success('terraformPlan')
+    needs: terraformPlan
+    # container:
+    #   image: ghcr.io/create-the-roaring-impossible/tf:latest
+    #   credentials:
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.DOCKER_TOKEN }}
+    steps:
+      - name: Publish plan.output Artifact
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: user1,user2,org-team1
+          minimum-approvals: 1
+          issue-title: "Deploying v1.3.5 to prod from staging"
+          issue-body: "Please approve or deny the deployment of version v1.3.5."
+          issue-body-file-path: relative/file_path/wrt/repo/root
+          exclude-workflow-initiator-as-approver: false
+          fail-on-denial: true
+          additional-approved-words: ''
+          additional-denied-words: ''
+  # terraformPlan:
+  #   name: 'Terraform Plan'
+  #   runs-on: 'arc-desktop-s8glse7'
+  #   if: ${{ github.event.inputs.action == 'plan+apply' }}
+  #   container:
+  #     image: ghcr.io/create-the-roaring-impossible/tf:latest
+  #     credentials:
+  #       username: ${{ github.actor }}
+  #       password: ${{ secrets.DOCKER_TOKEN }}
+  #   env:
+  #     TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
+  #     TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
+  #   steps:
+  #     - name: 'Repository Checkout'
+  #       uses: actions/checkout@v5
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Create Terraform Plugin Cache Dir
+  #       run: mkdir --parents $TF_PLUGIN_CACHE_DIR
+  #     - name: Cache Terraform plugins
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+  #         key:  ${{ runner.os }}${{ runner.arch }}-terraform
+  #         restore-keys: |
+  #           ${{ runner.os }}${{ runner.arch }}-terraform
+  #     - name: Terraform
+  #       env:
+  #         GL_USER: ${{ secrets.GITLAB_USER }}
+  #         GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+  #       run: |
+  #         pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
+  #                                         -Env '${{ github.event.inputs.env }}' \
+  #                                         -Scope '${{ github.event.inputs.scope }}' \
+  #                                         -Action 'plan' \
+  #                                         -LogLevel '${{ github.event.inputs.logLevel }}' \
+  #                                         -Targets '${{ github.event.inputs.targets }}' \
+  #                                         -Address '${{ github.event.inputs.address }}' \
+  #                                         -Id '${{ github.event.inputs.id }}' \
+  #                                         -Source '${{ github.event.inputs.source }}' \
+  #                                         -Destination '${{ github.event.inputs.destination }}' \
+  #                                         -GitLabUser $GL_USER \
+  #                                         -GitLabToken $GL_TOKEN
+  #                                         # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
+  #                                         # -PluginCacheMayBreakDependencyLockFile 'true' \
+  #     - name: Publish plan.output Artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: 'planOutput'
+  #         path: '${{ github.workspace }}/terraform/${{ github.event.inputs.scope }}/${{ github.event.inputs.env }}/plan.output'
+  #         if-no-files-found: error
+  #         retention-days: 0 # 0 means using repository retention settings
+  #         compression-level: 6
+  #         overwrite: true
+  #         include-hidden-files: false
