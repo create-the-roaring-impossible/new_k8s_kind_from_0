@@ -98,7 +98,7 @@ jobs:
           key:  ${{ runner.os }}${{ runner.arch }}-terraform
           restore-keys: |
             ${{ runner.os }}${{ runner.arch }}-terraform
-      - name: Terraform
+      - name: PLAN - Run terraform.ps1 script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
@@ -128,8 +128,8 @@ jobs:
           overwrite: true
           include-hidden-files: false
   # TODO: to add 'plan scan', via Chekov or tfsec or other tools
-  ManualTerraformPlanValidation:
-    name: 'ManualTerraformPlanValidation'
+  ManualTerraformPlanApproval:
+    name: 'ManualTerraformPlanApproval'
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ github.event.inputs.action == 'plan+apply' }} && success('terraformPlan')
     needs: terraformPlan
@@ -164,8 +164,8 @@ jobs:
   terraformApply:
     name: 'Terraform Apply'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' }} && success('ManualTerraformPlanValidation')
-    needs: ManualTerraformPlanValidation
+    if: ${{ github.event.inputs.action == 'plan+apply' }} && success('ManualTerraformPlanApproval')
+    needs: ManualTerraformPlanApproval
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -192,7 +192,7 @@ jobs:
           path: '${{ github.workspace }}/terraform/${{ github.event.inputs.scope }}/${{ github.event.inputs.env }}/'
           repository: ${{ github.repository }}
           run-id: ${{ github.run_id }}
-      - name: Terraform
+      - name: APPLY - Run terraform.ps1 script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
