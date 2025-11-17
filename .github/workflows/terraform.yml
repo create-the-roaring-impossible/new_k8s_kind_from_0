@@ -149,7 +149,7 @@ jobs:
       #   with:
       #     app-id: ${{ secrets.APP_ID }}
       #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Publish plan.output Artifact
+      - name: Manual Approval
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
