@@ -161,15 +161,16 @@ jobs:
           fail-on-denial: true
           additional-approved-words: ''
           additional-denied-words: ''
-  # terraformPlan:
-  #   name: 'Terraform Plan'
-  #   runs-on: 'arc-desktop-s8glse7'
-  #   if: ${{ github.event.inputs.action == 'plan+apply' }}
-  #   container:
-  #     image: ghcr.io/create-the-roaring-impossible/tf:latest
-  #     credentials:
-  #       username: ${{ github.actor }}
-  #       password: ${{ secrets.DOCKER_TOKEN }}
+  terraformApply:
+    name: 'Terraform Apply'
+    runs-on: 'arc-desktop-s8glse7'
+    if: ${{ github.event.inputs.action == 'plan+apply' }} && success('ManualTerraformPlanValidation')
+    needs: ManualTerraformPlanValidation
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.DOCKER_TOKEN }}
   #   env:
   #     TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
   #     TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
