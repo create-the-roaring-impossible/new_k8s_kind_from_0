@@ -185,16 +185,13 @@ jobs:
           key:  ${{ runner.os }}${{ runner.arch }}-terraform
           restore-keys: |
             ${{ runner.os }}${{ runner.arch }}-terraform
-  #     - name: Publish plan.output Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: 'planOutput'
-  #         path: '${{ github.workspace }}/terraform/${{ github.event.inputs.scope }}/${{ github.event.inputs.env }}/plan.output'
-  #         if-no-files-found: error
-  #         retention-days: 0 # 0 means using repository retention settings
-  #         compression-level: 6
-  #         overwrite: true
-  #         include-hidden-files: false
+      - name: Download plan.output Artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: 'planOutput'
+          path: '${{ github.workspace }}/terraform/${{ github.event.inputs.scope }}/${{ github.event.inputs.env }}/'
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
       - name: Terraform
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
