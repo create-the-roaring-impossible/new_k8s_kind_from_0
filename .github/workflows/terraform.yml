@@ -127,6 +127,7 @@ jobs:
           compression-level: 6
           overwrite: true
           include-hidden-files: false
+  # TODO: to add 'plan scan', via Chekov or tfsec or other tools
   ManualTerraformPlanValidation:
     name: 'ManualTerraformPlanValidation'
     runs-on: 'arc-desktop-s8glse7'
