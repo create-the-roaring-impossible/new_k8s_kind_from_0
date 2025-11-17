@@ -51,10 +51,10 @@
   Matteo Cristiano
 
 .VERSION
-  1.2.1
+  1.2.2
 
 .DATE
-  13/11/2025
+  17/11/2025
 #>
 
 # Inputs
@@ -195,18 +195,14 @@ switch ($Action) {
       exit 1
     }
   }
-  'import' {
-    Write-Output "############################## Importing a resource into Terraform State ##############################"
-    # Trim and remove all whitespace from $Address
-    $Address = $Address.Trim() -replace '\s+', ''
-    # Trim and remove all whitespace from $Id
-    $Id = $Id.Trim() -replace '\s+', ''
+  'state list' {
+    Write-Output "############################## Listing Terraform State ##############################"
 
-    # Run terraform import
-    # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
+    # Run terraform state list
+    # terraform state list ######################################################################################################################################################
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Importing failed."
+      Write-Output "ERROR: Terraform Listing failed."
       exit 1
     }
   }
@@ -240,14 +236,18 @@ switch ($Action) {
       exit 1
     }
   }
-  'state list' {
-    Write-Output "############################## Listing Terraform State ##############################"
+  'import' {
+    Write-Output "############################## Importing a resource into Terraform State ##############################"
+    # Trim and remove all whitespace from $Address
+    $Address = $Address.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $Id
+    $Id = $Id.Trim() -replace '\s+', ''
 
-    # Run terraform state list
-    # terraform state list ######################################################################################################################################################
+    # Run terraform import
+    # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
 
     if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Listing failed."
+      Write-Output "ERROR: Terraform Importing failed."
       exit 1
     }
   }
