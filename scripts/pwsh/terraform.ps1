@@ -184,15 +184,16 @@ switch ($Action) {
       Write-Output "ERROR: Terraform Planning failed."
       exit 1
     }
+  }
+  # Run terraform apply
+  'apply' {
+    Write-Output "############################## Applying Terraform changes ##############################"
+    terraform apply -input=false -no-color -auto-approve 'plan.output'
 
-    # # Run terraform apply
-    # Write-Output "############################## Applying Terraform changes ##############################"
-    # terraform apply -input=false -no-color -auto-approve 'plan.output'
-
-    # if ($LASTEXITCODE -ne 0) {
-    #   Write-Output "ERROR: Terraform Applying failed."
-    #   exit 1
-    # }
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Applying failed."
+      exit 1
+    }
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
