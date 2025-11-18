@@ -74,6 +74,7 @@ on:
 env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
   TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
+  TF_IN_AUTOMATION: 'true'
 jobs:
   terraformPlan:
     name: 'Terraform Plan'
