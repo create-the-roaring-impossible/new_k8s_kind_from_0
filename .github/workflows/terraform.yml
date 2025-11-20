@@ -224,6 +224,13 @@ jobs:
           fetch-depth: 0
       - name: Create Terraform Plugin Cache Dir
         run: mkdir --parents $TF_PLUGIN_CACHE_DIR
+      - name: Cache Terraform plugins
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key:  ${{ runner.os }}${{ runner.arch }}-terraform
+          restore-keys: |
+            ${{ runner.os }}${{ runner.arch }}-terraform
       - name: STATE LIST - Run terraform.ps1 script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
