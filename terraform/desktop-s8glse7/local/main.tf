@@ -3,14 +3,14 @@
 #   max = 100
 # }
 
+# moved {
+#   from = random_integer.rand
+#   to  = random_integer.rand_new
+# }
+
 resource "random_integer" "rand_new" {
   min = 1
   max = 100
-}
-
-moved {
-  from = random_integer.rand
-  to  = random_integer.rand_new
 }
 
 # resource "local_file" "test_file" {

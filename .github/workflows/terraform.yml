@@ -25,10 +25,10 @@ on:
         options:
           - 'nothing (only for test purposes)'
           - 'plan+apply'
+          - 'state list'
           - 'import'
           - 'state remove'
           - 'state move'
-          - 'state list'
       logLevel:
         description: 'Set the log level (optional)'
         type: choice
@@ -116,8 +116,6 @@ jobs:
                                           -Destination '${{ github.event.inputs.destination }}' \
                                           -GitLabUser $GL_USER \
                                           -GitLabToken $GL_TOKEN
-                                          # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
-                                          # -PluginCacheMayBreakDependencyLockFile 'true' \
       - name: Publish plan.output Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -210,5 +208,34 @@ jobs:
                                           -Destination '${{ github.event.inputs.destination }}' \
                                           -GitLabUser $GL_USER \
                                           -GitLabToken $GL_TOKEN
-                                          # -PluginCacheDir ${{ env.TF_PLUGIN_CACHE_DIR }} \
-                                          # -PluginCacheMayBreakDependencyLockFile 'true' \
+  terraformStateList:
+    name: 'Terraform State List'
+    runs-on: 'arc-desktop-s8glse7'
+    if: ${{ github.event.inputs.action == 'state list' }}
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: STATE LIST - Run terraform.ps1 script
+        env:
+          GL_USER: ${{ secrets.GITLAB_USER }}
+          GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
+                                          -Env '${{ github.event.inputs.env }}' \
+                                          -Scope '${{ github.event.inputs.scope }}' \
+                                          -Action 'state list' \
+                                          -LogLevel '${{ github.event.inputs.logLevel }}' \
+                                          -Targets '${{ github.event.inputs.targets }}' \
+                                          -Address '${{ github.event.inputs.address }}' \
+                                          -Id '${{ github.event.inputs.id }}' \
+                                          -Source '${{ github.event.inputs.source }}' \
+                                          -Destination '${{ github.event.inputs.destination }}' \
+                                          -GitLabUser $GL_USER \
+                                          -GitLabToken $GL_TOKEN

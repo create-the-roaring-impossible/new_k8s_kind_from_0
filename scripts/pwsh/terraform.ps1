@@ -199,7 +199,7 @@ switch ($Action) {
     Write-Output "############################## Listing Terraform State ##############################"
 
     # Run terraform state list
-    # terraform state list ######################################################################################################################################################
+    terraform state list
 
     if ($LASTEXITCODE -ne 0) {
       Write-Output "ERROR: Terraform Listing failed."
