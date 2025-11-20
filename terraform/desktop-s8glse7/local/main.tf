@@ -1,9 +1,24 @@
-resource "random_integer" "rand" {
+# resource "random_integer" "rand" {
+#   min = 1
+#   max = 100
+# }
+
+resource "random_integer" "rand_new" {
   min = 1
   max = 100
 }
 
+moved {
+  from = random_integer.rand
+  to  = random_integer.rand_new
+}
+
+# resource "local_file" "test_file" {
+#   filename = "${random_integer.rand.result}.txt"
+#   content  = "This is an example file created by Terraform."
+# }
+
 resource "local_file" "test_file" {
-  filename = "${random_integer.rand.result}.txt"
+  filename = "${random_integer.rand_new.result}.txt"
   content  = "This is an example file created by Terraform."
 }
