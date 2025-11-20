@@ -111,11 +111,6 @@ $env:TF_LOG_PATH="tf.log"
 
 # Set TF_PLUGIN_CACHE_DIR and TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE environment variables, if $PluginCacheDir is provided
 if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
-  # Ensure the plugin cache directory exists
-  if (-not (Test-Path -Path $PluginCacheDir)) {
-    New-Item -ItemType Directory -Path $PluginCacheDir -Force | Out-Null
-    Write-Output "INFO: Created plugin cache directory: $PluginCacheDir"
-  }
   $env:TF_PLUGIN_CACHE_DIR = $PluginCacheDir
   $env:TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE = $PluginCacheMayBreakDependencyLockFile
 }
