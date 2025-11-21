@@ -25,5 +25,10 @@ resource "local_file" "test_0_file" {
 
 resource "local_file" "test_1_file" {
   filename = "${random_integer.rand_new.result}.txt"
-  content  = "This is an example file created by Terraform."
+  content  = <<-EOT
+  This is an example file created by Terraform.
+    test line
+  test line
+test line
+  EOT
 }
