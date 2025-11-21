@@ -206,6 +206,22 @@ switch ($Action) {
       exit 1
     }
   }
+  'state move' {
+    Write-Output "############################## Moving a resource into Terraform State ##############################"
+    # Trim and remove all whitespace from $Source
+    $Source = $Source.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $Destination
+    $Destination = $Destination.Trim() -replace '\s+', ''
+
+    # Run terraform move
+    # TODO: to consider to set "-dry-run"
+    terraform state mv $Source $Destination
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Output "ERROR: Terraform Moving failed."
+      exit 1
+    }
+  }
   'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
     # Trim and remove all whitespace from $Address
@@ -217,22 +233,6 @@ switch ($Action) {
 
     if ($LASTEXITCODE -ne 0) {
       Write-Output "ERROR: Terraform Removing failed."
-      exit 1
-    }
-  }
-  'state move' {
-    Write-Output "############################## Moving a resource into Terraform State ##############################"
-    # Trim and remove all whitespace from $Source
-    $Source = $Source.Trim() -replace '\s+', ''
-    # Trim and remove all whitespace from $Destination
-    $Destination = $Destination.Trim() -replace '\s+', ''
-
-    # Run terraform move
-    # TODO: to consider to set "-dry-run"
-    # terraform state mv $Source $Destination ######################################################################################################################################################
-
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Moving failed."
       exit 1
     }
   }

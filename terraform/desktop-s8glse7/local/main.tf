@@ -18,7 +18,12 @@ resource "random_integer" "rand_new" {
 #   content  = "This is an example file created by Terraform."
 # }
 
-resource "local_file" "test_file" {
+resource "local_file" "test_0_file" {
+  filename = "${random_integer.rand_new.result}.txt"
+  content  = "This is an example file created by Terraform."
+}
+
+resource "local_file" "test_1_file" {
   filename = "${random_integer.rand_new.result}.txt"
   content  = "This is an example file created by Terraform."
 }
