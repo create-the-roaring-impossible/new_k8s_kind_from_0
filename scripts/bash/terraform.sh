@@ -5,7 +5,7 @@ set -e
 #              It will be used GitLab, to store the Terraform state remotely.
 #
 # REQUIREMENTS:
-#   - The path to the Terraform scripts (PATH) (mandatory)
+#   - The path to the Terraform scripts (TF_PATH) (mandatory)
 #   - The environment to set (ENV) (mandatory)
 #   - The scope to set (SCOPE) (mandatory)
 #   - The action to perform (ACTION) ('plan', 'apply', 'state move', 'state list', 'state remove', 'import') (mandatory)
@@ -20,7 +20,7 @@ set -e
 #   - The GitLab user to use for authentication (GITLAB_USER) (mandatory)
 #   - The GitLab token to use for authentication (GITLAB_TOKEN) (mandatory)
 #
-# USAGE: bash terraform.sh -PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> [-LOG_LEVEL <log_level>] [-PLUGIN_CACHE_DIR <plugin_cache_dir>] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [-ADDRESS <address>] [-ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
+# USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> [-LOG_LEVEL <log_level>] [-PLUGIN_CACHE_DIR <plugin_cache_dir>] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [-ADDRESS <address>] [-ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
 #
 # EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
 #          This example runs the 'plan' action, with the specified targets.
@@ -44,8 +44,8 @@ set -e
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -PATH)
-      PATH="$2"
+    -TF_PATH)
+      TF_PATH="$2"
       shift 2
       ;;
     -ENV)
@@ -108,10 +108,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required parameters
-if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
+if [[ -z "$TF_PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
   echo "ERROR: Missing required parameters"
-  echo "Required: -PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN"
-  echo "USAGE: bash terraform.sh -PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> [OPTIONS]"
+  echo "Required: -TF_PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN"
+  echo "USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> [OPTIONS]"
   echo "Optional: -LOG_LEVEL <level> -PLUGIN_CACHE_DIR <dir> -PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false> -TARGETS <targets> -SOURCE <source> -DESTINATION <destination> -ADDRESS <address> -ID <id>"
   exit 1
 fi
@@ -161,14 +161,12 @@ function test_exit_code() {
   fi
 }
 
-which cp
+# Copy backend.tf and variables.tf, from $TF_PATH to $TF_PATH/$ENV
+cp "$TF_PATH/backend.tf" "$TF_PATH/$ENV/backend.tf"
+cp "$TF_PATH/variables.tf" "$TF_PATH/$ENV/variables.tf"
 
-# Copy backend.tf and variables.tf, from $PATH to $PATH/$ENV
-cp "$PATH/backend.tf" "$PATH/$ENV/backend.tf"
-cp "$PATH/variables.tf" "$PATH/$ENV/variables.tf"
-
-# Change directory to $Path/$Env
-cd "$PATH/$ENV"
+# Change directory to $TF_PATH/$ENV
+cd "$TF_PATH/$ENV"
 
 # Set TF_LOG environment variable, default to ERROR if LogLevel is not provided
 if [[ -z "$LOG_LEVEL" ]]; then
@@ -305,5 +303,5 @@ rm -rf "backend.tf"
 rm -rf "variables.tf"
 
 # TODO: to investigate
-# mkdir -p "$PATH/$ENV/tf_temp"
-# terraform providers mirror "$PATH/$ENV/tf_temp"
+# mkdir -p "$TF_PATH/$ENV/tf_temp"
+# terraform providers mirror "$TF_PATH/$ENV/tf_temp"
