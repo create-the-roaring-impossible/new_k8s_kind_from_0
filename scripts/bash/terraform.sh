@@ -8,7 +8,7 @@ set -e
 # - The path to the Terraform scripts (PATH)
 # - The environment to set (ENV)
 # - The scope to set (SCOPE)
-# - The action to perform (ACTION) ['plan', 'apply', 'state move', 'state list', 'import', 'state remove']
+# - The action to perform (ACTION) ['plan', 'apply', 'state move', 'state list', 'state remove', 'import']
 # - The log level to set (LOG_LEVEL) [INFO, WARN, ERROR, DEBUG, TRACE]
 # - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) [optional]
 # - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) [optional]
@@ -115,7 +115,7 @@ if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER
   exit 1
 fi
 
-# Validate ACTION parameter
+# Validate LOG_LEVEL parameter
 valid_actions=("plan" "apply" "state list" "state move" "state remove" "import")
 if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
   echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove', and 'state move'"
