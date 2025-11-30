@@ -9,7 +9,7 @@ set -e
 # - The environment to set (ENV) (mandatory)
 # - The scope to set (SCOPE) (mandatory)
 # - The action to perform (ACTION) ('plan', 'apply', 'state move', 'state list', 'state remove', 'import') (mandatory)
-# - The log level to set (LOG_LEVEL) (INFO, WARN, ERROR, DEBUG, TRACE) (optional)
+# - The log level to set (LOG_LEVEL) ('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE') (optional)
 # - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) (optional)
 # - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) ('true', 'false') (optional)
 # - The targets to use for the plan action (TARGETS) (optional)
@@ -131,21 +131,26 @@ if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER
   exit 1
 fi
 
-# Validate LOG_LEVEL parameter
-valid_actions=("plan" "apply" "state list" "state move" "state remove" "import")
-if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
-  echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove', and 'state move'"
-  exit 1
-fi
-
 # Validate ACTION parameter
 valid_actions=("plan" "apply" "state list" "state move" "state remove" "import")
 if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
-  echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove', and 'state move'"
+  echo "ERROR: Invalid 'action' specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove' and 'state move'"
   exit 1
 fi
-#   [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
-#   [ValidateSet('true', 'false')]
+
+# Validate LOG_LEVEL parameter
+valid_log_levels=("INFO" "WARN" "ERROR" "DEBUG" "TRACE")
+if [[ ! " ${valid_log_levels[@]} " =~ " ${LOG_LEVEL} " ]]; then
+  echo "ERROR: Invalid 'log_level' specified. Valid actions are: 'INFO', 'WARN', 'ERROR', 'DEBUG' and 'TRACE'"
+  exit 1
+fi
+
+# Validate PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE parameter
+valid_plugin_cache_may_break_dependency_lock_file=("true" "false")
+if [[ ! " ${valid_plugin_cache_may_break_dependency_lock_file[@]} " =~ " ${PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE} " ]]; then
+  echo "ERROR: Invalid 'plugin_cache_may_break_dependency_lock_file' specified. Valid values are: 'true' and 'false'"
+  exit 1
+fi
 
 ###########################
 ######## Functions ########
