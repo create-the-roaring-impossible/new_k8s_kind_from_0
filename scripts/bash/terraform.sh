@@ -248,14 +248,14 @@ case $ACTION in
     ;;
   'apply')
     echo "############################## Applying Terraform changes ##############################"
-#     terraform apply -input=false -no-color -auto-approve 'plan.output'
+    terraform apply -input=false -no-color -auto-approve 'plan.output'
 
     test_exit_code "ERROR: Terraform Applying failed."
   ;;
   'state list')
     echo "############################## Listing Terraform State ##############################"
 
-#     terraform state list
+    terraform state list
 
     test_exit_code "ERROR: Terraform Listing failed."
     ;;
