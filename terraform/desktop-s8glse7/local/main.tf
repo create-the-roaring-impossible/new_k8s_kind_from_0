@@ -18,7 +18,7 @@ resource "local_file" "test_file" { # commented to test "state mv" command
 #   content  = "This is an example file created by Terraform."
 # }
 
-resource "local_file" "test_1_file" {
+resource "local_file" "test_file_heredoc" {
   filename = "heredoc.txt"
   content  = <<-EOF
 This is an example file created by Terraform.

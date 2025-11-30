@@ -229,22 +229,22 @@ case $ACTION in
     else
       echo "TEST"
       # Split multiple targets by comma and validate each
-    #   $targetArray = $Targets -split ','
-    #   $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
-    #   $validTargets = @()
-    #   foreach ($target in $targetArray) {
-    #     $target = $target.Trim()
-    #     if ($target -match $pattern) {
-    #       $validTargets += $target
-    #     } else {
-    #       Write-Output "ERROR: Invalid target format: $target"
-    #       Write-Output "Expected format: -target=resource_type.resource_name[..]"
-    #       exit 1
-    #     }
-    fi
+      IFS=',' read -ra target_array <<< "$TARGETS"
+      pattern='^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
+      valid_targets=()
+      for target in "${target_array[@]}"; do
+        target=$(echo "$target" | xargs)  # Trim whitespace
+        if [[ $target =~ $pattern ]]; then
+          valid_targets+=("$target")
+        else
+          echo "ERROR: Invalid target format: $target"
+          echo "Expected format: -target=resource_type.resource_name[..]"
+          exit 1
+        fi
+      done
 
-    #   terraform plan -input=false -no-color $validTargets -out="plan.output"
-    # }
+      terraform plan -input=false -no-color "${valid_targets[@]}" -out='plan.output'
+    fi
 
     test_exit_code "ERROR: Terraform Planning failed."
     ;;

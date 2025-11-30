@@ -193,18 +193,13 @@ jobs:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
-                                          -Env '${{ github.event.inputs.env }}' \
-                                          -Scope '${{ github.event.inputs.scope }}' \
-                                          -Action 'apply' \
-                                          -LogLevel '${{ github.event.inputs.logLevel }}' \
-                                          -Targets '${{ github.event.inputs.targets }}' \
-                                          -Address '${{ github.event.inputs.address }}' \
-                                          -Id '${{ github.event.inputs.id }}' \
-                                          -Source '${{ github.event.inputs.source }}' \
-                                          -Destination '${{ github.event.inputs.destination }}' \
-                                          -GitLabUser $GL_USER \
-                                          -GitLabToken $GL_TOKEN
+          bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ github.event.inputs.scope }}' \
+                                         -ENV '${{ github.event.inputs.env }}' \
+                                         -SCOPE '${{ github.event.inputs.scope }}' \
+                                         -ACTION 'plan' \
+                                         -LOG_LEVEL '${{ github.event.inputs.logLevel }}' \
+                                         -GITLAB_USER $GL_USER \
+                                         -GITLAB_TOKEN $GL_TOKEN
   terraformStateList:
     name: 'Terraform State List'
     runs-on: 'arc-desktop-s8glse7'
