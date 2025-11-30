@@ -221,13 +221,11 @@ case $ACTION in
     echo "############################## Planning Terraform changes ##############################"
     # Trim and remove all whitespace from $Targets
     TARGETS=$(echo "$TARGETS" | tr -d '[:space:]')
-    echo $TARGETS
 
     # Check if $Targets is empty (no targets specified)
     if [[ -z "$TARGETS" ]]; then
       terraform plan -input=false -no-color -out='plan.output'
     else
-      echo "TEST"
       # Split multiple targets by comma and validate each
       IFS=',' read -ra target_array <<< "$TARGETS"
       pattern='^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
