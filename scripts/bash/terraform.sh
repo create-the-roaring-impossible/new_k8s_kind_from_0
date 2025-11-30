@@ -1,26 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # DESCRIPTION: The script is used to run Terraform commands, such as init, plan, apply, import, remove, move and list.
 #              It will be used GitLab, to store the Terraform state remotely.
 #
 # REQUIREMENTS:
-# - The path to the Terraform scripts (PATH)
-# - The environment to set (ENV)
-# - The scope to set (SCOPE)
-# - The action to perform (ACTION) ['plan', 'apply', 'state move', 'state list', 'state remove', 'import']
-# - The log level to set (LOG_LEVEL) [INFO, WARN, ERROR, DEBUG, TRACE]
-# - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) [optional]
-# - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) [optional]
-# - The targets to use for the plan action (TARGETS) [optional]
-# - The address of the resource to import, remove or move (ADDRESS) [optional]
-# - The ID of the resource to import (ID) [optional]
-# - The source address of the resource to move (SOURCE) [optional]
-# - The destination address of the resource to move (DESTINATION) [optional]
-# - The GitLab user to use for authentication (GITLAB_USER)
-# - The GitLab token to use for authentication (GITLAB_TOKEN)
+# - The path to the Terraform scripts (PATH) (mandatory)
+# - The environment to set (ENV) (mandatory)
+# - The scope to set (SCOPE) (mandatory)
+# - The action to perform (ACTION) ('plan', 'apply', 'state move', 'state list', 'state remove', 'import') (mandatory)
+# - The log level to set (LOG_LEVEL) (INFO, WARN, ERROR, DEBUG, TRACE) (optional)
+# - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) (optional)
+# - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) ('true', 'false') (optional)
+# - The targets to use for the plan action (TARGETS) (optional)
+# - The address of the resource to import, remove or move (ADDRESS) (optional)
+# - The ID of the resource to import (ID) (optional)
+# - The source address of the resource to move (SOURCE) (optional)
+# - The destination address of the resource to move (DESTINATION) (optional)
+# - The GitLab user to use for authentication (GITLAB_USER) (mandatory)
+# - The GitLab token to use for authentication (GITLAB_TOKEN) (mandatory)
 #
-# USAGE: bash terraform.sh -PATH $PATH -ENV $ENV -SCOPE $SCOPE -ACTION $ACTION [-LOG_LEVEL $LOG_LEVEL] [-PLUGIN_CACHE_DIR $PLUGIN_CACHE_DIR] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS $TARGETS] [-SOURCE $SOURCE] [-DESTINATION $DESTINATION] [-ADDRESS $ADDRESS] [-ID $ID] -GITLAB_USER $USER -GITLAB_TOKEN $TOKEN
+# USAGE: bash terraform.sh -PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> [-LOG_LEVEL <log_level>] [-PLUGIN_CACHE_DIR <plugin_cache_dir>] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [-ADDRESS <address>] [-ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
 #
 # EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
 #          This example runs the 'plan' action, with the specified targets.
@@ -41,6 +41,7 @@ set -e
 ########## Inputs ##########
 ############################
 
+# Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
     -PATH)
@@ -106,6 +107,21 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+echo $PATH
+echo $ENV
+echo $SCOPE
+echo $ACTION
+echo $LOG_LEVEL
+echo $PLUGIN_CACHE_DIR
+echo $PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE
+echo $TARGETS
+echo $SOURCE
+echo $DESTINATION
+echo $ADDRESS
+echo $ID
+echo $GITLAB_USER
+echo $GITLAB_TOKEN
+
 # Validate required parameters
 if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
   echo "ERROR: Missing required parameters"
@@ -128,38 +144,8 @@ if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
   echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove', and 'state move'"
   exit 1
 fi
-
-#   [Parameter(Mandatory=$true)]
-#   [string]$Path,
-#   [Parameter(Mandatory=$true)]
-#   [string]$Env,
-#   [Parameter(Mandatory=$true)]
-#   [string]$Scope,
-#   [Parameter(Mandatory=$true)]
-#   [ValidateSet()]
-#   [string]$Action,
-#   [Parameter(Mandatory=$false)]
 #   [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
-#   [string]$LogLevel,
-#   [Parameter(Mandatory=$false)]
-#   [string]$PluginCacheDir,
-#   [Parameter(Mandatory=$false)]
 #   [ValidateSet('true', 'false')]
-#   [string]$PluginCacheMayBreakDependencyLockFile,
-#   [Parameter(Mandatory=$false)]
-#   [string]$Targets,
-#   [Parameter(Mandatory=$false)]
-#   [string]$Address,
-#   [Parameter(Mandatory=$false)]
-#   [string]$Id,
-#   [Parameter(Mandatory=$false)]
-#   [string]$Source,
-#   [Parameter(Mandatory=$false)]
-#   [string]$Destination,
-#   [Parameter(Mandatory=$true)]
-#   [string]$GitLabUser,
-#   [Parameter(Mandatory=$true)]
-#   [string]$GitLabToken
 
 ###########################
 ######## Functions ########
@@ -195,8 +181,6 @@ fi
 #     exit 1
 #   }
 # }
-
-echo "TEST"
 
 # # Copy backend.tf and variables.tf, from $Path to $Path/$Env
 # Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"
