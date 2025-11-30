@@ -93,12 +93,35 @@ param (
 )
 
 # Functions
-#####
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Listing failed."
-  exit 1
+function Test-ExitCode {
+  <#
+  .SYNOPSIS
+    This function checks the last exit code and exits the script if it is not zero.
+
+  .DESCRIPTION
+    This function checks the last exit code and exits the script if it is not zero. It also outputs a custom error message.
+
+  .PARAMETER Message
+    The error message to output if the last exit code is not zero. (Mandatory)
+
+  .USAGE
+    Test-ExitCode -Message "Custom error message"
+
+  .EXAMPLE
+    Test-ExitCode -Message "ERROR: Terraform Listing failed."
+    This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
+  #>
+
+  param (
+    [Parameter(Mandatory=$true)]
+    [string]$Message
+  )
+
+  if ($LASTEXITCODE -ne 0) {
+    Write-Output ${Message}
+    exit 1
+  }
 }
-#####
 
 # Copy backend.tf and variables.tf, from $Path to $Path/$Env
 Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"
@@ -145,19 +168,13 @@ terraform init -upgrade `
   -backend-config="unlock_method=DELETE" `
   -backend-config="retry_wait_min=5"
 
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Initializing failed."
-  exit 1
-}
+Test-ExitCode -Message "ERROR: Terraform Initializing failed."
 
 # Run terraform validate
 Write-Output "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
 
-if ($LASTEXITCODE -ne 0) {
-  Write-Output "ERROR: Terraform Validating failed."
-  exit 1
-}
+Test-ExitCode -Message "ERROR: Terraform Validating failed."
 
 switch ($Action) {
   # Run terraform plan
@@ -188,20 +205,14 @@ switch ($Action) {
       terraform plan -input=false -no-color $validTargets -out="plan.output"
     }
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Planning failed."
-      exit 1
-    }
+    Test-ExitCode -Message "ERROR: Terraform Planning failed."
   }
   # Run terraform apply
   'apply' {
     Write-Output "############################## Applying Terraform changes ##############################"
     terraform apply -input=false -no-color -auto-approve 'plan.output'
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Applying failed."
-      exit 1
-    }
+    Test-ExitCode -Message "ERROR: Terraform Applying failed."
   }
   'state list' {
     Write-Output "############################## Listing Terraform State ##############################"
@@ -209,10 +220,7 @@ switch ($Action) {
     # Run terraform state list
     terraform state list
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Listing failed."
-      exit 1
-    }
+    Test-ExitCode -Message "ERROR: Terraform Listing failed."
   }
   'state move' {
     Write-Output "############################## Moving a resource into Terraform State ##############################"
@@ -225,10 +233,7 @@ switch ($Action) {
     # TODO: to consider to set "-dry-run"
     terraform state mv $Source $Destination
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Moving failed."
-      exit 1
-    }
+    Test-ExitCode -Message "ERROR: Terraform Moving failed."
   }
   'state remove' {
     Write-Output "############################## Removing a resource into Terraform State ##############################"
@@ -239,10 +244,7 @@ switch ($Action) {
     # TODO: to consider to set "-dry-run"
     # terraform state rm $Address ######################################################################################################################################################
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Removing failed."
-      exit 1
-    }
+    Test-ExitCode -Message "ERROR: Terraform Removing failed."
   }
   'import' {
     Write-Output "############################## Importing a resource into Terraform State ##############################"
@@ -254,10 +256,7 @@ switch ($Action) {
     # Run terraform import
     # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
 
-    if ($LASTEXITCODE -ne 0) {
-      Write-Output "ERROR: Terraform Importing failed."
-      exit 1
-    }
+    Test-ExitCode -Message "ERROR: Terraform Importing failed."
   }
   default {
     Write-Output "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move'"
