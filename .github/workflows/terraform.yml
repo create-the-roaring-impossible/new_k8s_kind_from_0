@@ -23,10 +23,10 @@ on:
         required: true
         default: 'plan+apply'
         options:
-          - 'nothing (only for test purposes)'
           - 'plan+apply'
           - 'state list'
           - 'state move'
+          - 'nothing (only for test purposes)'
           - 'import'
           - 'state remove'
       logLevel:
@@ -46,16 +46,6 @@ on:
         type: string
         required: false
         default: ''
-      address:
-        description: 'Set the address (optional) [only for "import", "remove" and "move" actions]. Example: aws_instance.web'
-        type: string
-        required: false
-        default: ''
-      id:
-        description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
-        type: string
-        required: false
-        default: ''
       source:
         description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
         type: string
@@ -63,6 +53,16 @@ on:
         default: ''
       destination:
         description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
+        type: string
+        required: false
+        default: ''
+      address:
+        description: 'Set the address (optional) [only for "import", "remove" and "move" actions]. Example: aws_instance.web'
+        type: string
+        required: false
+        default: ''
+      id:
+        description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
         type: string
         required: false
         default: ''

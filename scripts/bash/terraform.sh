@@ -21,7 +21,7 @@ set -e
 # - The GitLab token to use for authentication (GITLAB_TOKEN)
 #
 # USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>]
-#[-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
+#[$TARGETS <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
 #
 # EXAMPLE: bash terraform.sh 'terraform/local'
 #                            -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
