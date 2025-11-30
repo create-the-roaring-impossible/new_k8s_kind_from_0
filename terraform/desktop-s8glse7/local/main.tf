@@ -3,20 +3,20 @@ resource "random_integer" "rand" {
   max = 100
 }
 
-resource "local_file" "test_file" { # commented to test "state mv" command
-  filename = "${random_integer.rand.result}.txt"
-  content  = "This is an example file created by Terraform."
-}
-
-# moved {
-#   from = random_integer.rand
-#   to  = random_integer.rand_new
-# }
-
-# resource "local_file" "test_file_new" {
+# resource "local_file" "test_file" { # commented to test "state mv" command
 #   filename = "${random_integer.rand.result}.txt"
 #   content  = "This is an example file created by Terraform."
 # }
+
+moved {
+  from = local_file.test_file
+  to  = local_file.test_file_new
+}
+
+resource "local_file" "test_file_new" {
+  filename = "${random_integer.rand.result}.txt"
+  content  = "This is an example file created by Terraform."
+}
 
 resource "local_file" "test_file_heredoc" {
   filename = "heredoc.txt"
