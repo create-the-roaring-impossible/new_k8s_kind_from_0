@@ -1,20 +1,26 @@
+#!/bin/bash
+set -e
+
 # DESCRIPTION: The script is used to run Terraform commands, such as init, plan, apply, import, remove, move and list.
 #              It will be used GitLab, to store the Terraform state remotely.
 #
 # REQUIREMENTS:
-#   - Terraform CLI installed
-#   - GitLab access token with api permissions
-#   - Valid GitLab project path
+# - GitHub Organization URL (GH_URL)
+# - Token (TOKEN) [scopes: admin:enterprise, admin:org]
+# - GitHub Organization Name (GH_ORG_NAME)
+# - Runner Group Name (RUNNER_GRP_NAME)
+# - Runner Name (RUNNER_NAME)
+# - Labels List (LABELS) [optional]
 #
-# USAGE: bash terraform.sh $PATH
-#                          -Env <env> -Scope <scope> -Action <action> [-LogLevel <level>] [-PluginCacheDir <dir>] [-PluginCacheMayBreakDependencyLockFile <true|false>] [-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
+# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>]
+#[-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
 #
 # EXAMPLE: bash terraform.sh 'terraform/local'
 #                            -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
 #          This example runs the 'plan' action, with the specified targets.
 #
 # NOTES: Ensure you have the necessary permissions to execute this script.
-#        Make sure all required dependencies are installed.
+#        Make sure all required dependencies are installed (Terraform CLI installed, GitLab access token with api permissions, valid GitLab project path).
 #
 # AUTHORS: Matteo Cristiano <slb6113@gmail.com>
 #
