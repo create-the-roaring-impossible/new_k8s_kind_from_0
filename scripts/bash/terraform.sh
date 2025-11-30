@@ -5,42 +5,20 @@ set -e
 #              It will be used GitLab, to store the Terraform state remotely.
 #
 # REQUIREMENTS:
-# - The path to the Terraform scripts. (PATH)
+# - The path to the Terraform scripts (PATH)
 # - The environment to set (ENV)
 # - The scope to set (SCOPE)
 # - The action to perform (ACTION)
-# - 
-# - 
-# - 
-# - 
-# - 
-# - 
-# - 
-# - 
-# - 
-# - Token (TOKEN) [scopes: admin:enterprise, admin:org]
-# - Labels List (LABELS) [optional]
- (e.g., plan, apply, import, remove, move, list). (Mandatory)
-# .PARAMETER LogLevel
-#   The log level to set (INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
-# .PARAMETER PluginCacheDir
-#   The directory to use for the Terraform plugin cache. (Optional)
-# .PARAMETER PluginCacheMayBreakDependencyLockFile
-#   Whether the plugin cache may break the dependency lock file. (Optional)
-# .PARAMETER Targets
-#   The targets to use for the plan action. (Optional)
-# .PARAMETER Address
-#   The address of the resource to import, remove or move. (Optional)
-# .PARAMETER Id
-#   The ID of the resource to import. (Optional)
-# .PARAMETER Source
-#   The source address of the resource to move. (Optional)
-# .PARAMETER Destination
-#   The destination address of the resource to move. (Optional)
-# .PARAMETER GitLabUser
-#   The GitLab user to use for authentication. (Mandatory)
-# .PARAMETER GitLabToken
-#   The GitLab token to use for authentication. (Mandatory)
+# - The log level to set (LOG_LEVEL) [INFO, WARN, ERROR, DEBUG, TRACE]
+# - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) [optional]
+# - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) [optional]
+# - The targets to use for the plan action (TARGETS) [optional]
+# - The address of the resource to import, remove or move (ADDRESS) [optional]
+# - The ID of the resource to import (ID) [optional]
+# - The source address of the resource to move (SOURCE) [optional]
+# - The destination address of the resource to move (DESTINATION) [optional]
+# - The GitLab user to use for authentication (GITLAB_USER)
+# - The GitLab token to use for authentication (GITLAB_TOKEN)
 #
 # USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>]
 #[-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
