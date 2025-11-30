@@ -219,30 +219,30 @@ test_exit_code "ERROR: Terraform Validating failed."
 case $ACTION in
   'plan')
     echo "############################## Planning Terraform changes ##############################"
-#     # Trim and remove all whitespace from $Targets
-#     $Targets = $Targets.Trim() -replace '\s+', ''
-#     # Check if $Targets is empty (no targets specified)
+    # Trim and remove all whitespace from $Targets
+    TARGETS=$(echo "$TARGETS" | tr -d '[:space:]')
 
-#     if ($Targets -eq '') {
-#       terraform plan -input=false -no-color -out='plan.output'
-#     } else {
-#       # Split multiple targets by comma and validate each
-#       $targetArray = $Targets -split ','
-#       $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
-#       $validTargets = @()
-#       foreach ($target in $targetArray) {
-#         $target = $target.Trim()
-#         if ($target -match $pattern) {
-#           $validTargets += $target
-#         } else {
-#           Write-Output "ERROR: Invalid target format: $target"
-#           Write-Output "Expected format: -target=resource_type.resource_name[..]"
-#           exit 1
-#         }
-#       }
+    # # Check if $Targets is empty (no targets specified)
+    # if ($Targets -eq '') {
+    #   terraform plan -input=false -no-color -out='plan.output'
+    # } else {
+    #   # Split multiple targets by comma and validate each
+    #   $targetArray = $Targets -split ','
+    #   $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
+    #   $validTargets = @()
+    #   foreach ($target in $targetArray) {
+    #     $target = $target.Trim()
+    #     if ($target -match $pattern) {
+    #       $validTargets += $target
+    #     } else {
+    #       Write-Output "ERROR: Invalid target format: $target"
+    #       Write-Output "Expected format: -target=resource_type.resource_name[..]"
+    #       exit 1
+    #     }
+    #   }
 
-#       terraform plan -input=false -no-color $validTargets -out="plan.output"
-#     }
+    #   terraform plan -input=false -no-color $validTargets -out="plan.output"
+    # }
 
     test_exit_code "ERROR: Terraform Planning failed."
     ;;
