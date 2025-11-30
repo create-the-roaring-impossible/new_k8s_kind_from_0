@@ -110,10 +110,6 @@ jobs:
                                          'plan' \
                                          '${{ github.event.inputs.logLevel }}' \
                                          '${{ github.event.inputs.targets }}' \
-                                         '${{ github.event.inputs.address }}' \
-                                         '${{ github.event.inputs.id }}' \
-                                         '${{ github.event.inputs.source }}' \
-                                         '${{ github.event.inputs.destination }}' \
                                          $GL_USER \
                                          $GL_TOKEN
       - name: Publish plan.output Artifact

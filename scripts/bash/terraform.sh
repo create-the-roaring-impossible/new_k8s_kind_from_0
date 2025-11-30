@@ -41,7 +41,74 @@ set -e
 ########## Inputs ##########
 ############################
 
-# PATH
+# Positional parameters
+PATH="$1"
+ENV="$2"
+SCOPE="$3"
+ACTION="$4"
+LOG_LEVEL="${5:-ERROR}" # set default log level to ERROR if not provided
+
+# Shift to handle optional named parameters
+shift 5 2>/dev/null || true
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -PLUGIN_CACHE_DIR)
+      PLUGIN_CACHE_DIR="$2"
+      shift 2
+      ;;
+    -PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE)
+      PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE="$2"
+      shift 2
+      ;;
+    -TARGETS)
+      TARGETS="$2"
+      shift 2
+      ;;
+    -ADDRESS)
+      ADDRESS="$2"
+      shift 2
+      ;;
+    -ID)
+      ID="$2"
+      shift 2
+      ;;
+    -SOURCE)
+      SOURCE="$2"
+      shift 2
+      ;;
+    -DESTINATION)
+      DESTINATION="$2"
+      shift 2
+      ;;
+    -GITLAB_USER)
+      GITLAB_USER="$2"
+      shift 2
+      ;;
+    -GITLAB_TOKEN)
+      GITLAB_TOKEN="$2"
+      shift 2
+      ;;
+    *)
+      echo "ERROR: Unknown parameter: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# Validate required parameters
+if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" ]]; then
+  echo "ERROR: Missing required parameters"
+  echo "USAGE: bash terraform.sh PATH ENV SCOPE ACTION [LOG_LEVEL] [-PLUGIN_CACHE_DIR dir] [-TARGETS targets] [-SOURCE source] [-DESTINATION destination] [-ADDRESS address] [-ID id] -GITLAB_USER user -GITLAB_TOKEN token"
+  exit 1
+fi
+
+# Validate ACTION parameter
+valid_actions=("plan" "apply" "state list" "state move" "state remove" "import")
+if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
+  echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove', and 'state move'"
+  exit 1
+fi
 
 #   [Parameter(Mandatory=$true)]
 #   [string]$Path,
