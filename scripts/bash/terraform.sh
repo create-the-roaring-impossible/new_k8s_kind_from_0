@@ -161,6 +161,8 @@ function test_exit_code() {
   fi
 }
 
+which cp
+
 # Copy backend.tf and variables.tf, from $PATH to $PATH/$ENV
 cp "$PATH/backend.tf" "$PATH/$ENV/backend.tf"
 cp "$PATH/variables.tf" "$PATH/$ENV/variables.tf"
