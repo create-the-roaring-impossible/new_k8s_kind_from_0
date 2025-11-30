@@ -26,9 +26,9 @@ on:
           - 'plan+apply'
           - 'state list'
           - 'state move'
-          - 'nothing (only for test purposes)'
-          - 'import'
           - 'state remove'
+          - 'import'
+          - 'nothing (only for test purposes)'
       logLevel:
         description: 'Set the log level (optional)'
         type: choice

@@ -20,7 +20,7 @@ set -e
 # - The GitLab user to use for authentication (GITLAB_USER)
 # - The GitLab token to use for authentication (GITLAB_TOKEN)
 #
-# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [$TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [$ADDRESS <address>] [$ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
+# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [$TARGETS <targets>] [$SOURCE <source>] [$DESTINATION <destination>] [$ADDRESS <address>] [$ID <id>] $GITLAB_USER <user> $GITLAB_TOKEN <token>
 #
 # EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
 #          This example runs the 'plan' action, with the specified targets.
@@ -41,18 +41,28 @@ set -e
 ########## Inputs ##########
 ############################
 
-# Positional parameters
-PATH="$1"
-ENV="$2"
-SCOPE="$3"
-ACTION="$4"
-LOG_LEVEL="${5:-ERROR}" # set default log level to ERROR if not provided
-
-# Shift to handle optional named parameters
-shift 5 2>/dev/null || true
-
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -PATH)
+      PATH="$2"
+      shift 2
+      ;;
+    -ENV)
+      ENV="$2"
+      shift 2
+      ;;
+    -SCOPE)
+      SCOPE="$2"
+      shift 2
+      ;;
+    -ACTION)
+      ACTION="$2"
+      shift 2
+      ;;
+    -LOG_LEVEL)
+      LOG_LEVEL="$2"
+      shift 2
+      ;;
     -PLUGIN_CACHE_DIR)
       PLUGIN_CACHE_DIR="$2"
       shift 2
@@ -65,20 +75,20 @@ while [[ $# -gt 0 ]]; do
       TARGETS="$2"
       shift 2
       ;;
-    -ADDRESS)
-      ADDRESS="$2"
-      shift 2
-      ;;
-    -ID)
-      ID="$2"
-      shift 2
-      ;;
     -SOURCE)
       SOURCE="$2"
       shift 2
       ;;
     -DESTINATION)
       DESTINATION="$2"
+      shift 2
+      ;;
+    -ADDRESS)
+      ADDRESS="$2"
+      shift 2
+      ;;
+    -ID)
+      ID="$2"
       shift 2
       ;;
     -GITLAB_USER)
@@ -97,9 +107,18 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required parameters
-if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" ]]; then
+if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
   echo "ERROR: Missing required parameters"
-  echo "USAGE: bash terraform.sh PATH ENV SCOPE ACTION [LOG_LEVEL] [-PLUGIN_CACHE_DIR dir] [-TARGETS targets] [-SOURCE source] [-DESTINATION destination] [-ADDRESS address] [-ID id] -GITLAB_USER user -GITLAB_TOKEN token"
+  echo "Required: -PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN"
+  echo "USAGE: bash terraform.sh -PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> [OPTIONS]"
+  echo "Optional: -LOG_LEVEL <level> -PLUGIN_CACHE_DIR <dir> -PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false> -TARGETS <targets> -SOURCE <source> -DESTINATION <destination> -ADDRESS <address> -ID <id>"
+  exit 1
+fi
+
+# Validate ACTION parameter
+valid_actions=("plan" "apply" "state list" "state move" "state remove" "import")
+if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
+  echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove', and 'state move'"
   exit 1
 fi
 
