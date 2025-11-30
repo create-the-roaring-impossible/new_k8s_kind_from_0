@@ -100,7 +100,7 @@ jobs:
           key:  ${{ runner.os }}${{ runner.arch }}-terraform
           restore-keys: |
             ${{ runner.os }}${{ runner.arch }}-terraform
-      - name: PLAN - Run terraform.ps1 script
+      - name: PLAN - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
@@ -167,6 +167,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+      # options: --user root
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -188,7 +189,7 @@ jobs:
           path: '${{ github.workspace }}/terraform/${{ github.event.inputs.scope }}/${{ github.event.inputs.env }}/'
           repository: ${{ github.repository }}
           run-id: ${{ github.run_id }}
-      - name: APPLY - Run terraform.ps1 script
+      - name: APPLY - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
@@ -196,7 +197,7 @@ jobs:
           bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ github.event.inputs.scope }}' \
                                          -ENV '${{ github.event.inputs.env }}' \
                                          -SCOPE '${{ github.event.inputs.scope }}' \
-                                         -ACTION 'plan' \
+                                         -ACTION 'apply' \
                                          -LOG_LEVEL '${{ github.event.inputs.logLevel }}' \
                                          -GITLAB_USER $GL_USER \
                                          -GITLAB_TOKEN $GL_TOKEN
@@ -209,6 +210,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+      # options: --user root
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -223,60 +225,15 @@ jobs:
           key:  ${{ runner.os }}${{ runner.arch }}-terraform
           restore-keys: |
             ${{ runner.os }}${{ runner.arch }}-terraform
-      - name: STATE LIST - Run terraform.ps1 script
+      - name: STATE LIST - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
-                                          -Env '${{ github.event.inputs.env }}' \
-                                          -Scope '${{ github.event.inputs.scope }}' \
-                                          -Action 'state list' \
-                                          -LogLevel '${{ github.event.inputs.logLevel }}' \
-                                          -Targets '${{ github.event.inputs.targets }}' \
-                                          -Address '${{ github.event.inputs.address }}' \
-                                          -Id '${{ github.event.inputs.id }}' \
-                                          -Source '${{ github.event.inputs.source }}' \
-                                          -Destination '${{ github.event.inputs.destination }}' \
-                                          -GitLabUser $GL_USER \
-                                          -GitLabToken $GL_TOKEN
-  # terraformStateList:
-  #   name: 'Terraform State List'
-  #   runs-on: 'arc-desktop-s8glse7'
-  #   if: ${{ github.event.inputs.action == 'state list' }}
-  #   container:
-  #     image: ghcr.io/create-the-roaring-impossible/tf:latest
-  #     credentials:
-  #       username: ${{ github.actor }}
-  #       password: ${{ secrets.DOCKER_TOKEN }}
-  #   steps:
-  #     - name: 'Repository Checkout'
-  #       uses: actions/checkout@v5
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Create Terraform Plugin Cache Dir
-  #       run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-  #     - name: Cache Terraform plugins
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-  #         key:  ${{ runner.os }}${{ runner.arch }}-terraform
-  #         restore-keys: |
-  #           ${{ runner.os }}${{ runner.arch }}-terraform
-  #     - name: STATE LIST - Run terraform.ps1 script
-  #       env:
-  #         GL_USER: ${{ secrets.GITLAB_USER }}
-  #         GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-  #       run: |
-  #         pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
-  #                                         -Env '${{ github.event.inputs.env }}' \
-  #                                         -Scope '${{ github.event.inputs.scope }}' \
-  #                                         -Action 'state list' \
-  #                                         -LogLevel '${{ github.event.inputs.logLevel }}' \
-  #                                         -Targets '${{ github.event.inputs.targets }}' \
-  #                                         -Address '${{ github.event.inputs.address }}' \
-  #                                         -Id '${{ github.event.inputs.id }}' \
-  #                                         -Source '${{ github.event.inputs.source }}' \
-  #                                         -Destination '${{ github.event.inputs.destination }}' \
-  #                                         -GitLabUser $GL_USER \
-  #                                         -GitLabToken $GL_TOKEN
+          bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ github.event.inputs.scope }}' \
+                                         -ENV '${{ github.event.inputs.env }}' \
+                                         -SCOPE '${{ github.event.inputs.scope }}' \
+                                         -ACTION 'state list' \
+                                         -LOG_LEVEL '${{ github.event.inputs.logLevel }}' \
+                                         -GITLAB_USER $GL_USER \
+                                         -GITLAB_TOKEN $GL_TOKEN
