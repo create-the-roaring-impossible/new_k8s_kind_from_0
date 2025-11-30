@@ -85,10 +85,10 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      options: --user root
+      # options: --user root
     steps:
       - name: 'Repository Checkout'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Create Terraform Plugin Cache Dir
