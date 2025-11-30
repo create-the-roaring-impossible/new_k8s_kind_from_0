@@ -192,29 +192,29 @@ if [[ -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
   exit 1
 fi
 
-# # Run terraform init
-# Write-Output "############################## Initializing Terraform ##############################"
-# $TfStateName="github-${Scope}-${Env}"
-# # TODO: to pass "GitLabProjectId" as variable
-# $GitLabProjectId="65547687"
+# Run terraform init
+echo "############################## Initializing Terraform ##############################"
+$TfStateName="github-${SCOPE}-${ENV}"
+# TODO: to pass "GitLabProjectId" as variable
+$GitLabProjectId="65547687"
 
-# terraform init -upgrade `
-#   -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" `
-#   -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
-#   -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
-#   -backend-config="username=${GitLabUser}" `
-#   -backend-config="password=${GitLabToken}" `
-#   -backend-config="lock_method=POST" `
-#   -backend-config="unlock_method=DELETE" `
-#   -backend-config="retry_wait_min=5"
+terraform init -upgrade `
+  -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" `
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
+  -backend-config="username=${GITLAB_USER}" `
+  -backend-config="password=${GITLAB_TOKEN}" `
+  -backend-config="lock_method=POST" `
+  -backend-config="unlock_method=DELETE" `
+  -backend-config="retry_wait_min=5"
 
-# Test-ExitCode -Message "ERROR: Terraform Initializing failed."
+test_exit_code() "ERROR: Terraform Initializing failed."
 
-# # Run terraform validate
-# Write-Output "############################## Validating Terraform scripts ##############################"
-# terraform validate -no-color
+# Run terraform validate
+echo "############################## Validating Terraform scripts ##############################"
+terraform validate -no-color
 
-# Test-ExitCode -Message "ERROR: Terraform Validating failed."
+test_exit_code() "ERROR: Terraform Validating failed."
 
 # switch ($Action) {
 #   # Run terraform plan
