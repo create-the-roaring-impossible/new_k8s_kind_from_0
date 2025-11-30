@@ -92,6 +92,14 @@ param (
   [string]$GitLabToken
 )
 
+# Functions
+#####
+if ($LASTEXITCODE -ne 0) {
+  Write-Output "ERROR: Terraform Listing failed."
+  exit 1
+}
+#####
+
 # Copy backend.tf and variables.tf, from $Path to $Path/$Env
 Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"
 Copy-Item -Path "$Path/variables.tf" -Destination "$Path/$Env/variables.tf"
