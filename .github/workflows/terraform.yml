@@ -86,7 +86,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
       # options: --user root
-      options: --privileged
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
