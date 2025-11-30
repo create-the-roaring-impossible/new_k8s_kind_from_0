@@ -8,7 +8,7 @@ set -e
 # - The path to the Terraform scripts (PATH)
 # - The environment to set (ENV)
 # - The scope to set (SCOPE)
-# - The action to perform (ACTION)
+# - The action to perform (ACTION) ['plan', 'apply', 'state move', 'state list', 'import', 'state remove']
 # - The log level to set (LOG_LEVEL) [INFO, WARN, ERROR, DEBUG, TRACE]
 # - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) [optional]
 # - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) [optional]
@@ -20,15 +20,16 @@ set -e
 # - The GitLab user to use for authentication (GITLAB_USER)
 # - The GitLab token to use for authentication (GITLAB_TOKEN)
 #
-# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>]
-#[$TARGETS <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
+# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [$TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [$ADDRESS <address>] [$ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
 #
-# EXAMPLE: bash terraform.sh 'terraform/local'
-#                            -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
+# EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
 #          This example runs the 'plan' action, with the specified targets.
 #
 # NOTES: Ensure you have the necessary permissions to execute this script.
-#        Make sure all required dependencies are installed (Terraform CLI installed, GitLab access token with api permissions, valid GitLab project path).
+#        Make sure all required dependencies are installed:
+#          - Terraform CLI installed
+#          - GitLab access token with api permissions
+#          - valid GitLab project path
 #
 # AUTHORS: Matteo Cristiano <slb6113@gmail.com>
 #
@@ -40,8 +41,8 @@ set -e
 ########## Inputs ##########
 ############################
 
-# # Inputs
-# param (
+# PATH
+
 #   [Parameter(Mandatory=$true)]
 #   [string]$Path,
 #   [Parameter(Mandatory=$true)]
@@ -49,7 +50,7 @@ set -e
 #   [Parameter(Mandatory=$true)]
 #   [string]$Scope,
 #   [Parameter(Mandatory=$true)]
-#   [ValidateSet('plan', 'apply', 'import', 'state remove', 'state move', 'state list')]
+#   [ValidateSet()]
 #   [string]$Action,
 #   [Parameter(Mandatory=$false)]
 #   [ValidateSet('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE')]
@@ -73,7 +74,6 @@ set -e
 #   [string]$GitLabUser,
 #   [Parameter(Mandatory=$true)]
 #   [string]$GitLabToken
-# )
 
 ###########################
 ######## Functions ########
