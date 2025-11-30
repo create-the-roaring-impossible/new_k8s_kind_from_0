@@ -125,22 +125,14 @@ fi
 
 # Validate LOG_LEVEL parameter
 valid_log_levels=("INFO" "WARN" "ERROR" "DEBUG" "TRACE")
-if [[ ! " ${valid_log_levels[@]} " =~ " ${LOG_LEVEL} " ]]; then
+if [[ -n "$LOG_LEVEL" && ! " ${valid_log_levels[@]} " =~ " ${LOG_LEVEL} " ]]; then
   echo "ERROR: Invalid 'log_level' specified. Valid actions are: 'INFO', 'WARN', 'ERROR', 'DEBUG' and 'TRACE'"
   exit 1
 fi
 
-echo $PLUGIN_CACHE_DIR
-echo $PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE
-echo $TARGETS
-echo $SOURCE
-echo $DESTINATION
-echo $ADDRESS
-echo $ID
-
 # Validate PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE parameter
 valid_plugin_cache_may_break_dependency_lock_file=("true" "false")
-if [[ ! " ${valid_plugin_cache_may_break_dependency_lock_file[@]} " =~ " ${PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE} " ]]; then
+if [[ -n "$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE" && ! " ${valid_plugin_cache_may_break_dependency_lock_file[@]} " =~ " ${PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE} " ]]; then
   echo "ERROR: Invalid 'plugin_cache_may_break_dependency_lock_file' specified. Valid values are: 'true' and 'false'"
   exit 1
 fi
