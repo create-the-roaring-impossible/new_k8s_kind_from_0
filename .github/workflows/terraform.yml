@@ -104,18 +104,18 @@ jobs:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          pwsh scripts/pwsh/terraform.ps1 -Path 'terraform/${{ github.event.inputs.scope }}' \
-                                          -Env '${{ github.event.inputs.env }}' \
-                                          -Scope '${{ github.event.inputs.scope }}' \
-                                          -Action 'plan' \
-                                          -LogLevel '${{ github.event.inputs.logLevel }}' \
-                                          -Targets '${{ github.event.inputs.targets }}' \
-                                          -Address '${{ github.event.inputs.address }}' \
-                                          -Id '${{ github.event.inputs.id }}' \
-                                          -Source '${{ github.event.inputs.source }}' \
-                                          -Destination '${{ github.event.inputs.destination }}' \
-                                          -GitLabUser $GL_USER \
-                                          -GitLabToken $GL_TOKEN
+          bash scripts/bash/terraform.sh 'terraform/${{ github.event.inputs.scope }}' \
+                                         '${{ github.event.inputs.env }}' \
+                                         '${{ github.event.inputs.scope }}' \
+                                         'plan' \
+                                         '${{ github.event.inputs.logLevel }}' \
+                                         '${{ github.event.inputs.targets }}' \
+                                         '${{ github.event.inputs.address }}' \
+                                         '${{ github.event.inputs.id }}' \
+                                         '${{ github.event.inputs.source }}' \
+                                         '${{ github.event.inputs.destination }}' \
+                                         $GL_USER \
+                                         $GL_TOKEN
       - name: Publish plan.output Artifact
         uses: actions/upload-artifact@v4
         with:
