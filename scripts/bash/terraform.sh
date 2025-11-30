@@ -178,17 +178,19 @@ fi
 # Set TF_LOG_PATH environment variable
 export TF_LOG_PATH="tf.log"
 
-# # Set TF_PLUGIN_CACHE_DIR and TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE environment variables, if $PluginCacheDir is provided
-# if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
-#   $env:TF_PLUGIN_CACHE_DIR = $PluginCacheDir
-#   $env:TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE = $PluginCacheMayBreakDependencyLockFile
-# }
+# Set TF_PLUGIN_CACHE_DIR and TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE environment variables, if $PLUGIN_CACHE_DIR and $TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE are provided
+if [[ -n "$PLUGIN_CACHE_DIR" ]]; then
+  export TF_PLUGIN_CACHE_DIR="$PLUGIN_CACHE_DIR"
+  if [[ -n "$TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE" ]]; then
+    export TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE="$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE"
+  fi
+fi
 
-# # Validate GitLab credentials
-# if ([string]::IsNullOrWhiteSpace(${GitLabUser}) -or [string]::IsNullOrWhiteSpace(${GitLabToken})) {
-#   Write-Output "ERROR: GitLabUser and GitLabToken environment variables must be set, please set them before running this script."
-#   exit 1
-# }
+# Validate GitLab credentials
+if [[ -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
+  echo "ERROR: GITLAB_USER and GITLAB_TOKEN environment variables must be set, please set them before running this script."
+  exit 1
+fi
 
 # # Run terraform init
 # Write-Output "############################## Initializing Terraform ##############################"
