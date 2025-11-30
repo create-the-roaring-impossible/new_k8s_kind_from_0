@@ -259,8 +259,8 @@ case $ACTION in
 
     test_exit_code "ERROR: Terraform Listing failed."
     ;;
-#   'state move' {
-#     Write-Output "############################## Moving a resource into Terraform State ##############################"
+  'state move')
+    echo "############################## Moving a resource into Terraform State ##############################"
 #     # Trim and remove all whitespace from $Source
 #     $Source = $Source.Trim() -replace '\s+', ''
 #     # Trim and remove all whitespace from $Destination
@@ -269,20 +269,20 @@ case $ACTION in
 #     # TODO: to consider to set "-dry-run"
 #     terraform state mv $Source $Destination
 
-#     Test-ExitCode -Message "ERROR: Terraform Moving failed."
-#   }
-#   'state remove' {
-#     Write-Output "############################## Removing a resource into Terraform State ##############################"
+    test_exit_code "ERROR: Terraform Moving failed."
+    ;;
+  'state remove')
+    echo "############################## Removing a resource into Terraform State ##############################"
 #     # Trim and remove all whitespace from $Address
 #     $Address = $Address.Trim() -replace '\s+', ''
 
 #     # TODO: to consider to set "-dry-run"
 #     # terraform state rm $Address ######################################################################################################################################################
 
-#     Test-ExitCode -Message "ERROR: Terraform Removing failed."
-#   }
-#   'import' {
-#     Write-Output "############################## Importing a resource into Terraform State ##############################"
+    test_exit_code "ERROR: Terraform Removing failed."
+    ;;
+  'import')
+    echo "############################## Importing a resource into Terraform State ##############################"
 #     # Trim and remove all whitespace from $Address
 #     $Address = $Address.Trim() -replace '\s+', ''
 #     # Trim and remove all whitespace from $Id
@@ -290,12 +290,13 @@ case $ACTION in
 
 #     # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
 
-#     Test-ExitCode -Message "ERROR: Terraform Importing failed."
-#   }
-#   default {
-#     Write-Output "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move'"
-#     exit 1
-#   }
+    test_exit_code "ERROR: Terraform Importing failed."
+    ;;
+  *)
+    echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
+    exit 1
+    ;;
+esac
 
 # Delete backend.tf and variables.tf
 rm -rf "backend.tf"
