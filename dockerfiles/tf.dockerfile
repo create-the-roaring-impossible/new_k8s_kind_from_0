@@ -21,6 +21,7 @@ RUN apk update && \
         bash \
         ca-certificates \
         cargo \
+        coreutils \
         curl \
         gcc \
         git \
