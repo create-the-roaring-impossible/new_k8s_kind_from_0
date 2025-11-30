@@ -98,12 +98,3 @@ RUN wget -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases
 FROM tools AS final
 
 ENV PATH="/opt/venv/bin:$PATH"
-
-# # Add user "tf_usr" and give sudo permissions
-# RUN addgroup -g 1001 tf_grp && \
-#     adduser -u 1001 -G tf_grp -D -s /bin/bash tf_usr && \
-#     mkdir -p /etc/sudoers.d && \
-#     echo "tf_usr ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/tf_usr && \
-#     chmod 0440 /etc/sudoers.d/tf_usr
-
-# USER tf_usr
