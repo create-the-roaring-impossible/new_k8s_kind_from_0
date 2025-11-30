@@ -11,7 +11,7 @@ FROM alpine:3.22 AS base
 # Add metadata labels
 LABEL description="Terraform container with non-root user setup"
 LABEL maintainer="Matteo Cristiano"
-LABEL version="1.3.0"
+LABEL version="1.3.2"
 
 USER root
 
