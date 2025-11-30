@@ -107,21 +107,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-echo $PATH
-echo $ENV
-echo $SCOPE
-echo $ACTION
-echo $LOG_LEVEL
-echo $PLUGIN_CACHE_DIR
-echo $PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE
-echo $TARGETS
-echo $SOURCE
-echo $DESTINATION
-echo $ADDRESS
-echo $ID
-echo $GITLAB_USER
-echo $GITLAB_TOKEN
-
 # Validate required parameters
 if [[ -z "$PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
   echo "ERROR: Missing required parameters"
@@ -145,6 +130,14 @@ if [[ ! " ${valid_log_levels[@]} " =~ " ${LOG_LEVEL} " ]]; then
   exit 1
 fi
 
+echo $PLUGIN_CACHE_DIR
+echo $PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE
+echo $TARGETS
+echo $SOURCE
+echo $DESTINATION
+echo $ADDRESS
+echo $ID
+
 # Validate PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE parameter
 valid_plugin_cache_may_break_dependency_lock_file=("true" "false")
 if [[ ! " ${valid_plugin_cache_may_break_dependency_lock_file[@]} " =~ " ${PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE} " ]]; then
@@ -156,7 +149,6 @@ fi
 ######## Functions ########
 ###########################
 
-# # Functions
 # function Test-ExitCode {
 #   <#
 #   .SYNOPSIS
