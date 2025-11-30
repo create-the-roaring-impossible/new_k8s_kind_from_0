@@ -198,14 +198,14 @@ $TfStateName="github-${SCOPE}-${ENV}"
 # TODO: to pass "GitLabProjectId" as variable
 $GitLabProjectId="65547687"
 
-terraform init -upgrade `
-  -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" `
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" `
-  -backend-config="username=${GITLAB_USER}" `
-  -backend-config="password=${GITLAB_TOKEN}" `
-  -backend-config="lock_method=POST" `
-  -backend-config="unlock_method=DELETE" `
+terraform init -upgrade \
+  -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" \
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" \
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" \
+  -backend-config="username=${GITLAB_USER}" \
+  -backend-config="password=${GITLAB_TOKEN}" \
+  -backend-config="lock_method=POST" \
+  -backend-config="unlock_method=DELETE" \
   -backend-config="retry_wait_min=5"
 
 test_exit_code() "ERROR: Terraform Initializing failed."
@@ -216,10 +216,9 @@ terraform validate -no-color
 
 test_exit_code() "ERROR: Terraform Validating failed."
 
-# switch ($Action) {
-#   # Run terraform plan
-#   'plan' {
-#     Write-Output "############################## Planning Terraform changes ##############################"
+case $ACTION in
+  'plan')
+    echo "############################## Planning Terraform changes ##############################"
 #     # Trim and remove all whitespace from $Targets
 #     $Targets = $Targets.Trim() -replace '\s+', ''
 #     # Check if $Targets is empty (no targets specified)
@@ -245,23 +244,21 @@ test_exit_code() "ERROR: Terraform Validating failed."
 #       terraform plan -input=false -no-color $validTargets -out="plan.output"
 #     }
 
-#     Test-ExitCode -Message "ERROR: Terraform Planning failed."
-#   }
-#   # Run terraform apply
-#   'apply' {
-#     Write-Output "############################## Applying Terraform changes ##############################"
+    test_exit_code() "ERROR: Terraform Planning failed."
+    ;;
+  'apply')
+    echo "############################## Applying Terraform changes ##############################"
 #     terraform apply -input=false -no-color -auto-approve 'plan.output'
 
-#     Test-ExitCode -Message "ERROR: Terraform Applying failed."
-#   }
-#   'state list' {
-#     Write-Output "############################## Listing Terraform State ##############################"
+    test_exit_code() "ERROR: Terraform Applying failed."
+  ;;
+  'state list')
+    echo "############################## Listing Terraform State ##############################"
 
-#     # Run terraform state list
 #     terraform state list
 
-#     Test-ExitCode -Message "ERROR: Terraform Listing failed."
-#   }
+    test_exit_code() "ERROR: Terraform Listing failed."
+    ;;
 #   'state move' {
 #     Write-Output "############################## Moving a resource into Terraform State ##############################"
 #     # Trim and remove all whitespace from $Source
@@ -269,7 +266,6 @@ test_exit_code() "ERROR: Terraform Validating failed."
 #     # Trim and remove all whitespace from $Destination
 #     $Destination = $Destination.Trim() -replace '\s+', ''
 
-#     # Run terraform move
 #     # TODO: to consider to set "-dry-run"
 #     terraform state mv $Source $Destination
 
@@ -280,7 +276,6 @@ test_exit_code() "ERROR: Terraform Validating failed."
 #     # Trim and remove all whitespace from $Address
 #     $Address = $Address.Trim() -replace '\s+', ''
 
-#     # Run terraform state rm
 #     # TODO: to consider to set "-dry-run"
 #     # terraform state rm $Address ######################################################################################################################################################
 
@@ -293,7 +288,6 @@ test_exit_code() "ERROR: Terraform Validating failed."
 #     # Trim and remove all whitespace from $Id
 #     $Id = $Id.Trim() -replace '\s+', ''
 
-#     # Run terraform import
 #     # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
 
 #     Test-ExitCode -Message "ERROR: Terraform Importing failed."
@@ -302,12 +296,11 @@ test_exit_code() "ERROR: Terraform Validating failed."
 #     Write-Output "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'import', 'list', 'remove', and 'move'"
 #     exit 1
 #   }
-# }
 
-# # Delete backend.tf and variables.tf
-# Remove-Item -Path "backend.tf" -Force
-# Remove-Item -Path "variables.tf" -Force
+# Delete backend.tf and variables.tf
+rm -rf "backend.tf"
+rm -rf "variables.tf"
 
-# # TODO: to investigate
-# # New-Item -ItemType Directory -Path "$Path/$Env/tf_temp" -Force
-# # terraform providers mirror "$Path/$Env/tf_temp"
+# TODO: to investigate
+# mkdir -p "$PATH/$ENV/tf_temp"
+# terraform providers mirror "$PATH/$ENV/tf_temp"
