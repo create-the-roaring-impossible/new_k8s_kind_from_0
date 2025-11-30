@@ -141,35 +141,35 @@ fi
 ######## Functions ########
 ###########################
 
-# function Test-ExitCode {
-#   <#
-#   .SYNOPSIS
-#     This function checks the last exit code and exits the script if it is not zero.
+function Test-ExitCode {
+  <#
+  .SYNOPSIS
+    This function checks the last exit code and exits the script if it is not zero.
 
-#   .DESCRIPTION
-#     This function checks the last exit code and exits the script if it is not zero. It also outputs a custom error message.
+  .DESCRIPTION
+    This function checks the last exit code and exits the script if it is not zero. It also outputs a custom error message.
 
-#   .PARAMETER Message
-#     The error message to output if the last exit code is not zero. (Mandatory)
+  .PARAMETER Message
+    The error message to output if the last exit code is not zero. (Mandatory)
 
-#   .USAGE
-#     Test-ExitCode -Message "Custom error message"
+  .USAGE
+    Test-ExitCode -Message "Custom error message"
 
-#   .EXAMPLE
-#     Test-ExitCode -Message "ERROR: Terraform Listing failed."
-#     This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
-#   #>
+  .EXAMPLE
+    Test-ExitCode -Message "ERROR: Terraform Listing failed."
+    This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
+  #>
 
-#   param (
-#     [Parameter(Mandatory=$true)]
-#     [string]$Message
-#   )
+  param (
+    [Parameter(Mandatory=$true)]
+    [string]$Message
+  )
 
-#   if ($LASTEXITCODE -ne 0) {
-#     Write-Output ${Message}
-#     exit 1
-#   }
-# }
+  if ($LASTEXITCODE -ne 0) {
+    Write-Output ${Message}
+    exit 1
+  }
+}
 
 # # Copy backend.tf and variables.tf, from $Path to $Path/$Env
 # Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"

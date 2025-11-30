@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # DESCRIPTION: This bash script install, and start, a GitHub runner
