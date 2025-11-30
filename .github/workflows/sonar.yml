@@ -16,8 +16,11 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
       # options: --user root
     steps:
+      - name: https://github.com/actions/checkout/issues/1720
+        run: |
+          chmod -R u+rwX .
       - name: 'Repository Checkout'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: SonarQube Scan
