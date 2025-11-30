@@ -3,7 +3,7 @@
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
-# VERSION: 1.3.1
+# VERSION: 1.3.2
 # DATE: 2025-11-30
 
 FROM alpine:3.22 AS base
