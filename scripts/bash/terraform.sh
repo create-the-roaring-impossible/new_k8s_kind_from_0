@@ -20,7 +20,7 @@ set -e
 # - The GitLab user to use for authentication (GITLAB_USER)
 # - The GitLab token to use for authentication (GITLAB_TOKEN)
 #
-# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [$TARGETS <targets>] [$SOURCE <source>] [$DESTINATION <destination>] [$ADDRESS <address>] [$ID <id>] $GITLAB_USER <user> $GITLAB_TOKEN <token>
+# USAGE: bash terraform.sh -PATH $PATH -ENV $ENV -SCOPE $SCOPE -ACTION $ACTION [-LOG_LEVEL $LOG_LEVEL] [-PLUGIN_CACHE_DIR $PLUGIN_CACHE_DIR] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS $TARGETS] [-SOURCE $SOURCE] [-DESTINATION $DESTINATION] [-ADDRESS $ADDRESS] [-ID $ID] -GITLAB_USER $USER -GITLAB_TOKEN $TOKEN
 #
 # EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
 #          This example runs the 'plan' action, with the specified targets.

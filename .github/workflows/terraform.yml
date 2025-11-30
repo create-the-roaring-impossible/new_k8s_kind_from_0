@@ -104,14 +104,14 @@ jobs:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          bash scripts/bash/terraform.sh 'terraform/${{ github.event.inputs.scope }}' \
-                                         '${{ github.event.inputs.env }}' \
-                                         '${{ github.event.inputs.scope }}' \
-                                         'plan' \
-                                         '${{ github.event.inputs.logLevel }}' \
-                                         '${{ github.event.inputs.targets }}' \
-                                         $GL_USER \
-                                         $GL_TOKEN
+          bash scripts/bash/terraform.sh -PATH 'terraform/${{ github.event.inputs.scope }}' \
+                                         -ENV '${{ github.event.inputs.env }}' \
+                                         -SCOPE '${{ github.event.inputs.scope }}' \
+                                         -ACTION 'plan' \
+                                         -LOG_LEVEL '${{ github.event.inputs.logLevel }}' \
+                                         -TARGETS '${{ github.event.inputs.targets }}' \
+                                         -GITLAB_USER $GL_USER \
+                                         -GITLAB_TOKEN $GL_TOKEN
       - name: Publish plan.output Artifact
         uses: actions/upload-artifact@v4
         with:
