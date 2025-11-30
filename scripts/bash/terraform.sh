@@ -223,11 +223,12 @@ case $ACTION in
     TARGETS=$(echo "$TARGETS" | tr -d '[:space:]')
     echo $TARGETS
 
-    # # Check if $Targets is empty (no targets specified)
-    # if ($Targets -eq '') {
-    #   terraform plan -input=false -no-color -out='plan.output'
-    # } else {
-    #   # Split multiple targets by comma and validate each
+    # Check if $Targets is empty (no targets specified)
+    if [[ -z "$TARGETS" ]]; then
+      terraform plan -input=false -no-color -out='plan.output'
+    else
+      echo "TEST"
+      # Split multiple targets by comma and validate each
     #   $targetArray = $Targets -split ','
     #   $pattern = '^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
     #   $validTargets = @()
@@ -240,7 +241,7 @@ case $ACTION in
     #       Write-Output "Expected format: -target=resource_type.resource_name[..]"
     #       exit 1
     #     }
-    #   }
+    fi
 
     #   terraform plan -input=false -no-color $validTargets -out="plan.output"
     # }
