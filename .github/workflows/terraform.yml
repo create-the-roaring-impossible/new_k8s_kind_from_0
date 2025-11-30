@@ -85,10 +85,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+      # options: --user root
     steps:
-      - name: https://github.com/actions/checkout/issues/1720
-        run: |
-          chmod -R u+rwX .
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
         with:
