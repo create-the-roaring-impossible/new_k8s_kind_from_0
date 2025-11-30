@@ -5,20 +5,20 @@ set -e
 #              It will be used GitLab, to store the Terraform state remotely.
 #
 # REQUIREMENTS:
-# - The path to the Terraform scripts (PATH) (mandatory)
-# - The environment to set (ENV) (mandatory)
-# - The scope to set (SCOPE) (mandatory)
-# - The action to perform (ACTION) ('plan', 'apply', 'state move', 'state list', 'state remove', 'import') (mandatory)
-# - The log level to set (LOG_LEVEL) ('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE') (optional)
-# - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) (optional)
-# - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) ('true', 'false') (optional)
-# - The targets to use for the plan action (TARGETS) (optional)
-# - The address of the resource to import, remove or move (ADDRESS) (optional)
-# - The ID of the resource to import (ID) (optional)
-# - The source address of the resource to move (SOURCE) (optional)
-# - The destination address of the resource to move (DESTINATION) (optional)
-# - The GitLab user to use for authentication (GITLAB_USER) (mandatory)
-# - The GitLab token to use for authentication (GITLAB_TOKEN) (mandatory)
+#   - The path to the Terraform scripts (PATH) (mandatory)
+#   - The environment to set (ENV) (mandatory)
+#   - The scope to set (SCOPE) (mandatory)
+#   - The action to perform (ACTION) ('plan', 'apply', 'state move', 'state list', 'state remove', 'import') (mandatory)
+#   - The log level to set (LOG_LEVEL) ('INFO', 'WARN', 'ERROR', 'DEBUG', 'TRACE') (optional)
+#   - The directory to use for the Terraform plugin cache (PLUGIN_CACHE_DIR) (optional)
+#   - Whether the plugin cache may break the dependency lock file (PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE) ('true', 'false') (optional)
+#   - The targets to use for the plan action (TARGETS) (optional)
+#   - The address of the resource to import, remove or move (ADDRESS) (optional)
+#   - The ID of the resource to import (ID) (optional)
+#   - The source address of the resource to move (SOURCE) (optional)
+#   - The destination address of the resource to move (DESTINATION) (optional)
+#   - The GitLab user to use for authentication (GITLAB_USER) (mandatory)
+#   - The GitLab token to use for authentication (GITLAB_TOKEN) (mandatory)
 #
 # USAGE: bash terraform.sh -PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> [-LOG_LEVEL <log_level>] [-PLUGIN_CACHE_DIR <plugin_cache_dir>] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [-ADDRESS <address>] [-ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
 #
@@ -141,52 +141,42 @@ fi
 ######## Functions ########
 ###########################
 
-function Test-ExitCode {
-  <#
-  .SYNOPSIS
-    This function checks the last exit code and exits the script if it is not zero.
+function test_exit_code() {
+  # DESCRIPTION: This function checks the last exit code and exits the script if it is not zero.
+  #              It also outputs a custom error message.
+  #
+  # REQUIREMENTS:
+  #   - The error message to output if the last exit code is not zero. ($1) (Mandatory)
+  #
+  # USAGE: test_exit_code "Custom error message"
+  #
+  # EXAMPLE: test_exit_code "ERROR: Terraform Listing failed."
+  #          This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
 
-  .DESCRIPTION
-    This function checks the last exit code and exits the script if it is not zero. It also outputs a custom error message.
+  local message="$1"
 
-  .PARAMETER Message
-    The error message to output if the last exit code is not zero. (Mandatory)
-
-  .USAGE
-    Test-ExitCode -Message "Custom error message"
-
-  .EXAMPLE
-    Test-ExitCode -Message "ERROR: Terraform Listing failed."
-    This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
-  #>
-
-  param (
-    [Parameter(Mandatory=$true)]
-    [string]$Message
-  )
-
-  if ($LASTEXITCODE -ne 0) {
-    Write-Output ${Message}
+  if [ $? -ne 0 ]; then
+    echo "${message}"
     exit 1
-  }
+  fi
 }
 
-# # Copy backend.tf and variables.tf, from $Path to $Path/$Env
-# Copy-Item -Path "$Path/backend.tf" -Destination "$Path/$Env/backend.tf"
-# Copy-Item -Path "$Path/variables.tf" -Destination "$Path/$Env/variables.tf"
+# Copy backend.tf and variables.tf, from $PATH to $PATH/$ENV
+cp "$PATH/backend.tf" "$PATH/$ENV/backend.tf"
+cp "$PATH/variables.tf" "$PATH/$ENV/variables.tf"
 
-# # Change directory to $Path/$Env
-# Set-Location -Path "$Path/$Env"
+# Change directory to $Path/$Env
+cd "$PATH/$ENV"
 
-# # Set TF_LOG environment variable, default to INFO if LogLevel is not provided
-# if ([string]::IsNullOrWhiteSpace($LogLevel)) {
-#   $env:TF_LOG = 'ERROR'
-# } else {
-#   $env:TF_LOG = $LogLevel
-# }
+# Set TF_LOG environment variable, default to ERROR if LogLevel is not provided
+if [[ -z "$LOG_LEVEL" ]]; then
+  export TF_LOG='ERROR'
+else
+  export TF_LOG="$LOG_LEVEL"
+fi
 
-# # Set TF_LOG_PATH environment variable
-# $env:TF_LOG_PATH="tf.log"
+# Set TF_LOG_PATH environment variable
+export TF_LOG_PATH="tf.log"
 
 # # Set TF_PLUGIN_CACHE_DIR and TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE environment variables, if $PluginCacheDir is provided
 # if (-not [string]::IsNullOrWhiteSpace($PluginCacheDir)) {
