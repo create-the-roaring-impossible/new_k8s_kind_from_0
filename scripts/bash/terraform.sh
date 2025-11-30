@@ -194,14 +194,14 @@ fi
 
 # Run terraform init
 echo "############################## Initializing Terraform ##############################"
-$TfStateName="github-${SCOPE}-${ENV}"
-# TODO: to pass "GitLabProjectId" as variable
-$GitLabProjectId="65547687"
+tf_state_name="github-${SCOPE}-${ENV}"
+# TODO: to pass "gitlab_project_id" as variable
+gitlab_project_id="65547687"
 
 terraform init -upgrade \
-  -backend-config="address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}" \
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" \
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GitLabProjectId}/terraform/state/${TfStateName}/lock" \
+  -backend-config="address=https://gitlab.com/api/v4/projects/${gitlab_project_id}/terraform/state/${tf_state_name}" \
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${gitlab_project_id}/terraform/state/${tf_state_name}/lock" \
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${gitlab_project_id}/terraform/state/${tf_state_name}/lock" \
   -backend-config="username=${GITLAB_USER}" \
   -backend-config="password=${GITLAB_TOKEN}" \
   -backend-config="lock_method=POST" \
@@ -221,6 +221,7 @@ case $ACTION in
     echo "############################## Planning Terraform changes ##############################"
     # Trim and remove all whitespace from $Targets
     TARGETS=$(echo "$TARGETS" | tr -d '[:space:]')
+    echo $TARGETS
 
     # # Check if $Targets is empty (no targets specified)
     # if ($Targets -eq '') {
