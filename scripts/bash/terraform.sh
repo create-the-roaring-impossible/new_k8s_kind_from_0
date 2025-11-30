@@ -5,37 +5,22 @@ set -e
 #              It will be used GitLab, to store the Terraform state remotely.
 #
 # REQUIREMENTS:
-# - GitHub Organization URL (GH_URL)
+# - The path to the Terraform scripts. (PATH)
+# - The environment to set (ENV)
+# - The scope to set (SCOPE)
+# - The action to perform (ACTION)
+# - 
+# - 
+# - 
+# - 
+# - 
+# - 
+# - 
+# - 
+# - 
 # - Token (TOKEN) [scopes: admin:enterprise, admin:org]
-# - GitHub Organization Name (GH_ORG_NAME)
-# - Runner Group Name (RUNNER_GRP_NAME)
-# - Runner Name (RUNNER_NAME)
 # - Labels List (LABELS) [optional]
-#
-# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>]
-#[-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
-#
-# EXAMPLE: bash terraform.sh 'terraform/local'
-#                            -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
-#          This example runs the 'plan' action, with the specified targets.
-#
-# NOTES: Ensure you have the necessary permissions to execute this script.
-#        Make sure all required dependencies are installed (Terraform CLI installed, GitLab access token with api permissions, valid GitLab project path).
-#
-# AUTHORS: Matteo Cristiano <slb6113@gmail.com>
-#
-# VERSION: 1.3.0
-#
-# DATE: 30/11/2025
-
-# .PARAMETER Path
-#   The path to the Terraform scripts. (Mandatory)
-# .PARAMETER Env
-#   The environment to set (e.g., local). (Mandatory)
-# .PARAMETER Scope
-#   The scope to set (e.g., 'desktop-s8glse7'). (Mandatory)
-# .PARAMETER Action
-#   The action to perform (e.g., plan, apply, import, remove, move, list). (Mandatory)
+ (e.g., plan, apply, import, remove, move, list). (Mandatory)
 # .PARAMETER LogLevel
 #   The log level to set (INFO, WARN, ERROR, DEBUG, TRACE). (Optional)
 # .PARAMETER PluginCacheDir
@@ -56,6 +41,22 @@ set -e
 #   The GitLab user to use for authentication. (Mandatory)
 # .PARAMETER GitLabToken
 #   The GitLab token to use for authentication. (Mandatory)
+#
+# USAGE: bash terraform.sh $PATH $ENV $SCOPE $ACTION [$LOG_LEVEL] [$PLUGIN_CACHE_DIR] [$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>]
+#[-Targets <targets>] [-Address <address>] [-Id <id>] [-Source <source>] [-Destination <destination>] -GitLabUser <user> -GitLabToken <token>
+#
+# EXAMPLE: bash terraform.sh 'terraform/local'
+#                            -Env 'local' -Scope 'desktop-s8glse7' -Action 'plan' -LogLevel 'ERROR' -Targets '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' -GitLabUser 'gitlab_user' -GitLabToken 'gitlab_token'
+#          This example runs the 'plan' action, with the specified targets.
+#
+# NOTES: Ensure you have the necessary permissions to execute this script.
+#        Make sure all required dependencies are installed (Terraform CLI installed, GitLab access token with api permissions, valid GitLab project path).
+#
+# AUTHORS: Matteo Cristiano <slb6113@gmail.com>
+#
+# VERSION: 1.3.0
+#
+# DATE: 30/11/2025
 
 ############################
 ########## Inputs ##########
