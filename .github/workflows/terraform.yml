@@ -105,7 +105,7 @@ jobs:
           GL_USER: ${{ secrets.GITLAB_USER }}
           GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          bash scripts/bash/terraform.sh -PATH 'terraform/${{ github.event.inputs.scope }}' \
+          bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ github.event.inputs.scope }}' \
                                          -ENV '${{ github.event.inputs.env }}' \
                                          -SCOPE '${{ github.event.inputs.scope }}' \
                                          -ACTION 'plan' \
