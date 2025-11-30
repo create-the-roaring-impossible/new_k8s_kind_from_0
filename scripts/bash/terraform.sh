@@ -208,13 +208,13 @@ terraform init -upgrade \
   -backend-config="unlock_method=DELETE" \
   -backend-config="retry_wait_min=5"
 
-test_exit_code() "ERROR: Terraform Initializing failed."
+test_exit_code "ERROR: Terraform Initializing failed."
 
 # Run terraform validate
 echo "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
 
-test_exit_code() "ERROR: Terraform Validating failed."
+test_exit_code "ERROR: Terraform Validating failed."
 
 case $ACTION in
   'plan')
@@ -244,20 +244,20 @@ case $ACTION in
 #       terraform plan -input=false -no-color $validTargets -out="plan.output"
 #     }
 
-    test_exit_code() "ERROR: Terraform Planning failed."
+    test_exit_code "ERROR: Terraform Planning failed."
     ;;
   'apply')
     echo "############################## Applying Terraform changes ##############################"
 #     terraform apply -input=false -no-color -auto-approve 'plan.output'
 
-    test_exit_code() "ERROR: Terraform Applying failed."
+    test_exit_code "ERROR: Terraform Applying failed."
   ;;
   'state list')
     echo "############################## Listing Terraform State ##############################"
 
 #     terraform state list
 
-    test_exit_code() "ERROR: Terraform Listing failed."
+    test_exit_code "ERROR: Terraform Listing failed."
     ;;
 #   'state move' {
 #     Write-Output "############################## Moving a resource into Terraform State ##############################"
