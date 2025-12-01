@@ -8,15 +8,15 @@ resource "local_file" "test_file" { # commented to test "state mv" command
   content  = "This is an example file created by Terraform."
 }
 
-moved {
+moved { # commented to test "state mv" command
   from = local_file.test_file
   to  = local_file.test_file_new
 }
 
-resource "local_file" "test_file_new" {
-  filename = "${random_integer.rand.result}.txt"
-  content  = "This is an example file created by Terraform."
-}
+# resource "local_file" "test_file_new" {
+#   filename = "${random_integer.rand.result}.txt"
+#   content  = "This is an example file created by Terraform."
+# }
 
 resource "local_file" "test_file_heredoc" {
   filename = "heredoc.txt"
