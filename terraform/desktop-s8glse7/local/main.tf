@@ -3,10 +3,10 @@
 #   max = 100
 # }
 
-moved { # comment "random_integer.rand" and decomment "random_integer.rand_new", before to use it
-  from = random_integer.rand
-  to  = random_integer.rand_new
-}
+# moved { # comment "random_integer.rand" and decomment "random_integer.rand_new", before to use it (comment after resource moving)
+#   from = random_integer.rand
+#   to  = random_integer.rand_new
+# }
 
 resource "random_integer" "rand_new" { # decommented before to use "moved" block
   min = 1
