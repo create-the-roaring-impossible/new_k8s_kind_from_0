@@ -8,10 +8,10 @@ resource "local_file" "test_file" { # commented to test "state mv" command
   content  = "This is an example file created by Terraform."
 }
 
-# moved { # comment "local_file.test_file" and "local_file.test_file_new", before to use it
-#   from = local_file.test_file
-#   to  = local_file.test_file_new
-# }
+moved { # comment "local_file.test_file" and "local_file.test_file_new", before to use it
+  from = local_file.test_file
+  to  = local_file.test_file_new
+}
 
 # resource "local_file" "test_file_new" {
 #   filename = "${random_integer.rand.result}.txt"
