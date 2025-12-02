@@ -57,7 +57,7 @@ on:
         required: false
         default: ''
       address:
-        description: 'Set the address (optional) [only for "import", "remove" and "move" actions]. Example: aws_instance.web'
+        description: 'Set the address (optional) [only for "remove" action]. Example: aws_instance.web'
         type: string
         required: false
         default: ''
