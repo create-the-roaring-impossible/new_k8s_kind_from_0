@@ -219,10 +219,10 @@ test_exit_code "ERROR: Terraform Validating failed."
 case $ACTION in
   'plan')
     echo "############################## Planning Terraform changes ##############################"
-    # Trim and remove all whitespace from $Targets
+    # Trim and remove all whitespace from $TARGETS
     TARGETS=$(echo "$TARGETS" | tr -d '[:space:]')
 
-    # Check if $Targets is empty (no targets specified)
+    # Check if $TARGETS is empty (no targets specified)
     if [[ -z "$TARGETS" ]]; then
       terraform plan -input=false -no-color -out='plan.output'
     else
@@ -231,7 +231,7 @@ case $ACTION in
       pattern='^-target=[a-zA-Z0-9_]+\.[a-zA-Z0-9_.-]+$'
       valid_targets=()
       for target in "${target_array[@]}"; do
-        target=$(echo "$target" | xargs)  # Trim whitespace
+        target=$(echo "$target" | xargs) # Trim whitespace
         if [[ $target =~ $pattern ]]; then
           valid_targets+=("$target")
         else
@@ -261,23 +261,21 @@ case $ACTION in
     ;;
   'state move')
     echo "############################## Moving a resource into Terraform State ##############################"
-#     # Trim and remove all whitespace from $Source
-#     $Source = $Source.Trim() -replace '\s+', ''
-#     # Trim and remove all whitespace from $Destination
-#     $Destination = $Destination.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $SOURCE
+    SOURCE=$(echo "$SOURCE" | tr -d '[:space:]')
+    # Trim and remove all whitespace from $DESTINATION
+    DESTINATION=$(echo "$DESTINATION" | tr -d '[:space:]')
 
-#     # TODO: to consider to set "-dry-run"
-#     terraform state mv $Source $Destination
+    terraform state mv $SOURCE $DESTINATION # TODO: to consider to set "-dry-run"
 
     test_exit_code "ERROR: Terraform Moving failed."
     ;;
   'state remove')
     echo "############################## Removing a resource into Terraform State ##############################"
-#     # Trim and remove all whitespace from $Address
-#     $Address = $Address.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $ADDRESS
+    ADDRESS=$(echo "$ADDRESS" | tr -d '[:space:]')
 
-#     # TODO: to consider to set "-dry-run"
-#     # terraform state rm $Address ######################################################################################################################################################
+    terraform state rm $ADDRESS # TODO: to consider to set "-dry-run"
 
     test_exit_code "ERROR: Terraform Removing failed."
     ;;
