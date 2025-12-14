@@ -281,12 +281,12 @@ case $ACTION in
     ;;
   'import')
     echo "############################## Importing a resource into Terraform State ##############################"
-#     # Trim and remove all whitespace from $Address
-#     $Address = $Address.Trim() -replace '\s+', ''
-#     # Trim and remove all whitespace from $Id
-#     $Id = $Id.Trim() -replace '\s+', ''
+    # Trim and remove all whitespace from $ADDRESS
+    ADDRESS=$(echo "$ADDRESS" | tr -d '[:space:]')
+    # Trim and remove all whitespace from $ID
+    ID=$(echo "$ID" | tr -d '[:space:]')
 
-#     # terraform import -input=false -no-color $Address $Id ######################################################################################################################################################
+    terraform import -input=false -no-color $ADDRESS $ID
 
     test_exit_code "ERROR: Terraform Importing failed."
     ;;

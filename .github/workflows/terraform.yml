@@ -57,7 +57,7 @@ on:
         required: false
         default: ''
       address:
-        description: 'Set the address (optional) [only for "remove" action]. Example: aws_instance.web'
+        description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
         type: string
         required: false
         default: ''
@@ -310,5 +310,43 @@ jobs:
                                          -ACTION 'state remove' \
                                          -LOG_LEVEL '${{ github.event.inputs.logLevel }}' \
                                          -ADDRESS '${{ github.event.inputs.address }}' \
+                                         -GITLAB_USER $GL_USER \
+                                         -GITLAB_TOKEN $GL_TOKEN
+  terraformStateImport:
+    name: 'Terraform State Import'
+    runs-on: 'arc-desktop-s8glse7'
+    if: ${{ github.event.inputs.action == 'import' }}
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+      # options: --user root
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Create Terraform Plugin Cache Dir
+        run: mkdir --parents $TF_PLUGIN_CACHE_DIR
+      - name: Cache Terraform plugins
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key:  ${{ runner.os }}${{ runner.arch }}-terraform
+          restore-keys: |
+            ${{ runner.os }}${{ runner.arch }}-terraform
+      - name: STATE IMPORT - Run terraform.sh script
+        env:
+          GL_USER: ${{ secrets.GITLAB_USER }}
+          GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ github.event.inputs.scope }}' \
+                                         -ENV '${{ github.event.inputs.env }}' \
+                                         -SCOPE '${{ github.event.inputs.scope }}' \
+                                         -ACTION 'import' \
+                                         -LOG_LEVEL '${{ github.event.inputs.logLevel }}' \
+                                         -ADDRESS '${{ github.event.inputs.address }}' \
+                                         -ID '${{ github.event.inputs.id }}' \
                                          -GITLAB_USER $GL_USER \
                                          -GITLAB_TOKEN $GL_TOKEN
