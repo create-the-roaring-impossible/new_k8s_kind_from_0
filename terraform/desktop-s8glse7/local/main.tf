@@ -27,8 +27,3 @@ test line
 test line
   EOF
 }
-
-resource "local_file" "test_template_file" {
-  filename = "templates/template_test.txt"
-  content  = "# template test"
-}
