@@ -38,7 +38,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'Login to GitHub Container Registry'
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
+        uses: docker/login-action@v3
         with:
           registry: ${{ github.event.inputs.docker_repository }}
           username: ${{ github.actor }}
@@ -55,7 +55,7 @@ jobs:
           echo "RCVersion=$RCVersion" >> $GITHUB_OUTPUT
         shell: bash
       - name: 'Build and Push Docker Image, tag "${{ github.event.inputs.tag }}${{ env.RCVersion }}"'
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        uses: docker/build-push-action@v6
         with:
           context: '.'
           file: ${{ github.event.inputs.dockerfile }}
@@ -70,7 +70,7 @@ jobs:
             org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
       - name: 'Build and Push Docker Image, tag "latest"'
         if: ${{ github.event.inputs.isRC == 'false' }}
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        uses: docker/build-push-action@v6
         with:
           context: '.'
           file: ${{ github.event.inputs.dockerfile }}
