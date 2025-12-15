@@ -1,3 +1,7 @@
+##################################################
+# test objects
+##################################################
+
 # resource "random_integer" "rand" { # commented before to use "moved" block
 #   min = 1
 #   max = 100
