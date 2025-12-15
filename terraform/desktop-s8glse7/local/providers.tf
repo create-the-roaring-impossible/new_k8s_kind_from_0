@@ -50,8 +50,8 @@ provider "google" {
 provider "kubernetes" {
   # Configuration options
   # https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs
-  # config_paths = [
-  #   "/path/to/config_a.yaml"
-  # ]
-  # config_context = "my-context"
+  config_paths = [
+    "~/.kube/config"
+  ]
+  config_context = "my-context"
 }
