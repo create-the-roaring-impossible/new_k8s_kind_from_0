@@ -53,5 +53,5 @@ provider "kubernetes" {
   config_paths = [
     "~/.kube/config"
   ]
-  config_context = "my-context"
+  config_context = "kind-personal-kind"
 }
