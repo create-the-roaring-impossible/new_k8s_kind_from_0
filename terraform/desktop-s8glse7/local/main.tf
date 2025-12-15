@@ -28,7 +28,7 @@ test line
   EOF
 }
 
-resource "random_integer" "imported_rand" { # decommented to test "import" command
+resource "random_integer" "imported_rand" { # decommented to test "import" command (random_integer.imported_rand 19,1,100)
   min = 1
   max = 100
-} # random_integer.imported_rand 19,1,100
+}
