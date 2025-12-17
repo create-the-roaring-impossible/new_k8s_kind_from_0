@@ -16,3 +16,17 @@ runs:
         key:  ${{ runner.os }}${{ runner.arch }}-terraform
         restore-keys: |
           ${{ runner.os }}${{ runner.arch }}-terraform
+  # - task: DownloadSecureFile@1
+  #   name: local_k8s_config
+  #   inputs:
+  #     secureFile: 'local_k8s_config'
+  #     retryCount: '8'
+  #   displayName: 'Download secure file - local_k8s_config'
+  # - task: PowerShell@2
+  #   inputs:
+  #     targetType: 'inline'
+  #     script: |
+  #       New-Item -ItemType Directory -Force -Path ~/.kube
+  #       Move-Item -Path $(local_k8s_config.secureFilePath) -Destination ~/.kube/config -Force
+  #       (Get-Content ~/.kube/config) -replace "127\.0\.0\.1", "172.18.224.242" | Set-Content ~/.kube/config
+  #   displayName: 'Copy and configure Kubeconfig file'
