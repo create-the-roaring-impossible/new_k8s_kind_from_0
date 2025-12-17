@@ -3,10 +3,6 @@ description: 'Terraform Utils'
 runs:
   using: 'composite'
   steps:
-    - name: 'Repository Checkout'
-      uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
     - name: Create Terraform Plugin Cache Dir
       run: mkdir --parents $TF_PLUGIN_CACHE_DIR
     - name: Cache Terraform plugins

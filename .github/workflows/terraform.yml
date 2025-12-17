@@ -84,12 +84,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      # options: --user root
     steps:
-      # - name: 'Repository Checkout'
-      #   uses: actions/checkout@v5
-      #   with:
-      #     fetch-depth: 0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # - name: Create Terraform Plugin Cache Dir
       #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       # - name: Cache Terraform plugins
@@ -167,12 +166,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      # options: --user root
     steps:
-      # - name: 'Repository Checkout'
-      #   uses: actions/checkout@v5
-      #   with:
-      #     fetch-depth: 0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # - name: Create Terraform Plugin Cache Dir
       #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       # - name: Cache Terraform plugins
@@ -211,12 +209,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      # options: --user root
     steps:
-      # - name: 'Repository Checkout'
-      #   uses: actions/checkout@v5
-      #   with:
-      #     fetch-depth: 0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # - name: Create Terraform Plugin Cache Dir
       #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       # - name: Cache Terraform plugins
@@ -248,12 +245,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      # options: --user root
     steps:
-      # - name: 'Repository Checkout'
-      #   uses: actions/checkout@v5
-      #   with:
-      #     fetch-depth: 0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # - name: Create Terraform Plugin Cache Dir
       #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       # - name: Cache Terraform plugins
@@ -287,12 +283,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      # options: --user root
     steps:
-      # - name: 'Repository Checkout'
-      #   uses: actions/checkout@v5
-      #   with:
-      #     fetch-depth: 0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # - name: Create Terraform Plugin Cache Dir
       #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       # - name: Cache Terraform plugins
@@ -325,12 +320,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-      # options: --user root
     steps:
-      # - name: 'Repository Checkout'
-      #   uses: actions/checkout@v5
-      #   with:
-      #     fetch-depth: 0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # - name: Create Terraform Plugin Cache Dir
       #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
       # - name: Cache Terraform plugins
