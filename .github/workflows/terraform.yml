@@ -89,15 +89,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Create Terraform Plugin Cache Dir
-      #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-      # - name: Cache Terraform plugins
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-      #     key:  ${{ runner.os }}${{ runner.arch }}-terraform
-      #     restore-keys: |
-      #       ${{ runner.os }}${{ runner.arch }}-terraform
       - uses: ./.github/actions/tf-utils-composite-action
       - name: PLAN - Run terraform.sh script
         env:
@@ -126,7 +117,7 @@ jobs:
   ManualTerraformPlanApproval:
     name: 'ManualTerraformPlanApproval'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' }} && success('terraformPlan')
+    if: ${{ github.event.inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
     needs: terraformPlan
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
@@ -159,7 +150,7 @@ jobs:
   terraformApply:
     name: 'Terraform Apply'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' }} && success('ManualTerraformPlanApproval')
+    if: ${{ github.event.inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
     needs: ManualTerraformPlanApproval
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
@@ -171,15 +162,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Create Terraform Plugin Cache Dir
-      #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-      # - name: Cache Terraform plugins
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-      #     key:  ${{ runner.os }}${{ runner.arch }}-terraform
-      #     restore-keys: |
-      #       ${{ runner.os }}${{ runner.arch }}-terraform
       - uses: ./.github/actions/tf-utils-composite-action
       - name: Download plan.output Artifact
         uses: actions/download-artifact@v5
@@ -214,15 +196,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Create Terraform Plugin Cache Dir
-      #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-      # - name: Cache Terraform plugins
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-      #     key:  ${{ runner.os }}${{ runner.arch }}-terraform
-      #     restore-keys: |
-      #       ${{ runner.os }}${{ runner.arch }}-terraform
       - uses: ./.github/actions/tf-utils-composite-action
       - name: STATE LIST - Run terraform.sh script
         env:
@@ -250,15 +223,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Create Terraform Plugin Cache Dir
-      #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-      # - name: Cache Terraform plugins
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-      #     key:  ${{ runner.os }}${{ runner.arch }}-terraform
-      #     restore-keys: |
-      #       ${{ runner.os }}${{ runner.arch }}-terraform
       - uses: ./.github/actions/tf-utils-composite-action
       - name: STATE MOVE - Run terraform.sh script
         env:
@@ -288,15 +252,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Create Terraform Plugin Cache Dir
-      #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-      # - name: Cache Terraform plugins
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-      #     key:  ${{ runner.os }}${{ runner.arch }}-terraform
-      #     restore-keys: |
-      #       ${{ runner.os }}${{ runner.arch }}-terraform
       - uses: ./.github/actions/tf-utils-composite-action
       - name: STATE REMOVE - Run terraform.sh script
         env:
@@ -325,15 +280,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      # - name: Create Terraform Plugin Cache Dir
-      #   run: mkdir --parents $TF_PLUGIN_CACHE_DIR
-      # - name: Cache Terraform plugins
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-      #     key:  ${{ runner.os }}${{ runner.arch }}-terraform
-      #     restore-keys: |
-      #       ${{ runner.os }}${{ runner.arch }}-terraform
       - uses: ./.github/actions/tf-utils-composite-action
       - name: STATE IMPORT - Run terraform.sh script
         env:
