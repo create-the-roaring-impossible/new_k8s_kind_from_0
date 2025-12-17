@@ -4,6 +4,7 @@ runs:
   using: 'composite'
   steps:
     - name: Create Terraform Plugin Cache Dir
+      shell: bash
       run: mkdir --parents $TF_PLUGIN_CACHE_DIR
     - name: Cache Terraform plugins
       uses: actions/cache@v4
