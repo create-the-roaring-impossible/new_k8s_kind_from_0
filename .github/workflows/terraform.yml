@@ -90,6 +90,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/tf-utils-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
       - name: PLAN - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
@@ -163,6 +165,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/tf-utils-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
       - name: Download plan.output Artifact
         uses: actions/download-artifact@v5
         with:
@@ -197,6 +201,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/tf-utils-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
       - name: STATE LIST - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
@@ -224,6 +230,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/tf-utils-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
       - name: STATE MOVE - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
@@ -253,6 +261,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/tf-utils-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
       - name: STATE REMOVE - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}
@@ -281,6 +291,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/tf-utils-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
       - name: STATE IMPORT - Run terraform.sh script
         env:
           GL_USER: ${{ secrets.GITLAB_USER }}

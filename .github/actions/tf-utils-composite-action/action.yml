@@ -1,5 +1,9 @@
 name: 'Terraform Utils'
 description: 'Terraform Utils'
+inputs:
+  kubeconfig:
+    description: 'Kubernetes config content'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -17,5 +21,7 @@ runs:
       shell: bash
       run: |
         mkdir --parents ~/.kube
-        cat ${{ secrets.LOCAL_K8S_CONFIG }} > ~/.kube/config
+        cat <<EOF > ~/.kube/config
+        ${{ inputs.kubeconfig }}
+        EOF
         sed -i 's/127\.0\.0\.1/host.docker.internal/g' ~/.kube/config
