@@ -54,4 +54,5 @@ provider "kubernetes" {
     "~/.kube/config"
   ]
   config_context = "kind-personal-kind"
+  insecure = true
 }
