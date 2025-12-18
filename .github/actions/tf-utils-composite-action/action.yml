@@ -25,5 +25,5 @@ runs:
   #     script: |
   #       New-Item -ItemType Directory -Force -Path ~/.kube
   #       Move-Item -Path $(local_k8s_config.secureFilePath) -Destination ~/.kube/config -Force
-  #       (Get-Content ~/.kube/config) -replace "127\.0\.0\.1", "172.18.224.242" | Set-Content ~/.kube/config
+  #       (Get-Content ~/.kube/config) -replace "127\.0\.0\.1", "host.docker.internal" | Set-Content ~/.kube/config
   #   displayName: 'Copy and configure Kubeconfig file'
