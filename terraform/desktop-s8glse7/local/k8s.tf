@@ -1,3 +1,7 @@
+##################################################
+# test objects
+##################################################
+
 resource "kubernetes_namespace" "gh_ns" {
   metadata {
     annotations = {
