@@ -1,5 +1,5 @@
-name: 'Terraform Apply'
-description: 'Terraform Apply'
+name: 'Terraform State List'
+description: 'Terraform State List'
 inputs:
   kubeconfig:
     description: 'Kubernetes config content'
@@ -27,20 +27,13 @@ runs:
       uses: ./.github/actions/tf-utils-composite-action
       with:
         kubeconfig: ${{ inputs.kubeconfig }}
-    - name: Download plan.output Artifact
-      uses: actions/download-artifact@v5
-      with:
-        name: 'planOutput'
-        path: '${{ github.workspace }}/terraform/${{ inputs.scope }}/${{ inputs.env }}/'
-        repository: ${{ github.repository }}
-        run-id: ${{ github.run_id }}
-    - name: APPLY - Run terraform.sh script
+    - name: STATE LIST - Run terraform.sh script
       shell: bash
       run: |
         bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ inputs.scope }}' \
                                         -ENV '${{ inputs.env }}' \
                                         -SCOPE '${{ inputs.scope }}' \
-                                        -ACTION 'apply' \
+                                        -ACTION 'state list' \
                                         -LOG_LEVEL '${{ inputs.logLevel }}' \
                                         -GITLAB_USER ${{ inputs.gitlab_user }} \
                                         -GITLAB_TOKEN ${{ inputs.gitlab_token }}

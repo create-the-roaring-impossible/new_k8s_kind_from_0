@@ -1,5 +1,5 @@
-name: 'Terraform Apply'
-description: 'Terraform Apply'
+name: 'Terraform State Move'
+description: 'Terraform State Move'
 inputs:
   kubeconfig:
     description: 'Kubernetes config content'
@@ -20,6 +20,12 @@ inputs:
     description: 'Log Level'
     default: 'ERROR'
     required: false
+  source:
+    description: 'Source address'
+    required: true
+  destination:
+    description: 'Destination address'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -27,20 +33,15 @@ runs:
       uses: ./.github/actions/tf-utils-composite-action
       with:
         kubeconfig: ${{ inputs.kubeconfig }}
-    - name: Download plan.output Artifact
-      uses: actions/download-artifact@v5
-      with:
-        name: 'planOutput'
-        path: '${{ github.workspace }}/terraform/${{ inputs.scope }}/${{ inputs.env }}/'
-        repository: ${{ github.repository }}
-        run-id: ${{ github.run_id }}
-    - name: APPLY - Run terraform.sh script
+    - name: STATE MOVE - Run terraform.sh script
       shell: bash
       run: |
         bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ inputs.scope }}' \
                                         -ENV '${{ inputs.env }}' \
                                         -SCOPE '${{ inputs.scope }}' \
-                                        -ACTION 'apply' \
+                                        -ACTION 'state move' \
                                         -LOG_LEVEL '${{ inputs.logLevel }}' \
+                                        -SOURCE '${{ inputs.source }}' \
+                                        -DESTINATION '${{ inputs.destination }}' \
                                         -GITLAB_USER ${{ inputs.gitlab_user }} \
                                         -GITLAB_TOKEN ${{ inputs.gitlab_token }}
