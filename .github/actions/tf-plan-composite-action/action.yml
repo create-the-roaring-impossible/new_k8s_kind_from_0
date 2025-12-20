@@ -25,7 +25,8 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: ./.github/actions/tf-utils-composite-action
+    - name: 'Terraform Utils'
+      uses: ./.github/actions/tf-utils-composite-action
       with:
         kubeconfig: ${{ inputs.kubeconfig }}
     - name: PLAN - Run terraform.sh script
