@@ -1,0 +1,45 @@
+name: 'Terraform Plan'
+description: 'Terraform Plan'
+inputs:
+  kubeconfig:
+    description: 'Kubernetes config content'
+    required: true
+  gitlab_user:
+    description: 'GitLab user'
+    required: true
+  gitlab_token:
+    description: 'GitLab token'
+    required: true
+  scope:
+    description: 'Scope'
+    required: true
+  env:
+    description: 'Environment'
+    required: true
+  logLevel:
+    description: 'Log Level'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Terraform Utils'
+      uses: ./.github/actions/tf-utils-composite-action
+      with:
+        kubeconfig: ${{ inputs.kubeconfig }}
+    - name: Download plan.output Artifact
+      uses: actions/download-artifact@v5
+      with:
+        name: 'planOutput'
+        path: '${{ github.workspace }}/terraform/${{ inputs.scope }}/${{ inputs.env }}/'
+        repository: ${{ github.repository }}
+        run-id: ${{ github.run_id }}
+    - name: APPLY - Run terraform.sh script
+      shell: bash
+      run: |
+        bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ inputs.scope }}' \
+                                        -ENV '${{ inputs.env }}' \
+                                        -SCOPE '${{ inputs.scope }}' \
+                                        -ACTION 'apply' \
+                                        -LOG_LEVEL '${{ inputs.logLevel }}' \
+                                        -GITLAB_USER ${{ inputs.gitlab_user }} \
+                                        -GITLAB_TOKEN ${{ inputs.gitlab_token }}
