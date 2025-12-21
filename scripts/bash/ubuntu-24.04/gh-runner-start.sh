@@ -30,6 +30,7 @@ print_header() {
   lightcyan="\033[1;36m"
   nocolor="\033[0m"
   echo -e "\n${lightcyan}$1${nocolor}\n"
+  return 0
 }
 
 ############################
@@ -37,31 +38,31 @@ print_header() {
 ############################
 
 GH_URL=$1
-if [ -z $GH_URL ]; then
+if [[ -z $GH_URL ]]; then
   echo 1>&2 "ERROR: missing GH_URL variable"
   exit 1
 fi
 
 TOKEN=$2
-if [ -z $TOKEN ]; then
+if [[ -z $TOKEN ]]; then
   echo 1>&2 "ERROR: missing TOKEN variable"
   exit 1
 fi
 
 GH_ORG_NAME=$3
-if [ -z $GH_ORG_NAME ]; then
+if [[ -z $GH_ORG_NAME ]]; then
   echo 1>&2 "ERROR: missing GH_ORG_NAME variable"
   exit 1
 fi
 
 RUNNER_GRP_NAME=$4
-if [ -z $RUNNER_GRP_NAME ]; then
+if [[ -z $RUNNER_GRP_NAME ]]; then
   echo 1>&2 "ERROR: missing RUNNER_GRP_NAME variable"
   exit 1
 fi
 
 RUNNER_NAME=$5
-if [ -z $RUNNER_NAME ]; then
+if [[ -z $RUNNER_NAME ]]; then
   echo 1>&2 "ERROR: missing RUNNER_NAME variable"
   exit 1
 fi
@@ -69,7 +70,7 @@ RUNNER_NAME=$RUNNER_NAME"_$RANDOM"
 echo "Runner \"$RUNNER_NAME\" will be created"
 
 LABELS=$6
-if [ -n "$LABELS" ]; then
+if [[ -n "$LABELS" ]]; then
   # Remove spaces around commas and validate the format
   LABELS=$(echo "$LABELS" | sed 's/ *, */,/g')
   if ! [[ "$LABELS" =~ ^[a-zA-Z0-9._/-]+(,[a-zA-Z0-9._/-]+)*$ ]]; then
@@ -84,12 +85,12 @@ fi
 
 print_header "1. Creating folder structure.."
 
-if [ ! -d ~/gh-runners ]; then
+if [[ ! -d ~/gh-runners ]]; then
   mkdir -p ~/gh-runners
 fi
 cd ~/gh-runners
 
-if [ ! -d ~/gh-runners/$RUNNER_NAME ]; then
+if [[ ! -d ~/gh-runners/$RUNNER_NAME ]]; then
   mkdir -p ~/gh-runners/$RUNNER_NAME
 fi
 cd ~/gh-runners/$RUNNER_NAME
@@ -101,7 +102,7 @@ cd ~/gh-runners/$RUNNER_NAME
 print_header "2. Determining, downloading, and extracting package to install.."
 
 GH_RUNNER_PACKAGE=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r .assets[].browser_download_url | grep "linux-x64")
-if [ -z "$GH_RUNNER_PACKAGE" ]; then
+if [[ -z "$GH_RUNNER_PACKAGE" ]]; then
   echo 1>&2 "ERROR: Could not determine GitHub Runner package to download"
   exit 1
 fi
