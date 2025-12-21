@@ -101,7 +101,7 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     *)
-      echo "ERROR: Unknown parameter: $1"
+      echo 1>&2 "ERROR: Unknown parameter: $1"
       exit 1
       ;;
   esac
@@ -109,31 +109,31 @@ done
 
 # Validate required parameters
 if [[ -z "$TF_PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
-  echo "ERROR: Missing required parameters"
-  echo "Required: -TF_PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN"
-  echo "USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> [OPTIONS]"
-  echo "Optional: -LOG_LEVEL <level> -PLUGIN_CACHE_DIR <dir> -PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false> -TARGETS <targets> -SOURCE <source> -DESTINATION <destination> -ADDRESS <address> -ID <id>"
+  echo 1>&2 "ERROR: Missing required parameters"
+  echo 1>&2 "Required: -TF_PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN"
+  echo 1>&2 "USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> [OPTIONS]"
+  echo 1>&2 "Optional: -LOG_LEVEL <level> -PLUGIN_CACHE_DIR <dir> -PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false> -TARGETS <targets> -SOURCE <source> -DESTINATION <destination> -ADDRESS <address> -ID <id>"
   exit 1
 fi
 
 # Validate ACTION parameter
 valid_actions=("plan" "apply" "state list" "state move" "state remove" "import")
 if [[ ! " ${valid_actions[@]} " =~ " ${ACTION} " ]]; then
-  echo "ERROR: Invalid 'action' specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove' and 'state move'"
+  echo 1>&2 "ERROR: Invalid 'action' specified. Valid actions are: 'plan', 'apply', 'import', 'state list', 'state remove' and 'state move'"
   exit 1
 fi
 
 # Validate LOG_LEVEL parameter
 valid_log_levels=("INFO" "WARN" "ERROR" "DEBUG" "TRACE")
 if [[ -n "$LOG_LEVEL" && ! " ${valid_log_levels[@]} " =~ " ${LOG_LEVEL} " ]]; then
-  echo "ERROR: Invalid 'log_level' specified. Valid actions are: 'INFO', 'WARN', 'ERROR', 'DEBUG' and 'TRACE'"
+  echo 1>&2 "ERROR: Invalid 'log_level' specified. Valid actions are: 'INFO', 'WARN', 'ERROR', 'DEBUG' and 'TRACE'"
   exit 1
 fi
 
 # Validate PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE parameter
 valid_plugin_cache_may_break_dependency_lock_file=("true" "false")
 if [[ -n "$PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE" && ! " ${valid_plugin_cache_may_break_dependency_lock_file[@]} " =~ " ${PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE} " ]]; then
-  echo "ERROR: Invalid 'plugin_cache_may_break_dependency_lock_file' specified. Valid values are: 'true' and 'false'"
+  echo 1>&2 "ERROR: Invalid 'plugin_cache_may_break_dependency_lock_file' specified. Valid values are: 'true' and 'false'"
   exit 1
 fi
 
@@ -188,7 +188,7 @@ fi
 
 # Validate GitLab credentials
 if [[ -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
-  echo "ERROR: GITLAB_USER and GITLAB_TOKEN environment variables must be set, please set them before running this script."
+  echo 1>&2 "ERROR: GITLAB_USER and GITLAB_TOKEN environment variables must be set, please set them before running this script."
   exit 1
 fi
 
@@ -235,8 +235,8 @@ case $ACTION in
         if [[ $target =~ $pattern ]]; then
           valid_targets+=("$target")
         else
-          echo "ERROR: Invalid target format: $target"
-          echo "Expected format: -target=resource_type.resource_name[..]"
+          echo 1>&2 "ERROR: Invalid target format: $target"
+          echo 1>&2 "Expected format: -target=resource_type.resource_name[..]"
           exit 1
         fi
       done
@@ -291,7 +291,7 @@ case $ACTION in
     test_exit_code "ERROR: Terraform Importing failed."
     ;;
   *)
-    echo "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
+    echo 1>&2 "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
     exit 1
     ;;
 esac
