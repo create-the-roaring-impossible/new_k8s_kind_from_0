@@ -84,11 +84,4 @@ jobs:
       destination: ${{ github.event.inputs.destination }}
       address: ${{ github.event.inputs.address }}
       id: ${{ github.event.inputs.id }}
-    secrets:
-      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      LOCAL_K8S_CONFIG: ${{ secrets.LOCAL_K8S_CONFIG }}
-      GITLAB_USER: ${{ secrets.GITLAB_USER }}
-      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+    secrets: inherit

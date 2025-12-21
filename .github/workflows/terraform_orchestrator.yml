@@ -1,6 +1,19 @@
 name: 'Terraform Orchestrator CI\CD'
 on:
   workflow_call:
+    secrets:
+      DOCKER_TOKEN:
+        description: 'Docker token'
+        required: true
+      LOCAL_K8S_CONFIG:
+        description: 'Kubernetes config'
+        required: true
+      GITLAB_USER:
+        description: 'GitLab user'
+        required: true
+      GITLAB_TOKEN:
+        description: 'GitLab token'
+        required: true
     inputs:
       env:
         description: 'Set the environment'
