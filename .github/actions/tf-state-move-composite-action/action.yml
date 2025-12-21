@@ -1,0 +1,47 @@
+name: 'Terraform State Move'
+description: 'Terraform State Move'
+inputs:
+  kubeconfig:
+    description: 'Kubernetes config content'
+    required: true
+  gitlab_user:
+    description: 'GitLab user'
+    required: true
+  gitlab_token:
+    description: 'GitLab token'
+    required: true
+  scope:
+    description: 'Scope'
+    required: true
+  env:
+    description: 'Environment'
+    required: true
+  logLevel:
+    description: 'Log Level'
+    default: 'ERROR'
+    required: false
+  source:
+    description: 'Source address'
+    required: true
+  destination:
+    description: 'Destination address'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Terraform Utils'
+      uses: ./.github/actions/tf-utils-composite-action
+      with:
+        kubeconfig: ${{ inputs.kubeconfig }}
+    - name: STATE MOVE - Run terraform.sh script
+      shell: bash
+      run: |
+        bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ inputs.scope }}' \
+                                        -ENV '${{ inputs.env }}' \
+                                        -SCOPE '${{ inputs.scope }}' \
+                                        -ACTION 'state move' \
+                                        -LOG_LEVEL '${{ inputs.logLevel }}' \
+                                        -SOURCE '${{ inputs.source }}' \
+                                        -DESTINATION '${{ inputs.destination }}' \
+                                        -GITLAB_USER ${{ inputs.gitlab_user }} \
+                                        -GITLAB_TOKEN ${{ inputs.gitlab_token }}

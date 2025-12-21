@@ -1,0 +1,53 @@
+name: 'Terraform Plan'
+description: 'Terraform Plan'
+inputs:
+  kubeconfig:
+    description: 'Kubernetes config content'
+    required: true
+  gitlab_user:
+    description: 'GitLab user'
+    required: true
+  gitlab_token:
+    description: 'GitLab token'
+    required: true
+  scope:
+    description: 'Scope'
+    required: true
+  env:
+    description: 'Environment'
+    required: true
+  logLevel:
+    description: 'Log Level'
+    default: 'ERROR'
+    required: false
+  targets:
+    description: 'Targets'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Terraform Utils'
+      uses: ./.github/actions/tf-utils-composite-action
+      with:
+        kubeconfig: ${{ inputs.kubeconfig }}
+    - name: PLAN - Run terraform.sh script
+      shell: bash
+      run: |
+        bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ inputs.scope }}' \
+                                        -ENV '${{ inputs.env }}' \
+                                        -SCOPE '${{ inputs.scope }}' \
+                                        -ACTION 'plan' \
+                                        -LOG_LEVEL '${{ inputs.logLevel }}' \
+                                        -TARGETS '${{ inputs.targets }}' \
+                                        -GITLAB_USER ${{ inputs.gitlab_user }} \
+                                        -GITLAB_TOKEN ${{ inputs.gitlab_token }}
+    - name: Publish plan.output Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'planOutput'
+        path: '${{ github.workspace }}/terraform/${{ inputs.scope }}/${{ inputs.env }}/plan.output'
+        if-no-files-found: error
+        retention-days: 0 # 0 means using repository retention settings
+        compression-level: 6
+        overwrite: true
+        include-hidden-files: false

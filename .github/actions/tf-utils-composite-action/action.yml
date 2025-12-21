@@ -1,0 +1,27 @@
+name: 'Terraform Utils'
+description: 'Terraform Utils'
+inputs:
+  kubeconfig:
+    description: 'Kubernetes config content'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Create Terraform Plugin Cache Dir
+      shell: bash
+      run: mkdir --parents $TF_PLUGIN_CACHE_DIR
+    - name: Cache Terraform plugins
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+        key:  ${{ runner.os }}${{ runner.arch }}-terraform
+        restore-keys: |
+          ${{ runner.os }}${{ runner.arch }}-terraform
+    - name: Copy and configure Kubeconfig file
+      shell: bash
+      run: |
+        mkdir --parents ~/.kube
+        cat <<EOF > ~/.kube/config
+        ${{ inputs.kubeconfig }}
+        EOF
+        sed -i 's/127\.0\.0\.1/host.docker.internal/g' ~/.kube/config
