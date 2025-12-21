@@ -1,4 +1,4 @@
-name: 'Terraform CI\CD'
+name: 'Terraform Orchestrator CI\CD'
 on:
   workflow_dispatch:
     inputs:
