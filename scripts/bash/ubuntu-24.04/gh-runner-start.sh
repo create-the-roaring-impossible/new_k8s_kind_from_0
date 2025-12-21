@@ -27,9 +27,11 @@ set -e
 ###############################
 
 print_header() {
+  local header="$1"
+
   lightcyan="\033[1;36m"
   nocolor="\033[0m"
-  echo -e "\n${lightcyan}$1${nocolor}\n"
+  echo -e "\n${lightcyan}$header${nocolor}\n"
   return 0
 }
 
