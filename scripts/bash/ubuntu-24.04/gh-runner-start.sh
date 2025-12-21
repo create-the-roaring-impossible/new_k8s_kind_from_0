@@ -121,7 +121,7 @@ chmod +x ~/gh-runners/$RUNNER_NAME/*
 
 print_header "3. Configuring runner.."
 
-RUNNER_TOKEN=$(curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/$GH_ORG_NAME/actions/runners/registration-token | jq -r .token)
+RUNNER_TOKEN=$(curl --proto "=https" --tlsv1.2 -sSf -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/$GH_ORG_NAME/actions/runners/registration-token | jq -r .token)
 
 ./config.sh --unattended --name $RUNNER_NAME --url $GH_URL --token $RUNNER_TOKEN --runnergroup $RUNNER_GRP_NAME --replace --labels $LABELS --disableupdate
 
