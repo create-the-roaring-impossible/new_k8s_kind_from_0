@@ -155,10 +155,12 @@ function test_exit_code() {
 
   local message="$1"
 
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     echo "${message}"
     exit 1
   fi
+
+  return 0 # TODO: to test
 }
 
 # Copy backend.tf and variables.tf, from $TF_PATH to $TF_PATH/$ENV
