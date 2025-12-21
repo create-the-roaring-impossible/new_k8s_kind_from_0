@@ -72,6 +72,8 @@ env:
 jobs:
   call-terraform-orchestrator-workflow:
     uses: ./.github/workflows/terraform_orchestrator.yml
+    permissions:
+      issues: write
     with:
       env: ${{ github.event.inputs.env }}
       scope: ${{ github.event.inputs.scope }}
