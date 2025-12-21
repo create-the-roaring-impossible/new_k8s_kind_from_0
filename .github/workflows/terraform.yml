@@ -1,75 +1,75 @@
-# name: 'Terraform CI\CD'
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       env:
-#         description: 'Set the environment'
-#         type: choice
-#         required: true
-#         default: 'local'
-#         options:
-#           - 'local'
-#       scope:
-#         description: 'Set the scope'
-#         type: choice
-#         required: true
-#         default: 'desktop-s8glse7'
-#         options:
-#           - 'desktop-s8glse7'
-#       action:
-#         description: 'Set the action to do'
-#         type: choice
-#         required: true
-#         default: 'plan+apply'
-#         options:
-#           - 'plan+apply'
-#           - 'state list'
-#           - 'state move'
-#           - 'state remove'
-#           - 'import'
-#           - 'nothing (only for test purposes)'
-#       logLevel:
-#         description: 'Set the log level (optional)'
-#         type: choice
-#         required: false
-#         default: 'ERROR'
-#         options:
-#           - 'NONE'
-#           - 'INFO'
-#           - 'WARN'
-#           - 'ERROR'
-#           - 'DEBUG'
-#           - 'TRACE'
-#       targets:
-#         description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
-#         type: string
-#         required: false
-#         default: ''
-#       source:
-#         description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
-#         type: string
-#         required: false
-#         default: ''
-#       destination:
-#         description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
-#         type: string
-#         required: false
-#         default: ''
-#       address:
-#         description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
-#         type: string
-#         required: false
-#         default: ''
-#       id:
-#         description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
-#         type: string
-#         required: false
-#         default: ''
-# env:
-#   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
-#   TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
-#   TF_IN_AUTOMATION: 'true'
-# jobs:
+name: 'Terraform CI\CD'
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Set the environment'
+        type: choice
+        required: true
+        default: 'local'
+        options:
+          - 'local'
+      scope:
+        description: 'Set the scope'
+        type: choice
+        required: true
+        default: 'desktop-s8glse7'
+        options:
+          - 'desktop-s8glse7'
+      action:
+        description: 'Set the action to do'
+        type: choice
+        required: true
+        default: 'plan+apply'
+        options:
+          - 'plan+apply'
+          - 'state list'
+          - 'state move'
+          - 'state remove'
+          - 'import'
+          - 'nothing (only for test purposes)'
+      logLevel:
+        description: 'Set the log level (optional)'
+        type: choice
+        required: false
+        default: 'ERROR'
+        options:
+          - 'NONE'
+          - 'INFO'
+          - 'WARN'
+          - 'ERROR'
+          - 'DEBUG'
+          - 'TRACE'
+      targets:
+        description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
+        type: string
+        required: false
+        default: ''
+      source:
+        description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
+        type: string
+        required: false
+        default: ''
+      destination:
+        description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
+        type: string
+        required: false
+        default: ''
+      address:
+        description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
+        type: string
+        required: false
+        default: ''
+      id:
+        description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
+        type: string
+        required: false
+        default: ''
+env:
+  TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
+  TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
+  TF_IN_AUTOMATION: 'true'
+jobs:
 #   terraformPlan:
 #     name: 'Terraform Plan'
 #     runs-on: 'arc-desktop-s8glse7'
