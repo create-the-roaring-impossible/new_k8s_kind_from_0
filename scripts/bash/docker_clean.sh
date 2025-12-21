@@ -26,13 +26,13 @@ set -e
 ############################
 
 IMAGE=$1
-if [ -z $IMAGE ]; then
+if [[ -z $IMAGE ]]; then
   echo 1>&2 "ERROR: missing IMAGE variable"
   exit 1
 fi
 
 TAG=$2
-if [ -z $TAG ]; then
+if [[ -z $TAG ]]; then
   echo 1>&2 "ERROR: missing TAG variable"
   exit 1
 fi

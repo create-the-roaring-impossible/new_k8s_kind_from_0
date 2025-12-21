@@ -30,10 +30,11 @@
 	uninstall_gh_runners \
 	install_gl_runners \
 	uninstall_gl_runners \
-	install_argo \
-	get_admin_password_argo \
-	port_forward_argo \
-	uninstall_argo \
+
+# 	install_argo \
+# 	get_admin_password_argo \
+# 	port_forward_argo \
+# 	uninstall_argo \
 
 # which_is_my_external_ip \
 
@@ -59,9 +60,9 @@ install_helm:
 	./get_helm.sh
 
 install_kind:
-	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64 # TODO: to parametrize "v0.30.0" version
-	chmod +x ./kind
-	sudo mv ./kind /usr/local/bin/kind
+	curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64 && \
+	chmod +x ./kind && \
+	sudo mv ./kind /usr/local/bin/kind# TODO: to parametrize "v0.30.0" version
 
 # install_vagrant:
 # 	sudo apt install vagrant && \
@@ -364,39 +365,39 @@ uninstall_gl_runners:
 	helm uninstall gitlab-runner --namespace devops-gl && \
 	kubectl delete ns devops-gl
 
-install_argo:
-	@read -p "Enter Docker Hub username: " USERNAME && \
-	echo "Using Docker Hub username: $$USERNAME" && \
-	read -p "Enter Docker Hub password: " PASSWORD && \
-	echo "Using Docker Hub password: $$PASSWORD" && \
-	read -p "Enter Docker Hub email: " EMAIL && \
-	echo "Using Docker Hub email: $$EMAIL" && \
-	kubectl create ns argo && \
-	kubectl --namespace argo create secret docker-registry regcred \
-		--docker-server=https://index.docker.io/v1/ \
-		--docker-username=$$USERNAME \
-		--docker-password=$$PASSWORD \
-		--docker-email=$$EMAIL && \
-	echo -e "\n" && \
-	helm repo add argo https://charts.argo.io && \
-	helm repo update && \
-	helm upgrade --install argo argo/argo --namespace argo --create-namespace \
-# 		--version 1.0.0 \ # TODO: to specify version
-		--atomic \
-		--cleanup-on-fail \
-		--timeout 10m0s \
-		--debug \
-		-o yaml \
-		--set imagePullSecrets[0].name=regcred \
+# install_argo:
+# 	@read -p "Enter Docker Hub username: " USERNAME && \
+# 	echo "Using Docker Hub username: $$USERNAME" && \
+# 	read -p "Enter Docker Hub password: " PASSWORD && \
+# 	echo "Using Docker Hub password: $$PASSWORD" && \
+# 	read -p "Enter Docker Hub email: " EMAIL && \
+# 	echo "Using Docker Hub email: $$EMAIL" && \
+# 	kubectl create ns argo && \
+# 	kubectl --namespace argo create secret docker-registry regcred \
+# 		--docker-server=https://index.docker.io/v1/ \
+# 		--docker-username=$$USERNAME \
+# 		--docker-password=$$PASSWORD \
+# 		--docker-email=$$EMAIL && \
+# 	echo -e "\n" && \
+# 	helm repo add argo https://charts.argo.io && \
+# 	helm repo update && \
+# 	helm upgrade --install argo argo/argo --namespace argo --create-namespace \
+# # 		--version 1.0.0 \ # TODO: to specify version
+# 		--atomic \
+# 		--cleanup-on-fail \
+# 		--timeout 10m0s \
+# 		--debug \
+# 		-o yaml \
+# 		--set imagePullSecrets[0].name=regcred \
 
-get_admin_password_argo:
-# 	kubectl exec --namespace argo -it svc/argo -c argo -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+# get_admin_password_argo:
+# # 	kubectl exec --namespace argo -it svc/argo -c argo -- /bin/cat /run/secrets/additional/chart-admin-password && echo
 
-port_forward_argo: get_admin_password_argo
-# 	kubectl --namespace argo port-forward svc/argo 8081:8080
+# port_forward_argo: get_admin_password_argo
+# # 	kubectl --namespace argo port-forward svc/argo 8081:8080
 
-uninstall_argo:
-	helm uninstall argo --namespace argo
+# uninstall_argo:
+# 	helm uninstall argo --namespace argo
 
 
 

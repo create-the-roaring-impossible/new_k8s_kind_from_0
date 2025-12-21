@@ -65,13 +65,11 @@ on:
         type: string
         required: false
         default: ''
-env:
-  TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
-  TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
-  TF_IN_AUTOMATION: 'true'
 jobs:
-  call-workflow-passing-data:
+  call-terraform-orchestrator-workflow:
     uses: ./.github/workflows/terraform_orchestrator.yml
+    permissions:
+      issues: write
     with:
       env: ${{ github.event.inputs.env }}
       scope: ${{ github.event.inputs.scope }}
@@ -82,3 +80,4 @@ jobs:
       destination: ${{ github.event.inputs.destination }}
       address: ${{ github.event.inputs.address }}
       id: ${{ github.event.inputs.id }}
+    secrets: inherit
