@@ -1,251 +1,251 @@
-name: 'Terraform CI\CD'
-on:
-  workflow_dispatch:
-    inputs:
-      env:
-        description: 'Set the environment'
-        type: choice
-        required: true
-        default: 'local'
-        options:
-          - 'local'
-      scope:
-        description: 'Set the scope'
-        type: choice
-        required: true
-        default: 'desktop-s8glse7'
-        options:
-          - 'desktop-s8glse7'
-      action:
-        description: 'Set the action to do'
-        type: choice
-        required: true
-        default: 'plan+apply'
-        options:
-          - 'plan+apply'
-          - 'state list'
-          - 'state move'
-          - 'state remove'
-          - 'import'
-          - 'nothing (only for test purposes)'
-      logLevel:
-        description: 'Set the log level (optional)'
-        type: choice
-        required: false
-        default: 'ERROR'
-        options:
-          - 'NONE'
-          - 'INFO'
-          - 'WARN'
-          - 'ERROR'
-          - 'DEBUG'
-          - 'TRACE'
-      targets:
-        description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
-        type: string
-        required: false
-        default: ''
-      source:
-        description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
-        type: string
-        required: false
-        default: ''
-      destination:
-        description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
-        type: string
-        required: false
-        default: ''
-      address:
-        description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
-        type: string
-        required: false
-        default: ''
-      id:
-        description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
-        type: string
-        required: false
-        default: ''
-env:
-  TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
-  TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
-  TF_IN_AUTOMATION: 'true'
-jobs:
-  terraformPlan:
-    name: 'Terraform Plan'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' }}
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Terraform Plan'
-        uses: ./.github/actions/tf-plan-composite-action
-        with:
-          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
-          gitlab_user: ${{ secrets.GITLAB_USER }}
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          targets: ${{ github.event.inputs.targets }}
-  # TODO: to add 'plan scan', via Chekov or tfsec or other tools
-  ManualTerraformPlanApproval:
-    name: 'ManualTerraformPlanApproval'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
-    needs: terraformPlan
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    timeout-minutes: 15
-    permissions:
-      issues: write
-    steps:
-      # TODO: to check section 'Org team approver', to 'https://github.com/marketplace/actions/manual-workflow-approval' url
-      # - name: Generate token
-      #   id: generate_token
-      #   uses: actions/create-github-app-token@v2
-      #   with:
-      #     app-id: ${{ secrets.APP_ID }}
-      #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Manual Approval
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: Sennar19 # TODO: to set 'Admin'
-          minimum-approvals: 1
-          issue-title: "Terraform Plan - Manual Approval Required"
-          issue-body: "Validate Terraform plan"
-          exclude-workflow-initiator-as-approver: false
-          fail-on-denial: true
-          additional-approved-words: ''
-          additional-denied-words: ''
-  terraformApply:
-    name: 'Terraform Apply'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
-    needs: ManualTerraformPlanApproval
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Terraform Apply'
-        uses: ./.github/actions/tf-apply-composite-action
-        with:
-          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
-          gitlab_user: ${{ secrets.GITLAB_USER }}
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-  terraformStateList:
-    name: 'Terraform State List'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'state list' }}
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Terraform State List'
-        uses: ./.github/actions/tf-state-list-composite-action
-        with:
-          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
-          gitlab_user: ${{ secrets.GITLAB_USER }}
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-  terraformStateMove:
-    name: 'Terraform State Move'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'state move' }}
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Terraform State Move'
-        uses: ./.github/actions/tf-state-move-composite-action
-        with:
-          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
-          gitlab_user: ${{ secrets.GITLAB_USER }}
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          source: ${{ github.event.inputs.source }}
-          destination: ${{ github.event.inputs.destination }}
-  terraformStateRemove:
-    name: 'Terraform State Remove'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'state remove' }}
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Terraform State Remove'
-        uses: ./.github/actions/tf-state-remove-composite-action
-        with:
-          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
-          gitlab_user: ${{ secrets.GITLAB_USER }}
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          address: ${{ github.event.inputs.address }}
-  terraformStateImport:
-    name: 'Terraform State Import'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'import' }}
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    steps:
-      - name: 'Repository Checkout'
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Terraform State Import'
-        uses: ./.github/actions/tf-state-import-composite-action
-        with:
-          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
-          gitlab_user: ${{ secrets.GITLAB_USER }}
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          address: ${{ github.event.inputs.address }}
-          id: ${{ github.event.inputs.id }}
+# name: 'Terraform CI\CD'
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       env:
+#         description: 'Set the environment'
+#         type: choice
+#         required: true
+#         default: 'local'
+#         options:
+#           - 'local'
+#       scope:
+#         description: 'Set the scope'
+#         type: choice
+#         required: true
+#         default: 'desktop-s8glse7'
+#         options:
+#           - 'desktop-s8glse7'
+#       action:
+#         description: 'Set the action to do'
+#         type: choice
+#         required: true
+#         default: 'plan+apply'
+#         options:
+#           - 'plan+apply'
+#           - 'state list'
+#           - 'state move'
+#           - 'state remove'
+#           - 'import'
+#           - 'nothing (only for test purposes)'
+#       logLevel:
+#         description: 'Set the log level (optional)'
+#         type: choice
+#         required: false
+#         default: 'ERROR'
+#         options:
+#           - 'NONE'
+#           - 'INFO'
+#           - 'WARN'
+#           - 'ERROR'
+#           - 'DEBUG'
+#           - 'TRACE'
+#       targets:
+#         description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
+#         type: string
+#         required: false
+#         default: ''
+#       source:
+#         description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
+#         type: string
+#         required: false
+#         default: ''
+#       destination:
+#         description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
+#         type: string
+#         required: false
+#         default: ''
+#       address:
+#         description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
+#         type: string
+#         required: false
+#         default: ''
+#       id:
+#         description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
+#         type: string
+#         required: false
+#         default: ''
+# env:
+#   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
+#   TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
+#   TF_IN_AUTOMATION: 'true'
+# jobs:
+#   terraformPlan:
+#     name: 'Terraform Plan'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'plan+apply' }}
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v5
+#         with:
+#           fetch-depth: 0
+#       - name: 'Terraform Plan'
+#         uses: ./.github/actions/tf-plan-composite-action
+#         with:
+#           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+#           gitlab_user: ${{ secrets.GITLAB_USER }}
+#           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+#           scope: ${{ github.event.inputs.scope }}
+#           env: ${{ github.event.inputs.env }}
+#           logLevel: ${{ github.event.inputs.logLevel }}
+#           targets: ${{ github.event.inputs.targets }}
+#   # TODO: to add 'plan scan', via Chekov or tfsec or other tools
+#   ManualTerraformPlanApproval:
+#     name: 'ManualTerraformPlanApproval'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
+#     needs: terraformPlan
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     timeout-minutes: 15
+#     permissions:
+#       issues: write
+#     steps:
+#       # TODO: to check section 'Org team approver', to 'https://github.com/marketplace/actions/manual-workflow-approval' url
+#       # - name: Generate token
+#       #   id: generate_token
+#       #   uses: actions/create-github-app-token@v2
+#       #   with:
+#       #     app-id: ${{ secrets.APP_ID }}
+#       #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
+#       - name: Manual Approval
+#         uses: trstringer/manual-approval@v1
+#         with:
+#           secret: ${{ github.TOKEN }}
+#           approvers: Sennar19 # TODO: to set 'Admin'
+#           minimum-approvals: 1
+#           issue-title: "Terraform Plan - Manual Approval Required"
+#           issue-body: "Validate Terraform plan"
+#           exclude-workflow-initiator-as-approver: false
+#           fail-on-denial: true
+#           additional-approved-words: ''
+#           additional-denied-words: ''
+#   terraformApply:
+#     name: 'Terraform Apply'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
+#     needs: ManualTerraformPlanApproval
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v5
+#         with:
+#           fetch-depth: 0
+#       - name: 'Terraform Apply'
+#         uses: ./.github/actions/tf-apply-composite-action
+#         with:
+#           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+#           gitlab_user: ${{ secrets.GITLAB_USER }}
+#           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+#           scope: ${{ github.event.inputs.scope }}
+#           env: ${{ github.event.inputs.env }}
+#           logLevel: ${{ github.event.inputs.logLevel }}
+#   terraformStateList:
+#     name: 'Terraform State List'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'state list' }}
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v5
+#         with:
+#           fetch-depth: 0
+#       - name: 'Terraform State List'
+#         uses: ./.github/actions/tf-state-list-composite-action
+#         with:
+#           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+#           gitlab_user: ${{ secrets.GITLAB_USER }}
+#           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+#           scope: ${{ github.event.inputs.scope }}
+#           env: ${{ github.event.inputs.env }}
+#           logLevel: ${{ github.event.inputs.logLevel }}
+#   terraformStateMove:
+#     name: 'Terraform State Move'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'state move' }}
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v5
+#         with:
+#           fetch-depth: 0
+#       - name: 'Terraform State Move'
+#         uses: ./.github/actions/tf-state-move-composite-action
+#         with:
+#           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+#           gitlab_user: ${{ secrets.GITLAB_USER }}
+#           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+#           scope: ${{ github.event.inputs.scope }}
+#           env: ${{ github.event.inputs.env }}
+#           logLevel: ${{ github.event.inputs.logLevel }}
+#           source: ${{ github.event.inputs.source }}
+#           destination: ${{ github.event.inputs.destination }}
+#   terraformStateRemove:
+#     name: 'Terraform State Remove'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'state remove' }}
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v5
+#         with:
+#           fetch-depth: 0
+#       - name: 'Terraform State Remove'
+#         uses: ./.github/actions/tf-state-remove-composite-action
+#         with:
+#           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+#           gitlab_user: ${{ secrets.GITLAB_USER }}
+#           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+#           scope: ${{ github.event.inputs.scope }}
+#           env: ${{ github.event.inputs.env }}
+#           logLevel: ${{ github.event.inputs.logLevel }}
+#           address: ${{ github.event.inputs.address }}
+#   terraformStateImport:
+#     name: 'Terraform State Import'
+#     runs-on: 'arc-desktop-s8glse7'
+#     if: ${{ github.event.inputs.action == 'import' }}
+#     container:
+#       image: ghcr.io/create-the-roaring-impossible/tf:latest
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.DOCKER_TOKEN }}
+#     steps:
+#       - name: 'Repository Checkout'
+#         uses: actions/checkout@v5
+#         with:
+#           fetch-depth: 0
+#       - name: 'Terraform State Import'
+#         uses: ./.github/actions/tf-state-import-composite-action
+#         with:
+#           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+#           gitlab_user: ${{ secrets.GITLAB_USER }}
+#           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+#           scope: ${{ github.event.inputs.scope }}
+#           env: ${{ github.event.inputs.env }}
+#           logLevel: ${{ github.event.inputs.logLevel }}
+#           address: ${{ github.event.inputs.address }}
+#           id: ${{ github.event.inputs.id }}
