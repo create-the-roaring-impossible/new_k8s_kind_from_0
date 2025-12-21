@@ -70,7 +70,7 @@ env:
   TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
   TF_IN_AUTOMATION: 'true'
 jobs:
-  call-workflow-passing-data:
+  call-terraform-orchestrator-workflow:
     uses: ./.github/workflows/terraform_orchestrator.yml
     with:
       env: ${{ github.event.inputs.env }}
