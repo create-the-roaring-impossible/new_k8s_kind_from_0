@@ -1,94 +1,46 @@
 name: 'Terraform Orchestrator CI\CD'
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       env:
         description: 'Set the environment'
-        type: choice
+        type: string
         required: true
-        options:
-          - 'local'
       scope:
         description: 'Set the scope'
-        type: choice
+        type: string
         required: true
-        options:
-          - 'desktop-s8glse7'
       action:
         description: 'Set the action to do'
-        type: choice
+        type: string
         required: true
-        options:
-          - 'plan+apply'
-          - 'state list'
-          - 'state move'
-          - 'state remove'
-          - 'import'
-          - 'nothing (only for test purposes)'
       logLevel:
         description: 'Set the log level (optional)'
-        type: choice
+        type: string
         required: false
         default: 'ERROR'
-        options:
-          - 'NONE'
-          - 'INFO'
-          - 'WARN'
-          - 'ERROR'
-          - 'DEBUG'
-          - 'TRACE'
       targets:
         description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
         type: string
         required: false
+        default: ''
       source:
         description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
         type: string
         required: false
+        default: ''
       destination:
         description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
         type: string
         required: false
+        default: ''
       address:
         description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
         type: string
         required: false
+        default: ''
       id:
         description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
-        type: string
-        required: false
-  workflow_call:
-    inputs:
-      env:
-        type: string
-        required: true
-      scope:
-        type: string
-        required: true
-      action:
-        type: string
-        required: true
-      logLevel:
-        type: string
-        required: false
-        default: 'ERROR'
-      targets:
-        type: string
-        required: false
-        default: ''
-      source:
-        type: string
-        required: false
-        default: ''
-      destination:
-        type: string
-        required: false
-        default: ''
-      address:
-        type: string
-        required: false
-        default: ''
-      id:
         type: string
         required: false
         default: ''
@@ -100,7 +52,7 @@ jobs:
   terraformPlan:
     name: 'Terraform Plan'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' }}
+    if: ${{ inputs.action == 'plan+apply' }}
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -117,15 +69,15 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          targets: ${{ github.event.inputs.targets }}
+          scope: ${{ inputs.scope }}
+          env: ${{ inputs.env }}
+          logLevel: ${{ inputs.logLevel }}
+          targets: ${{ inputs.targets }}
   # TODO: to add 'plan scan', via Chekov or tfsec or other tools
   ManualTerraformPlanApproval:
     name: 'ManualTerraformPlanApproval'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
+    if: ${{ inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
     needs: terraformPlan
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
@@ -158,7 +110,7 @@ jobs:
   terraformApply:
     name: 'Terraform Apply'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
+    if: ${{ inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
     needs: ManualTerraformPlanApproval
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
@@ -176,13 +128,13 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
+          scope: ${{ inputs.scope }}
+          env: ${{ inputs.env }}
+          logLevel: ${{ inputs.logLevel }}
   terraformStateList:
     name: 'Terraform State List'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'state list' }}
+    if: ${{ inputs.action == 'state list' }}
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -199,13 +151,13 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
+          scope: ${{ inputs.scope }}
+          env: ${{ inputs.env }}
+          logLevel: ${{ inputs.logLevel }}
   terraformStateMove:
     name: 'Terraform State Move'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'state move' }}
+    if: ${{ inputs.action == 'state move' }}
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -222,15 +174,15 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          source: ${{ github.event.inputs.source }}
-          destination: ${{ github.event.inputs.destination }}
+          scope: ${{ inputs.scope }}
+          env: ${{ inputs.env }}
+          logLevel: ${{ inputs.logLevel }}
+          source: ${{ inputs.source }}
+          destination: ${{ inputs.destination }}
   terraformStateRemove:
     name: 'Terraform State Remove'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'state remove' }}
+    if: ${{ inputs.action == 'state remove' }}
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -247,14 +199,14 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          address: ${{ github.event.inputs.address }}
+          scope: ${{ inputs.scope }}
+          env: ${{ inputs.env }}
+          logLevel: ${{ inputs.logLevel }}
+          address: ${{ inputs.address }}
   terraformStateImport:
     name: 'Terraform State Import'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ github.event.inputs.action == 'import' }}
+    if: ${{ inputs.action == 'import' }}
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -271,8 +223,8 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ github.event.inputs.scope }}
-          env: ${{ github.event.inputs.env }}
-          logLevel: ${{ github.event.inputs.logLevel }}
-          address: ${{ github.event.inputs.address }}
-          id: ${{ github.event.inputs.id }}
+          scope: ${{ inputs.scope }}
+          env: ${{ inputs.env }}
+          logLevel: ${{ inputs.logLevel }}
+          address: ${{ inputs.address }}
+          id: ${{ inputs.id }}
