@@ -52,7 +52,7 @@ FROM base AS tools
 
 # Install PowerShell
 ARG POWERSHELL_VERSION=7.5.3
-ADD https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz /tmp/powershell.tar.gz
+ADD "https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
 RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
@@ -71,18 +71,18 @@ RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
 ARG TF_VERSION=1.13.4
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
     cd /tmp && \
-    curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip && \
-    curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS && \
-    curl --proto "=https" --tlsv1.2 -sSf -LO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS.sig && \
-    curl --proto "=https" --tlsv1.2 -sSf https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import && \
-    gpg --verify terraform_${TF_VERSION}_SHA256SUMS.sig terraform_${TF_VERSION}_SHA256SUMS && \
-    grep terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS | sha256sum -c && \
-    unzip /tmp/terraform_${TF_VERSION}_linux_amd64.zip -d /tmp && \
+    curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" && \
+    curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" && \
+    curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS.sig" && \
+    curl --proto "=https" --tlsv1.2 -sSf "https://www.hashicorp.com/.well-known/pgp-key.txt" | gpg --import && \
+    gpg --verify "terraform_${TF_VERSION}_SHA256SUMS.sig terraform_${TF_VERSION}_SHA256SUMS" && \
+    grep "terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c && \
+    unzip "/tmp/terraform_${TF_VERSION}_linux_amd64.zip" -d /tmp && \
     mv /tmp/terraform /usr/local/bin/terraform && \
-    rm -f /tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig
+    rm -f "/tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig"
 # Install tfsec
 ARG TFSEC_VERSION=1.28.13
-RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 -qO /usr/local/bin/tfsec https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 && \
+RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 -qO /usr/local/bin/tfsec "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" && \
     chmod +x /usr/local/bin/tfsec && \
     apk del .deps \
         cargo \
