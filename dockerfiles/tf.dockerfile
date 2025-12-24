@@ -82,8 +82,8 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
     rm -f "/tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig"
 # Install tfsec
 ARG TFSEC_VERSION=1.28.13
-RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 -qO /usr/local/bin/tfsec "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" && \
-    chmod +x /usr/local/bin/tfsec && \
+ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
+RUN chmod +x /usr/local/bin/tfsec && \
     apk del .deps \
         cargo \
         gcc \
