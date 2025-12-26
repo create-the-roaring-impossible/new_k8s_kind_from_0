@@ -5,7 +5,7 @@
 	install_helm \
 	install_kind \
 
-# install_vagrant \
+# 	install_vagrant \
 
 	create_docker_registry \
 	connect_registry_to_kind_network \
@@ -36,16 +36,19 @@
 # 	port_forward_argo \
 # 	uninstall_argo \
 
-# which_is_my_external_ip \
+# 	install_stakater_reloader \
+# 	uninstall_stakater_reloader \
 
-# install_hashicorp_vault \
-# port_forward_hashicorp_vault \
-# uninstall_hashicorp_vault \
+# 	which_is_my_external_ip \
 
-# install_flux \
-# get_admin_password_flux \
-# port_forward_flux \
-# uninstall_flux \
+# 	install_hashicorp_vault \
+# 	port_forward_hashicorp_vault \
+	uninstall_hashicorp_vault \
+
+# 	install_flux \
+# 	get_admin_password_flux \
+# 	port_forward_flux \
+# 	uninstall_flux \
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 
@@ -398,6 +401,17 @@ uninstall_gl_runners:
 
 # uninstall_argo:
 # 	helm uninstall argo --namespace argo
+
+
+
+# install_stakater_reloader:
+# 	helm repo add hashicorp https://helm.releases.hashicorp.com && \
+# 	helm repo update && \
+# 	helm upgrade -i vault hashicorp/vault \
+# 	--create-namespace --namespace vault
+
+# uninstall_stakater_reloader:
+# 	helm uninstall vault --namespace vault
 
 
 
