@@ -75,15 +75,15 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
     curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" && \
     curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS.sig" && \
     curl --proto "=https" --tlsv1.2 -sSf "https://www.hashicorp.com/.well-known/pgp-key.txt" | gpg --import && \
-    gpg --verify "terraform_${TF_VERSION}_SHA256SUMS.sig terraform_${TF_VERSION}_SHA256SUMS" && \
-    grep "terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c && \
+    gpg --verify "terraform_${TF_VERSION}_SHA256SUMS.sig" "terraform_${TF_VERSION}_SHA256SUMS" && \
+    grep "terraform_${TF_VERSION}_linux_amd64.zip" "terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c && \
     unzip "/tmp/terraform_${TF_VERSION}_linux_amd64.zip" -d /tmp && \
     mv /tmp/terraform /usr/local/bin/terraform && \
     rm -f "/tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig"
 # Install tfsec
 ARG TFSEC_VERSION=1.28.13
-RUN wget --secure-protocol=TLSv1_2 --max-redirect=0 -qO /usr/local/bin/tfsec "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" && \
-    chmod +x /usr/local/bin/tfsec && \
+ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
+RUN chmod +x /usr/local/bin/tfsec && \
     apk del .deps \
         cargo \
         gcc \
