@@ -27,11 +27,25 @@ on:
         description: 'Set the action to do'
         type: string
         required: true
+        options:
+          - 'plan+apply'
+          - 'state list'
+          - 'state move'
+          - 'state remove'
+          - 'import'
+          - 'nothing (only for test purposes)'
       logLevel:
         description: 'Set the log level (optional)'
         type: string
         required: false
         default: 'ERROR'
+        options:
+          - 'NONE'
+          - 'INFO'
+          - 'WARN'
+          - 'ERROR'
+          - 'DEBUG'
+          - 'TRACE'
       targets:
         description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
         type: string
