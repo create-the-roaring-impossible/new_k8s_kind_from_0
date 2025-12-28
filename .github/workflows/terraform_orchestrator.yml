@@ -39,13 +39,6 @@ on:
         type: string
         required: false
         default: 'ERROR'
-        options:
-          - 'NONE'
-          - 'INFO'
-          - 'WARN'
-          - 'ERROR'
-          - 'DEBUG'
-          - 'TRACE'
       targets:
         description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
         type: string
