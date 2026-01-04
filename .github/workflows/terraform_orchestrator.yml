@@ -66,6 +66,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -95,6 +96,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       issues: write
+    environment: ${{ inputs.env }}
     steps:
       # TODO: to check section 'Org team approver', to 'https://github.com/marketplace/actions/manual-workflow-approval' url
       # - name: Generate token
@@ -125,6 +127,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -171,6 +174,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -196,6 +200,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -220,6 +225,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
