@@ -33,9 +33,9 @@ set -e
 #
 # AUTHORS: Matteo Cristiano <slb6113@gmail.com>
 #
-# VERSION: 1.3.0
+# VERSION: 1.3.1
 #
-# DATE: 30/11/2025
+# DATE: 04/01/2026
 
 ############################
 ########## Inputs ##########
@@ -141,16 +141,16 @@ fi
 ######## Functions ########
 ###########################
 
-function test_exit_code() {
+function exit_code() {
   # DESCRIPTION: This function checks the last exit code and exits the script if it is not zero.
   #              It also outputs a custom error message.
   #
   # REQUIREMENTS:
   #   - The error message to output if the last exit code is not zero. ($1) (Mandatory)
   #
-  # USAGE: test_exit_code "Custom error message"
+  # USAGE: exit_code "Custom error message"
   #
-  # EXAMPLE: test_exit_code "ERROR: Terraform Listing failed."
+  # EXAMPLE: exit_code "ERROR: Terraform Listing failed."
   #          This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
 
   local message="$1"
@@ -210,13 +210,13 @@ terraform init -upgrade \
   -backend-config="unlock_method=DELETE" \
   -backend-config="retry_wait_min=5"
 
-test_exit_code "ERROR: Terraform Initializing failed."
+exit_code "ERROR: Terraform Initializing failed."
 
 # Run terraform validate
 echo "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
 
-test_exit_code "ERROR: Terraform Validating failed."
+exit_code "ERROR: Terraform Validating failed."
 
 case $ACTION in
   'plan')
@@ -246,20 +246,20 @@ case $ACTION in
       terraform plan -input=false -no-color "${valid_targets[@]}" -out='plan.output'
     fi
 
-    test_exit_code "ERROR: Terraform Planning failed."
+    exit_code "ERROR: Terraform Planning failed."
     ;;
   'apply')
     echo "############################## Applying Terraform changes ##############################"
     terraform apply -input=false -no-color -auto-approve 'plan.output'
 
-    test_exit_code "ERROR: Terraform Applying failed."
+    exit_code "ERROR: Terraform Applying failed."
   ;;
   'state list')
     echo "############################## Listing Terraform State ##############################"
 
     terraform state list
 
-    test_exit_code "ERROR: Terraform Listing failed."
+    exit_code "ERROR: Terraform Listing failed."
     ;;
   'state move')
     echo "############################## Moving a resource into Terraform State ##############################"
@@ -270,7 +270,7 @@ case $ACTION in
 
     terraform state mv $SOURCE $DESTINATION # TODO: to consider to set "-dry-run"
 
-    test_exit_code "ERROR: Terraform Moving failed."
+    exit_code "ERROR: Terraform Moving failed."
     ;;
   'state remove')
     echo "############################## Removing a resource into Terraform State ##############################"
@@ -279,7 +279,7 @@ case $ACTION in
 
     terraform state rm $ADDRESS # TODO: to consider to set "-dry-run"
 
-    test_exit_code "ERROR: Terraform Removing failed."
+    exit_code "ERROR: Terraform Removing failed."
     ;;
   'import')
     echo "############################## Importing a resource into Terraform State ##############################"
@@ -290,11 +290,10 @@ case $ACTION in
 
     terraform import -input=false -no-color $ADDRESS $ID
 
-    test_exit_code "ERROR: Terraform Importing failed."
+    exit_code "ERROR: Terraform Importing failed."
     ;;
   *)
-    echo 1>&2 "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
-    exit 1
+    exit_code "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
     ;;
 esac
 
