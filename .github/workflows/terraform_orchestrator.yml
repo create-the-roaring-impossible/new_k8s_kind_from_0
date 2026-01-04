@@ -66,7 +66,6 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
-    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
