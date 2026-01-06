@@ -146,21 +146,23 @@ function exit_code() {
   #              It also outputs a custom error message.
   #
   # REQUIREMENTS:
-  #   - The error message to output if the last exit code is not zero. ($1) (Mandatory)
+  #   - The exit status to check. ($1) (Mandatory)
+  #   - The error message to output if the last exit code is not zero. ($2) (Mandatory)
   #
-  # USAGE: exit_code "Custom error message"
+  # USAGE: exit_code $? "<custom_error_message>"
   #
-  # EXAMPLE: exit_code "ERROR: Terraform Listing failed."
+  # EXAMPLE: exit_code $? "ERROR: Terraform Listing failed."
   #          This example checks the last exit code and outputs "ERROR: Terraform Listing failed." if it is not zero.
 
-  local message="$1"
+  local exit_status="$1"
+  local message="$2"
 
-  if [[ $? -ne 0 ]]; then
-    echo "${message}"
+  if [[ $exit_status -ne 0 ]]; then
+    echo "${message}" >&2 # to write errors to stderr, instead of stdout
     exit 1
   fi
 
-  return 0 # TODO: to test
+  return 0
 }
 
 # Copy backend.tf and variables.tf, from $TF_PATH to $TF_PATH/$ENV
@@ -210,13 +212,13 @@ terraform init -upgrade \
   -backend-config="unlock_method=DELETE" \
   -backend-config="retry_wait_min=5"
 
-exit_code "ERROR: Terraform Initializing failed."
+exit_code $? "ERROR: Terraform Initializing failed."
 
 # Run terraform validate
 echo "############################## Validating Terraform scripts ##############################"
 terraform validate -no-color
 
-exit_code "ERROR: Terraform Validating failed."
+exit_code $? "ERROR: Terraform Validating failed."
 
 case $ACTION in
   'plan')
@@ -246,20 +248,20 @@ case $ACTION in
       terraform plan -input=false -no-color "${valid_targets[@]}" -out='plan.output'
     fi
 
-    exit_code "ERROR: Terraform Planning failed."
+    exit_code $? "ERROR: Terraform Planning failed."
     ;;
   'apply')
     echo "############################## Applying Terraform changes ##############################"
     terraform apply -input=false -no-color -auto-approve 'plan.output'
 
-    exit_code "ERROR: Terraform Applying failed."
+    exit_code $? "ERROR: Terraform Applying failed."
   ;;
   'state list')
     echo "############################## Listing Terraform State ##############################"
 
     terraform state list
 
-    exit_code "ERROR: Terraform Listing failed."
+    exit_code $? "ERROR: Terraform Listing failed."
     ;;
   'state move')
     echo "############################## Moving a resource into Terraform State ##############################"
@@ -270,7 +272,7 @@ case $ACTION in
 
     terraform state mv $SOURCE $DESTINATION # TODO: to consider to set "-dry-run"
 
-    exit_code "ERROR: Terraform Moving failed."
+    exit_code $? "ERROR: Terraform Moving failed."
     ;;
   'state remove')
     echo "############################## Removing a resource into Terraform State ##############################"
@@ -279,7 +281,7 @@ case $ACTION in
 
     terraform state rm $ADDRESS # TODO: to consider to set "-dry-run"
 
-    exit_code "ERROR: Terraform Removing failed."
+    exit_code $? "ERROR: Terraform Removing failed."
     ;;
   'import')
     echo "############################## Importing a resource into Terraform State ##############################"
@@ -290,10 +292,10 @@ case $ACTION in
 
     terraform import -input=false -no-color $ADDRESS $ID
 
-    exit_code "ERROR: Terraform Importing failed."
+    exit_code $? "ERROR: Terraform Importing failed."
     ;;
   *)
-    exit_code "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
+    exit_code $? "ERROR: Invalid action specified. Valid actions are: 'plan', 'apply', 'state list', 'state move', 'state remove' and 'import'"
     ;;
 esac
 
