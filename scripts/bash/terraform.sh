@@ -101,7 +101,6 @@ while [[ $# -gt 0 ]]; do
       GITLAB_TOKEN="$2"
       shift 2
       ;;
-    *)
     -GITLAB_PROJECT_ID)
       GITLAB_PROJECT_ID="$2"
       shift 2
