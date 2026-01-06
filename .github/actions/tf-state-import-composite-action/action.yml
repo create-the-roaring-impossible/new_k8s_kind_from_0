@@ -10,6 +10,9 @@ inputs:
   gitlab_token:
     description: 'GitLab token'
     required: true
+  gitlab_project_id:
+    description: 'GitLab project ID'
+    required: true
   scope:
     description: 'Scope'
     required: true
@@ -44,4 +47,5 @@ runs:
                                         -ADDRESS '${{ inputs.address }}' \
                                         -ID '${{ inputs.id }}' \
                                         -GITLAB_USER ${{ inputs.gitlab_user }} \
-                                        -GITLAB_TOKEN ${{ inputs.gitlab_token }}
+                                        -GITLAB_TOKEN ${{ inputs.gitlab_token }} \
+                                        -GITLAB_PROJECT_ID ${{ inputs.gitlab_project_id }}

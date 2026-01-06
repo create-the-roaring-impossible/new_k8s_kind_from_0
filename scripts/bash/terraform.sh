@@ -19,10 +19,11 @@ set -e
 #   - The destination address of the resource to move (DESTINATION) (optional)
 #   - The GitLab user to use for authentication (GITLAB_USER) (mandatory)
 #   - The GitLab token to use for authentication (GITLAB_TOKEN) (mandatory)
+#   - The GitLab project ID to use for the Terraform state (GITLAB_PROJECT_ID) (mandatory)
 #
-# USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> [-LOG_LEVEL <log_level>] [-PLUGIN_CACHE_DIR <plugin_cache_dir>] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [-ADDRESS <address>] [-ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token>
+# USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> [-LOG_LEVEL <log_level>] [-PLUGIN_CACHE_DIR <plugin_cache_dir>] [-PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false>] [-TARGETS <targets>] [-SOURCE <source>] [-DESTINATION <destination>] [-ADDRESS <address>] [-ID <id>] -GITLAB_USER <user> -GITLAB_TOKEN <token> -GITLAB_PROJECT_ID <project_id>
 #
-# EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token'
+# EXAMPLE: bash terraform.sh 'terraform/local' 'local' 'desktop-s8glse7' 'plan' 'ERROR' '-target=aws_instance.instance_name,-target=aws_s3_bucket.bucket_name' 'gitlab_user' 'gitlab_token' 'gitlab_project_id'
 #          This example runs the 'plan' action, with the specified targets.
 #
 # NOTES: Ensure you have the necessary permissions to execute this script.
@@ -35,7 +36,7 @@ set -e
 #
 # VERSION: 1.3.1
 #
-# DATE: 04/01/2026
+# DATE: 06/01/2026
 
 ############################
 ########## Inputs ##########
@@ -101,6 +102,11 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     *)
+    -GITLAB_PROJECT_ID)
+      GITLAB_PROJECT_ID="$2"
+      shift 2
+      ;;
+    *)
       echo 1>&2 "ERROR: Unknown parameter: $1"
       exit 1
       ;;
@@ -108,10 +114,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required parameters
-if [[ -z "$TF_PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
+if [[ -z "$TF_PATH" || -z "$ENV" || -z "$SCOPE" || -z "$ACTION" || -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" || -z "$GITLAB_PROJECT_ID" ]]; then
   echo 1>&2 "ERROR: Missing required parameters"
-  echo 1>&2 "Required: -TF_PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN"
-  echo 1>&2 "USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> [OPTIONS]"
+  echo 1>&2 "Required: -TF_PATH, -ENV, -SCOPE, -ACTION, -GITLAB_USER, -GITLAB_TOKEN, -GITLAB_PROJECT_ID"
+  echo 1>&2 "USAGE: bash terraform.sh -TF_PATH <path> -ENV <env> -SCOPE <scope> -ACTION <action> -GITLAB_USER <user> -GITLAB_TOKEN <token> -GITLAB_PROJECT_ID <project_id> [OPTIONS]"
   echo 1>&2 "Optional: -LOG_LEVEL <level> -PLUGIN_CACHE_DIR <dir> -PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE <true|false> -TARGETS <targets> -SOURCE <source> -DESTINATION <destination> -ADDRESS <address> -ID <id>"
   exit 1
 fi
@@ -191,21 +197,19 @@ if [[ -n "$PLUGIN_CACHE_DIR" ]]; then
 fi
 
 # Validate GitLab credentials
-if [[ -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" ]]; then
-  echo 1>&2 "ERROR: GITLAB_USER and GITLAB_TOKEN environment variables must be set, please set them before running this script."
+if [[ -z "$GITLAB_USER" || -z "$GITLAB_TOKEN" || -z "$GITLAB_PROJECT_ID" ]]; then
+  echo 1>&2 "ERROR: GITLAB_USER, GITLAB_TOKEN and GITLAB_PROJECT_ID environment variables must be set, please set them before running this script."
   exit 1
 fi
 
 # Run terraform init
 echo "############################## Initializing Terraform ##############################"
 tf_state_name="github-${SCOPE}-${ENV}"
-# TODO: to pass "gitlab_project_id" as variable
-gitlab_project_id="65547687"
 
 terraform init -upgrade \
-  -backend-config="address=https://gitlab.com/api/v4/projects/${gitlab_project_id}/terraform/state/${tf_state_name}" \
-  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${gitlab_project_id}/terraform/state/${tf_state_name}/lock" \
-  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${gitlab_project_id}/terraform/state/${tf_state_name}/lock" \
+  -backend-config="address=https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/terraform/state/${tf_state_name}" \
+  -backend-config="lock_address=https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/terraform/state/${tf_state_name}/lock" \
+  -backend-config="unlock_address=https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/terraform/state/${tf_state_name}/lock" \
   -backend-config="username=${GITLAB_USER}" \
   -backend-config="password=${GITLAB_TOKEN}" \
   -backend-config="lock_method=POST" \
