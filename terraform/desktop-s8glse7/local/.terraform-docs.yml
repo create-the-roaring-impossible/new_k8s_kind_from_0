@@ -18,8 +18,6 @@ sections:
   show-all: true  # deprecated in v0.13.0, removed in v0.15.0
 
 content: |-
-  Any arbitrary text can be placed anywhere in the content
-
   {{ .Header }}
 
   and even in between sections. also spaces will be preserved:
@@ -32,9 +30,9 @@ content: |-
 
   and they don't even need to be in the default order
 
-  {{ .Outputs }}
-
   {{ .Inputs }}
+
+  {{ .Outputs }}
 
   {{ .Footer }}
 

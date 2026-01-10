@@ -1,7 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-Any arbitrary text can be placed anywhere in the content
-
-# HEADER
+## HEADER
 
 Header test
 
@@ -23,6 +21,22 @@ The following providers are used by this module:
 
 and they don't even need to be in the default order
 
+## Required Inputs
+
+No required inputs.
+
+## Optional Inputs
+
+The following input variables are optional (have default values):
+
+### <a name="input_test_password"></a> [test\_password](#input\_test\_password)
+
+Description: A test password variable
+
+Type: `string`
+
+Default: `"1234567890ab"`
+
 ## Outputs
 
 The following outputs are exported:
@@ -35,15 +49,7 @@ Description: n/a
 
 Description: n/a
 
-## Required Inputs
-
-No required inputs.
-
-## Optional Inputs
-
-No optional inputs.
-
-# FOOTER
+## FOOTER
 
 Footer test
 <!-- END_TF_DOCS -->
