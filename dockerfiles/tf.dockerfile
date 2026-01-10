@@ -97,7 +97,7 @@ RUN chmod +x /usr/local/bin/tfsec && \
 
 # Install terraform-docs
 ARG TERRAFORM_DOC_VERSION=0.20.0
-ADD https://terraform-docs.io/dl/v${TERRAFORM_DOC_VERSION}/terraform-docs-v${TERRAFORM_DOC_VERSION}-$(uname)-amd64.tar.gz /tmp/terraform-docs.tar.gz
+ADD https://terraform-docs.io/dl/v${TERRAFORM_DOC_VERSION}/terraform-docs-v${TERRAFORM_DOC_VERSION}-linux-amd64.tar.gz /tmp/terraform-docs.tar.gz
 RUN tar -xzf /tmp/terraform-docs.tar.gz && \
     mv /tmp/terraform-docs /usr/local/bin/terraform-docs && \
     chmod +x /usr/local/bin/terraform-docs
