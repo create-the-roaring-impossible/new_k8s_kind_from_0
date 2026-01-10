@@ -2,8 +2,8 @@ formatter: "markdown table" # this is required
 
 version: ">= 0.20.0"
 
-header-from: "../docs/header.md"
-footer-from: "../docs/footer.md"
+header-from: "../docs/.header.md"
+footer-from: "../docs/.footer.md"
 
 recursive:
   enabled: false
@@ -23,11 +23,15 @@ content: |-
     - item 1-1
   - item 2
 
+  {{ .Requirements }}
+
   {{ .Providers }}
 
   and they don't even need to be in the default order
 
   {{ .Inputs }}
+
+  {{ .Resources }}
 
   {{ .Outputs }}
 
