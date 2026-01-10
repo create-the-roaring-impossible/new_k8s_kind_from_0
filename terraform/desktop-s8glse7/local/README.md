@@ -21,9 +21,6 @@ The following providers are used by this module:
 
 and they don't even need to be in the default order
 
-## Required Inputs
-
-No required inputs.
 
 ## Optional Inputs
 
