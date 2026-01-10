@@ -1,3 +1,1 @@
-## HEADER
-
 Header test

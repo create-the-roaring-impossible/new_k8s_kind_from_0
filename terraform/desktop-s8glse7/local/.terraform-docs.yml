@@ -1,4 +1,4 @@
-formatter: "markdown document" # this is required
+formatter: "markdown table" # this is required
 
 version: ">= 0.20.0"
 

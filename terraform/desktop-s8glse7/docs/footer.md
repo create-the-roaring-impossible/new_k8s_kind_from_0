@@ -1,3 +1,1 @@
-## FOOTER
-
-Footer test
+The End ;-)
