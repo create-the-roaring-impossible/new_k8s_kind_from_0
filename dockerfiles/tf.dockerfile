@@ -3,15 +3,15 @@
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
-# VERSION: 1.3.2
-# DATE: 2025-11-30
+# VERSION: 1.3.3
+# DATE: 2026-01-10
 
 FROM alpine:3.22 AS base
 
 # Add metadata labels
 LABEL description="Terraform container with non-root user setup"
 LABEL maintainer="Matteo Cristiano"
-LABEL version="1.3.2"
+LABEL version="1.3.3"
 
 USER root
 
@@ -94,6 +94,13 @@ RUN chmod +x /usr/local/bin/tfsec && \
         python3-dev && \
     apk cache clean && \
     rm -rf /var/cache/apk/* /tmp/* /root/.cache
+
+# Install terraform-docs
+ARG TERRAFORM_DOC_VERSION=0.21.0
+ADD https://terraform-docs.io/dl/v${TERRAFORM_DOC_VERSION}/terraform-docs-v${TERRAFORM_DOC_VERSION}-$(uname)-amd64.tar.gz /tmp/terraform-docs.tar.gz
+RUN tar -xzf /tmp/terraform-docs.tar.gz && \
+    mv /tmp/terraform-docs /usr/local/bin/terraform-docs && \
+    chmod +x /usr/local/bin/terraform-docs
 
 FROM tools AS final
 
