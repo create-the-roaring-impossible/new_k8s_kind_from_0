@@ -85,6 +85,7 @@ jobs:
           env: ${{ inputs.env }}
           logLevel: ${{ inputs.logLevel }}
           targets: ${{ inputs.targets }}
+  # TODO: to add terraform-docs
   # TODO: to add 'plan scan', via Chekov or tfsec or other tools
   ManualTerraformPlanApproval:
     name: 'ManualTerraformPlanApproval'
