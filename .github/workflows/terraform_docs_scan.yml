@@ -22,8 +22,11 @@ jobs:
         run: |
           for dir in $(find terraform/ -type d -name '*');
             do
-              cp terraform/docs/backend.tf $dir/backend.tf
-              cp terraform/docs/variables.tf $dir/variables.tf
+              for subdir in $(find $dir -type d -name '*');
+                do
+                  cp terraform/$dir/docs/backend.tf $dir/$subdir/backend.tf
+                  cp terraform/$dir/docs/variables.tf $dir/$subdir/variables.tf
+                done
             done
           )
       - name: Render terraform docs inside the README.md and push changes back to PR branch
@@ -42,8 +45,11 @@ jobs:
         run: |
           for dir in $(find terraform/ -type d -name '*');
             do
-              ls -larth
-              rm -rf $dir/backend.tf
-              rm -rf $dir/variables.tf
+              for subdir in $(find $dir -type d -name '*');
+                do
+                  ls -larth
+                  rm -rf $dir/$subdir/backend.tf
+                  rm -rf $dir/$subdir/variables.tf
+                done
             done
           )
