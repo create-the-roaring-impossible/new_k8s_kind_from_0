@@ -16,3 +16,34 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Copy 'backend.tf' and 'variables.tf' files in all environment folders
+        shell: bash
+        run: |
+          for dir in $(find terraform/ -type d -name '*');
+            do
+              cp terraform/docs/backend.tf $dir/backend.tf
+              cp terraform/docs/variables.tf $dir/variables.tf
+            done
+          )
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: terraform/desktop-s8glse7/local
+          # find-dir: terraform/ # terraform/desktop-s8glse7/
+          # atlantis-file: atlantis.yaml
+          config-file: '../docs/.terraform-docs.yml'
+          # git-commit-message: 'Update documentation and scan reports - ASDASDASD' # TODO: to set something like 'https://dev.azure.com/fierli92/personal-project/_build/results?buildId=$(Build.BuildId)&view=results'
+          git-push: 'false' # 'true'
+          # git-push-user-email: 'github@fake-domain.lol'
+          # git-push-user-name: 'GitHub Bot'
+      - name: Delete 'backend.tf' and 'variables.tf' files in all environment folders
+        shell: bash
+        run: |
+          for dir in $(find terraform/ -type d -name '*');
+            do
+              ls -larth
+              rm -rf $dir/backend.tf
+              rm -rf $dir/variables.tf
+            done
+          )
