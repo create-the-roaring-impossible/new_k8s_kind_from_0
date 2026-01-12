@@ -24,8 +24,8 @@ jobs:
             do
               for subdir in $(find $dir -type d -name '*');
                 do
-                  cp ${dir}docs/backend.tf ${dir}/${subdir}/backend.tf
-                  cp ${dir}/docs/variables.tf ${dir}/${subdir}/variables.tf
+                  cp ${dir}docs/backend.tf ${dir}${subdir}backend.tf
+                  cp ${dir}docs/variables.tf ${dir}${subdir}variables.tf
                 done
             done
           )
@@ -48,8 +48,8 @@ jobs:
               for subdir in $(find $dir -type d -name '*');
                 do
                   ls -larth
-                  rm -rf ${dir}/${subdir}/backend.tf
-                  rm -rf ${dir}/${subdir}/variables.tf
+                  rm -rf ${dir}${subdir}backend.tf
+                  rm -rf ${dir}${subdir}variables.tf
                 done
             done
           )
