@@ -24,11 +24,11 @@ jobs:
             do
               for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
-                  if ("$subdir" == "docs"); then
+                  if [[ "$(basename $subdir)" == "docs" ]]; then
                     continue; 
                   else
-                    cp ${dir}/backend.tf ${dir}/${subdir}/backend.tf
-                    cp ${dir}/variables.tf ${dir}/${subdir}/variables.tf
+                    cp ${dir}/backend.tf ${subdir}/backend.tf
+                    cp ${dir}/variables.tf ${subdir}/variables.tf
                   fi
                 done
             done
@@ -50,7 +50,7 @@ jobs:
             do
               for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
-                  if ("$subdir" == "docs"); then
+                  if [[ "$(basename $subdir)" == "docs" ]]; then
                     continue; 
                   else
                     ls -larth
