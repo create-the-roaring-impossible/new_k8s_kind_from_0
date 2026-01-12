@@ -20,15 +20,14 @@ jobs:
       - name: Copy 'backend.tf' and 'variables.tf' files in all environment folders
         shell: bash
         run: |
-          for dir in $(find terraform/ -type d -name '*');
+          for dir in $(find terraform/ -maxdepth 1 -mindepth 1 -type d);
             do
-              for subdir in $(find $dir -type d -name '*');
+              for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
-                  cp ${dir}docs/backend.tf ${dir}${subdir}backend.tf
-                  cp ${dir}docs/variables.tf ${dir}${subdir}variables.tf
+                  cp ${dir}/docs/backend.tf ${subdir}/backend.tf
+                  cp ${dir}/docs/variables.tf ${subdir}/variables.tf
                 done
             done
-          )
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -43,13 +42,12 @@ jobs:
       - name: Delete 'backend.tf' and 'variables.tf' files in all environment folders
         shell: bash
         run: |
-          for dir in $(find terraform/ -type d -name '*');
+          for dir in $(find terraform/ -maxdepth 1 -mindepth 1 -type d);
             do
-              for subdir in $(find $dir -type d -name '*');
+              for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
                   ls -larth
-                  rm -rf ${dir}${subdir}backend.tf
-                  rm -rf ${dir}${subdir}variables.tf
+                  rm -rf ${subdir}/backend.tf
+                  rm -rf ${subdir}/variables.tf
                 done
             done
-          )
