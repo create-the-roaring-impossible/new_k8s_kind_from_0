@@ -24,8 +24,12 @@ jobs:
             do
               for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
-                  cp ${dir}/docs/backend.tf ${subdir}/backend.tf
-                  cp ${dir}/docs/variables.tf ${subdir}/variables.tf
+                  if ("$subdir" == "docs"); then
+                    continue; 
+                  else
+                    cp ${dir}/backend.tf ${dir}/${subdir}/backend.tf
+                    cp ${dir}/variables.tf ${dir}/${subdir}/variables.tf
+                  fi
                 done
             done
       - name: Render terraform docs inside the README.md and push changes back to PR branch
@@ -46,8 +50,12 @@ jobs:
             do
               for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
-                  ls -larth
-                  rm -rf ${subdir}/backend.tf
-                  rm -rf ${subdir}/variables.tf
+                  if ("$subdir" == "docs"); then
+                    continue; 
+                  else
+                    ls -larth
+                    rm -rf ${subdir}/backend.tf
+                    rm -rf ${subdir}/variables.tf
+                  fi
                 done
             done
