@@ -20,15 +20,21 @@ jobs:
       - name: Copy 'backend.tf' and 'variables.tf' files in all environment folders
         shell: bash
         run: |
-          for dir in $(find terraform/ -maxdepth 1 -mindepth 1 -type d);
+          for dir in $(find terraform/ -maxdepth 1 -mindepth 1 -type d); # TODO: to pass "terraform/" as argument
             do
+              echo $dir
               for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
                   if [[ "$(basename $subdir)" == "docs" ]]; then
+                    echo "$subdir is docs folder, skipping..."
                     continue; 
                   else
+                    echo $subdir
+                    ls -larth
+                    echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
                     cp ${dir}/backend.tf ${subdir}/backend.tf
                     cp ${dir}/variables.tf ${subdir}/variables.tf
+                    ls -larth
                   fi
                 done
             done
@@ -39,21 +45,20 @@ jobs:
           # find-dir: terraform/ # terraform/desktop-s8glse7/
           # atlantis-file: atlantis.yaml
           config-file: '../docs/.terraform-docs.yml'
-          # git-commit-message: 'Update documentation and scan reports - ASDASDASD' # TODO: to set something like 'https://dev.azure.com/fierli92/personal-project/_build/results?buildId=$(Build.BuildId)&view=results'
+          git-commit-message: 'Update documentation and scan reports - https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0/actions/runs/21040122145'
           git-push: 'false' # 'true'
-          # git-push-user-email: 'github@fake-domain.lol'
-          # git-push-user-name: 'GitHub Bot'
+          git-push-user-email: 'github@fake-domain.lol'
+          git-push-user-name: 'GitHub Bot'
       - name: Delete 'backend.tf' and 'variables.tf' files in all environment folders
         shell: bash
         run: |
-          for dir in $(find terraform/ -maxdepth 1 -mindepth 1 -type d);
+          for dir in $(find terraform/ -maxdepth 1 -mindepth 1 -type d); # TODO: to pass "terraform/" as argument
             do
               for subdir in $(find $dir -maxdepth 1 -mindepth 1 -type d);
                 do
                   if [[ "$(basename $subdir)" == "docs" ]]; then
                     continue; 
                   else
-                    ls -larth
                     rm -rf ${subdir}/backend.tf
                     rm -rf ${subdir}/variables.tf
                   fi
