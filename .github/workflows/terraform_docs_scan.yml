@@ -64,8 +64,8 @@ jobs:
         shell: bash
         run: |
           # Configure git
-          git config --local user.email "github@fake-domain.lol"
-          git config --local user.name "GitHub Bot"
+          git config --global user.email "github@fake-domain.lol"
+          git config --global user.name "GitHub Bot"
           # Check the current status
           git status
           # Commit and push
