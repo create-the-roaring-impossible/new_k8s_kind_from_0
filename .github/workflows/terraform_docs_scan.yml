@@ -32,7 +32,6 @@ jobs:
             cp $parent_dir/backend.tf $subdir/backend.tf
             cp $parent_dir/variables.tf $subdir/variables.tf
             cp -r $parent_dir/docs/ $subdir/docs/
-            ls -larth $subdir/docs/
           done
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.4.1
