@@ -30,11 +30,14 @@ jobs:
                     continue; 
                   else
                     echo $subdir
+                    cd $subdir
                     ls -larth
                     echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
                     cp ${dir}/backend.tf ${subdir}/backend.tf
                     cp ${dir}/variables.tf ${subdir}/variables.tf
                     ls -larth
+                    cd ..
+                    echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
                   fi
                 done
             done
@@ -59,6 +62,7 @@ jobs:
                   if [[ "$(basename $subdir)" == "docs" ]]; then
                     continue; 
                   else
+                    cd $subdir
                     rm -rf ${subdir}/backend.tf
                     rm -rf ${subdir}/variables.tf
                   fi
