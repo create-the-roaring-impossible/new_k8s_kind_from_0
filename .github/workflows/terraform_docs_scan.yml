@@ -22,19 +22,19 @@ jobs:
         run: |
           for subdir in $(find terraform/ -mindepth 2 -maxdepth 2 -type d); do # TODO: to pass "terraform/" as argument
             if [[ "$(basename $subdir)" == "docs" ]]; then
-              echo "Skipping '$subdir' folder!!"
+              echo "Skipping $subdir folder"
               continue
             fi
-            parent_dir="$(dirname "$subdir")"
+            parent_dir=$(dirname $subdir)
             echo "Copying to: $subdir"
-            cp "$parent_dir/backend.tf" "$subdir/backend.tf"
-            cp "$parent_dir/variables.tf" "$subdir/variables.tf"
+            cp $parent_dir/backend.tf $subdir/backend.tf
+            cp $parent_dir/variables.tf $subdir/variables.tf
           done
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          working-dir: terraform/desktop-s8glse7/local
-          # find-dir: terraform/ # terraform/desktop-s8glse7/
+          # working-dir: terraform/desktop-s8glse7/local
+          find-dir: terraform/ # terraform/desktop-s8glse7/
           # atlantis-file: atlantis.yaml
           config-file: '../docs/.terraform-docs.yml'
           git-commit-message: 'Update documentation and scan reports - https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0/actions/runs/21040122145'
@@ -46,9 +46,10 @@ jobs:
         run: |
           for subdir in $(find terraform/ -mindepth 2 -maxdepth 2 -type d); do # TODO: to pass "terraform/" as argument
             if [[ "$(basename $subdir)" == "docs" ]]; then
-              echo "Skipping '$subdir' folder!!"
+              echo "Skipping $subdir folder"
               continue
             fi
             echo "Cleaning: $subdir"
-            rm -f "$subdir/backend.tf" "$subdir/variables.tf"
+            ls -larth $subdir
+            rm -f $subdir/backend.tf $subdir/variables.tf
           done
