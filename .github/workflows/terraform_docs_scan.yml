@@ -38,7 +38,7 @@ jobs:
           # working-dir: '${{ env.TERRAFORM_FOLDER }}desktop-s8glse7/local'
           # find-dir: '${{ env.TERRAFORM_FOLDER }}' # '${{ env.TERRAFORM_FOLDER }}desktop-s8glse7/'
           atlantis-file: atlantis.yaml
-          config-file: 'docs/.terraform-docs.yml'
+          config-file: '../docs/.terraform-docs.yml'
           git-commit-message: 'Update documentation and scan reports - https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0/actions/runs/21040122145'
           git-push: 'false' # 'true'
           git-push-user-email: 'github@fake-domain.lol'
