@@ -38,8 +38,8 @@ jobs:
         with:
           atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
           config-file: 'docs/.terraform-docs.yml'
-          git-commit-message: 'Update documentation and scan reports - https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0/actions/runs/21040122145'
-          git-push: 'false' # 'true'
+          git-commit-message: 'Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          git-push: 'true'
           git-push-user-email: 'github@fake-domain.lol'
           git-push-user-name: 'GitHub Bot'
       - name: Delete some files in all environment folders
