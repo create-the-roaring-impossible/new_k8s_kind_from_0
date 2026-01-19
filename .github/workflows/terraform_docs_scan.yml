@@ -31,7 +31,7 @@ jobs:
             echo "Copying to: $subdir"
             cp $parent_dir/backend.tf $subdir/backend.tf
             cp $parent_dir/variables.tf $subdir/variables.tf
-            cp $parent_dir/docs/* $subdir/
+            cp -r $parent_dir/docs/ $subdir/docs/
             ls -larth $subdir
           done
       - name: Render terraform docs inside the README.md and push changes back to PR branch
@@ -51,7 +51,8 @@ jobs:
               echo "Skipping $subdir folder"
               continue
             fi
-            ls -larth $subdir
             echo "Cleaning: $subdir"
-            rm -f $subdir/backend.tf $subdir/variables.tf $subdir/docs/*
+            rm -f $subdir/backend.tf $subdir/variables.tf
+            rm -rf $subdir/docs/
+            ls -larth $subdir
           done
