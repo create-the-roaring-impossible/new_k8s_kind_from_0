@@ -33,8 +33,8 @@ jobs:
                     cd $subdir
                     ls -larth
                     echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
-                    cp ${dir}/backend.tf ${subdir}/backend.tf
-                    cp ${dir}/variables.tf ${subdir}/variables.tf
+                    cp ../../${dir}/backend.tf backend.tf
+                    cp ../../${dir}/variables.tf variables.tf
                     ls -larth
                     cd ..
                     echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
@@ -63,8 +63,8 @@ jobs:
                     continue; 
                   else
                     cd $subdir
-                    rm -rf ${subdir}/backend.tf
-                    rm -rf ${subdir}/variables.tf
+                    rm -rf backend.tf
+                    rm -rf variables.tf
                   fi
                 done
             done
