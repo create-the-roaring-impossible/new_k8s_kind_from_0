@@ -1,0 +1,4 @@
+version: 1
+projects:
+- name: desktop-s8glse7_local
+  dir: desktop-s8glse7/local
