@@ -64,6 +64,7 @@ jobs:
         shell: bash
         run: |
           # Configure git
+          git config --global --add safe.directory '*'
           git config --global user.email "github@fake-domain.lol"
           git config --global user.name "GitHub Bot"
           # Check the current status
