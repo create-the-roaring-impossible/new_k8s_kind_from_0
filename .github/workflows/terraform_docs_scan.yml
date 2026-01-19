@@ -4,10 +4,14 @@ on:
     types: [opened, synchronize, reopened]
 env:
   TERRAFORM_FOLDER: 'terraform/'
+  TERRAFORM_DOCS_FOLDER: 'docs'
 jobs:
   terraformDocsAndScan:
     name: 'Terraform Docs And Scan'
     runs-on: 'arc-desktop-s8glse7'
+    permissions:
+      contents: write
+      pull-requests: write
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -19,39 +23,52 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
       - name: Copy some files in all environment folders
         shell: bash
         run: |
           for subdir in $(find ${TERRAFORM_FOLDER} -mindepth 2 -maxdepth 2 -type d); do
-            if [[ "$(basename $subdir)" == "docs" ]]; then
+            if [[ "$(basename $subdir)" == "${TERRAFORM_DOCS_FOLDER}" ]]; then
               echo "Skipping $subdir folder"
               continue
             fi
             parent_dir=$(dirname $subdir)
-            echo "Copying to: $subdir"
+            echo "Copying files to: $subdir"
             cp $parent_dir/backend.tf $subdir/backend.tf
             cp $parent_dir/variables.tf $subdir/variables.tf
-            cp -r $parent_dir/docs/ $subdir/docs/
+            cp -r $parent_dir/${TERRAFORM_DOCS_FOLDER}/ $subdir/${TERRAFORM_DOCS_FOLDER}/
           done
-      - name: Render terraform docs inside the README.md and push changes back to PR branch
+      - name: Generate Terraform documentation
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
-          config-file: 'docs/.terraform-docs.yml'
-          git-commit-message: 'Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-          git-push: 'true'
-          git-push-user-email: 'github@fake-domain.lol'
-          git-push-user-name: 'GitHub Bot'
+          config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
+          git-push: 'false'
+      # - name: Generate Terraform scan report
+      #   uses: terraform-docs/gh-actions@v1.4.1
+      #   with:
+      #     atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
       - name: Delete some files in all environment folders
         shell: bash
         run: |
           for subdir in $(find ${TERRAFORM_FOLDER} -mindepth 2 -maxdepth 2 -type d); do
-            if [[ "$(basename $subdir)" == "docs" ]]; then
+            if [[ "$(basename $subdir)" == "${TERRAFORM_DOCS_FOLDER}" ]]; then
               echo "Skipping $subdir folder"
               continue
             fi
-            echo "Cleaning: $subdir"
+            echo "Cleaning files from: $subdir"
             rm -f $subdir/backend.tf $subdir/variables.tf
-            rm -rf $subdir/docs/
+            rm -rf $subdir/${TERRAFORM_DOCS_FOLDER}/
           done
+      - name: Commit and push new documentation and scan reports
+        shell: bash
+        run: |
+          # Configure git
+          git config --local user.email "github@fake-domain.lol"
+          git config --local user.name "GitHub Bot"
+          # Check the current status
+          git status
+          # Commit and push
+          git add .
+          git commit -m "Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git push origin refs/heads/${{ github.event.pull_request.head.ref }}
