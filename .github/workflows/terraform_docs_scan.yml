@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-      - name: Copy 'backend.tf' and 'variables.tf' files in all environment folders
+      - name: Copy some files in all environment folders
         shell: bash
         run: |
           for subdir in $(find ${TERRAFORM_FOLDER} -mindepth 2 -maxdepth 2 -type d); do
@@ -42,7 +42,7 @@ jobs:
           git-push: 'false' # 'true'
           git-push-user-email: 'github@fake-domain.lol'
           git-push-user-name: 'GitHub Bot'
-      - name: Delete 'backend.tf' and 'variables.tf' files in all environment folders
+      - name: Delete some files in all environment folders
         shell: bash
         run: |
           for subdir in $(find ${TERRAFORM_FOLDER} -mindepth 2 -maxdepth 2 -type d); do
@@ -53,5 +53,4 @@ jobs:
             echo "Cleaning: $subdir"
             rm -f $subdir/backend.tf $subdir/variables.tf
             rm -rf $subdir/docs/
-            ls -larth $subdir
           done
