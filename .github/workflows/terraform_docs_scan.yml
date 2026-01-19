@@ -32,12 +32,12 @@ jobs:
             cp $parent_dir/backend.tf $subdir/backend.tf
             cp $parent_dir/variables.tf $subdir/variables.tf
             cp -r $parent_dir/docs/ $subdir/docs/
-            ls -larth $subdir
+            ls -larth $subdir/docs/
           done
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          atlantis-file: ${TERRAFORM_FOLDER}atlantis.yaml
+          atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
           config-file: 'docs/.terraform-docs.yml'
           git-commit-message: 'Update documentation and scan reports - https://github.com/create-the-roaring-impossible/new_k8s_kind_from_0/actions/runs/21040122145'
           git-push: 'false' # 'true'
