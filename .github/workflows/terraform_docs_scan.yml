@@ -47,7 +47,7 @@ jobs:
           config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
           git-push: 'false'
       - name: Generate Terraform scan report
-        uses: aquasecurity/tfsec-sarif-action@v0.1.4
+        uses: aquasecurity/tfsec-sarif-action@v0.1.0
         with:
           working_directory: '${{ env.TERRAFORM_FOLDER }}'
           tfsec_args: '--format markdown --tfvars-file terraform.tfvars --out tfsec.report'
