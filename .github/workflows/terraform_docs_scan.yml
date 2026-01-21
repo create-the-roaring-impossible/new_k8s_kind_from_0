@@ -12,6 +12,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # actions: read
+      # security-events: write
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -23,6 +25,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
+          # persist-credentials: false
       - name: Copy some files in all environment folders
         shell: bash
         run: |
@@ -43,10 +46,17 @@ jobs:
           atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
           config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
           git-push: 'false'
-      # - name: Generate Terraform scan report
-      #   uses: terraform-docs/gh-actions@v1.4.1
+      - name: Generate Terraform scan report
+        uses: aquasecurity/tfsec-sarif-action@v0.1.4
+        with:
+          working_directory: '${{ env.TERRAFORM_FOLDER }}'
+          tfsec_args: '--format markdown --tfvars-file terraform.tfvars --out tfsec.report'
+          full_repo_scan: true
+          sarif_file: tfsec.sarif
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v1
       #   with:
-      #     atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
+      #     sarif_file: tfsec.sarif
       - name: Delete some files in all environment folders
         shell: bash
         run: |
