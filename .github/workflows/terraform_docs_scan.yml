@@ -48,10 +48,6 @@ jobs:
           atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
           config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
           git-push: 'false'
-      # - name: Upload SARIF file
-      #   uses: github/codeql-action/upload-sarif@v1
-      #   with:
-      #     sarif_file: tfsec.sarif
       - name: Delete some files in all environment folders
         shell: bash
         run: |
@@ -75,5 +71,5 @@ jobs:
           git status
           # Commit and push
           git add .
-          git commit -m "Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || echo "No changes to commit"
+          git commit -m "Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
           git push origin HEAD:refs/heads/${{ github.event.pull_request.head.ref }}
