@@ -40,7 +40,7 @@ jobs:
             cp $parent_dir/variables.tf $subdir/variables.tf
             cp -r $parent_dir/${TERRAFORM_DOCS_FOLDER}/ $subdir/${TERRAFORM_DOCS_FOLDER}/
             terraform fmt
-            tfsec --format markdown --out tfsec.report --tfvars-file $subdir/terraform.tfvars . || true
+            tfsec --format markdown --out $subdir/tfsec.report --tfvars-file $subdir/terraform.tfvars . || true
           done
       - name: Generate Terraform documentation
         uses: terraform-docs/gh-actions@v1.4.1
@@ -75,5 +75,5 @@ jobs:
           git status
           # Commit and push
           git add .
-          git commit -m "Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || echo "No changes to commit"
-          git push origin refs/heads/${{ github.event.pull_request.head.ref }}
+          git commit -m "Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" # || echo "No changes to commit"
+          git push origin HEAD:refs/heads/${{ github.event.pull_request.head.ref }}
