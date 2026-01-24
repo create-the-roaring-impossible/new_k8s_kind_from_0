@@ -40,7 +40,7 @@ jobs:
             cp $parent_dir/variables.tf $subdir/variables.tf
             cp -r $parent_dir/${TERRAFORM_DOCS_FOLDER}/ $subdir/${TERRAFORM_DOCS_FOLDER}/
             terraform fmt
-            tfsec --format markdown --out tfsec.report --tfvars-file terraform.tfvars . # > /dev/null 2>&1
+            tfsec --format markdown --out tfsec.report --tfvars-file terraform.tfvars . > /dev/null 2>&1
           done
       - name: Generate Terraform documentation
         uses: terraform-docs/gh-actions@v1.4.1
