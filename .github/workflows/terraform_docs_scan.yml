@@ -12,8 +12,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      # actions: read
-      # security-events: write
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
@@ -25,7 +23,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-          # persist-credentials: false
       - name: Copy some files, formatting and scanning, in all environment folders
         shell: bash
         run: |
