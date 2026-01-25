@@ -2,15 +2,21 @@
 # test objects
 ##################################################
 
-resource "kubernetes_namespace" "gh_ns" {
+resource "kubernetes_namespace" "ns" {
   metadata {
     annotations = {
-      name = "gh-annotation"
+      name = "${var.scope}-annotation"
     }
     labels = {
-      mylabel = "gh-label"
+      mylabel = "${var.scope}-label"
     }
-    name = "gh-ns"
+    name = "${var.scope}-ns"
   }
   wait_for_default_service_account = true
+  # lifecycle {
+  #   precondition {
+  #     condition = asdasdasd # TODO: to set a condition on "scope" as "ado"
+  #     error_message = "Error: you can only set '${var.scope}' as scope"
+  #   }
+  # }
 }

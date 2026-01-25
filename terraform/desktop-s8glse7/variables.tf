@@ -1,5 +1,5 @@
 ##################################################
-# test objects
+# test variables
 ##################################################
 
 variable "test_password" {
@@ -10,5 +10,16 @@ variable "test_password" {
     validation {
         condition = length(var.test_password) >= 12
         error_message = "error! the length is less than 12 characters."
+    }
+}
+
+variable "scope" {
+    type = string
+    description = "The scope of the project"
+    sensitive = false
+    default = "default"
+    validation {
+        condition = length(var.test_password) <= 10
+        error_message = "error! the length is more than 10 characters."
     }
 }
