@@ -51,5 +51,9 @@ and they don't even need to be in the default order
 | <a name="output_imported_random_integer"></a> [imported\_random\_integer](#output\_imported\_random\_integer) | n/a |
 | <a name="output_random_integer"></a> [random\_integer](#output\_random\_integer) | n/a |
 
+## Contributor
+
+Matteo Cristiano <slb6113@gmail.com>
+
 The End ;-)
 <!-- END_TF_DOCS -->
