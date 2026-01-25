@@ -18,5 +18,9 @@ resource "kubernetes_namespace" "ns" {
       condition = ${var.scope} == "gh"
       error_message = "Error: you can only set 'gh' as scope"
     }
+    postcondition {
+      condition = self.metadata.annotations.name != ""
+      error_message = "Error: namespace created without annotation name"
+    }
   }
 }
