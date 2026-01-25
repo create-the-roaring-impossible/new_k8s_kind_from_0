@@ -32,13 +32,14 @@ and they don't even need to be in the default order
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_scope"></a> [scope](#input\_scope) | The scope of the project | `string` | `"default"` | no |
 | <a name="input_test_password"></a> [test\_password](#input\_test\_password) | A test password variable | `string` | `"1234567890ab"` | no |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [kubernetes_namespace.gh_ns](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/namespace) | resource |
+| [kubernetes_namespace.ns](https://registry.terraform.io/providers/hashicorp/kubernetes/2.38.0/docs/resources/namespace) | resource |
 | [local_file.test_file](https://registry.terraform.io/providers/hashicorp/local/2.6.1/docs/resources/file) | resource |
 | [local_file.test_file_heredoc](https://registry.terraform.io/providers/hashicorp/local/2.6.1/docs/resources/file) | resource |
 | [random_integer.imported_rand](https://registry.terraform.io/providers/hashicorp/random/3.7.2/docs/resources/integer) | resource |
