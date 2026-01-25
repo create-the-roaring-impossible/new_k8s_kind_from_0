@@ -19,7 +19,7 @@ variable "scope" {
     sensitive = false
     default = "default"
     validation {
-        condition = length(var.test_password) <= 10
+        condition = length(var.scope) <= 10
         error_message = "error! the length is more than 10 characters."
     }
 }
