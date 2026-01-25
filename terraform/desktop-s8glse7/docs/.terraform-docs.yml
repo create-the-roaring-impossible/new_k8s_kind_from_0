@@ -1,4 +1,4 @@
-formatter: "markdown table" # this is required
+formatter: "markdown table"
 
 version: ">= 0.20.0"
 
@@ -57,9 +57,9 @@ settings:
   anchor: true
   color: true
   default: true
-  description: true # false
+  description: true
   escape: true
-  hide-empty: true # false
+  hide-empty: true
   html: true
   indent: 2
   lockfile: true
