@@ -15,7 +15,7 @@ resource "kubernetes_namespace" "ns" {
   wait_for_default_service_account = true
   lifecycle {
     precondition {
-      condition = var.scope == "gh"
+      condition = var.scope == "gh" # test
       error_message = "Error: you can only set 'gh' as scope"
     }
     postcondition {
