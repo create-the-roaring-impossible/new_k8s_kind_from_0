@@ -36,7 +36,7 @@ jobs:
             cp $parent_dir/backend.tf $subdir/backend.tf
             cp $parent_dir/variables.tf $subdir/variables.tf
             cp -r $parent_dir/${TERRAFORM_DOCS_FOLDER}/ $subdir/${TERRAFORM_DOCS_FOLDER}/
-            terraform fmt
+            terraform fmt $subdir
             tfsec --format markdown --out $subdir/tfsec.report --tfvars-file $subdir/terraform.tfvars . || true
           done
       - name: Generate Terraform documentation
