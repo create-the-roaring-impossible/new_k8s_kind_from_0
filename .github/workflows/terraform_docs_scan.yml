@@ -68,5 +68,5 @@ jobs:
           git status
           # Commit and push
           git add .
-          git commit -m "Update documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+          git commit -m "Formatting and updating documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
           git push origin HEAD:refs/heads/${{ github.event.pull_request.head.ref }}
