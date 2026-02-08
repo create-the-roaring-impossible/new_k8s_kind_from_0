@@ -9,12 +9,19 @@
 ARG TF_VERSION=1.14.4
 ARG TOFU_VERSION=1.11.4
 ARG TF_DOC_VERSION=0.20.0
+ARG TFSEC_VERSION=v1.28.14
+ARG AWS_VERSION=2.33.17
 ARG ALPINE_VERSION=3.23.3
-# ARG TFSEC_VERSION=1.28.13
 
 FROM hashicorp/terraform:${TF_VERSION} AS terraform
+
 FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
+
 FROM quay.io/terraform-docs/terraform-docs:${TF_DOC_VERSION} AS terraform-docs
+
+FROM ghcr.io/aquasecurity/tfsec-alpine:${TFSEC_VERSION} AS tfsec
+
+FROM amazon/aws-cli:${AWS_VERSION} AS awscli
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -90,18 +97,11 @@ COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 # Copy the terraform-docs binary
 COPY --from=terraform-docs /usr/local/bin/terraform-docs /usr/local/bin/terraform-docs
 
-# # Install tfsec # TODO to replace with ASDASDASD
-# ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
-# RUN chmod +x /usr/local/bin/tfsec && \
-#     apk del .deps \
-#         gcc \
-#         libffi-dev \
-#         make \
-#         musl-dev \
-#         openssl-dev \
-#         python3-dev && \
-#     apk cache clean && \
-#     rm -rf /var/cache/apk/* /tmp/* /root/.cache
+# Copy the tfsec binary
+COPY --from=tfsec /usr/bin/tfsec /usr/bin/tfsec
+
+# Copy the aws cli binary
+COPY --from=awscli /usr/local/bin/aws /usr/local/bin/aws
 
 FROM tools AS final
 
