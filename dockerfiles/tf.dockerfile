@@ -64,7 +64,7 @@ ARG PWSH_VERSION=7.5.4
 ADD "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
 RUN apk add --no-cache \
         libgcc \
-        libstdc++ \
+        libstdc++ && \
     sudo mkdir -p /opt/microsoft/powershell/7 && \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
