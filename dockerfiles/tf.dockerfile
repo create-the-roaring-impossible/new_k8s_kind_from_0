@@ -6,19 +6,15 @@
 # VERSION: 2.00
 # DATE: 2026-08-02
 
-ARG POWERSHELL_VERSION=7.5.0.6911470
-ARG ALPINE_VERSION=3.23.3
-
 # ARG TOFU_VERSION=1.11.4
 # FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
-
 # ARG TF_VERSION=1.13.4
-
 # ARG TFSEC_VERSION=1.28.13
-
 # ARG TERRAFORM_DOC_VERSION=0.20.0
+# # Copy the tofu binary from the minimal image
+# COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 
-FROM demisto/powershell:${POWERSHELL_VERSION} AS pwsh
+ARG ALPINE_VERSION=3.23.3
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -65,15 +61,14 @@ RUN apk update && \
 
 FROM base AS tools
 
-# # Copy the tofu binary from the minimal image
-# COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
-
-# # Install PowerShell
-# ADD "https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
-# RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
-#     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
-#     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
-#     sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && \
+# Install PowerShell
+ARG PWSH_VERSION=7.5.4
+ADD "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
+RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
+    sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
+    sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
+    sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+    # && \
 # # Activate Python env and upgrade PIP
 #     python3 -m venv /opt/venv && \
 #     . /opt/venv/bin/activate && \
