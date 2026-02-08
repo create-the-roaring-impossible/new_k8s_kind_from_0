@@ -84,20 +84,11 @@ RUN apk add --no-cache \
 # # Deactivate Python env
 #     deactivate
 
-# # Install Terraform
-# RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
-#     cd /tmp && \
-#     curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" && \
-#     curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" && \
-#     curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS.sig" && \
-#     curl --proto "=https" --tlsv1.2 -sSf "https://www.hashicorp.com/.well-known/pgp-key.txt" | gpg --import && \
-#     gpg --verify "terraform_${TF_VERSION}_SHA256SUMS.sig" "terraform_${TF_VERSION}_SHA256SUMS" && \
-#     grep "terraform_${TF_VERSION}_linux_amd64.zip" "terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c && \
-#     unzip "/tmp/terraform_${TF_VERSION}_linux_amd64.zip" -d /tmp && \
-#     mv /tmp/terraform /usr/local/bin/terraform && \
-#     rm -f "/tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig"
+# Copy the terraform binary
+COPY --from=terraform /bin/terraform /bin/terraform
 
-# # Install OpenTofu
+# Copy the tofu binary
+COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 
 # # Install tfsec # TODO to replace with ASDASDASD
 # ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
