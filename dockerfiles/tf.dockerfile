@@ -28,8 +28,7 @@ USER root
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
-        bash
-        # \
+        bash \
 #         ca-certificates \
 #         cargo \
 #         coreutils \
@@ -57,7 +56,8 @@ RUN apk update && \
 #         tar \
 #         tzdata \
 #         userspace-rcu \
-#         zlib
+#         zlib \
+        wget
 
 FROM base AS tools
 
