@@ -34,8 +34,7 @@ RUN apk update && \
 #         coreutils \
 #         curl \
 #         gcc \
-#         git \
-#         icu-libs \
+        git \
 #         krb5-libs \
 #         less \
 #         libffi-dev \
@@ -63,6 +62,7 @@ FROM base AS tools
 ARG PWSH_VERSION=7.5.4
 ADD "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
 RUN apk add --no-cache \
+        icu-libs \
         libgcc \
         libstdc++ && \
     sudo mkdir -p /opt/microsoft/powershell/7 && \
