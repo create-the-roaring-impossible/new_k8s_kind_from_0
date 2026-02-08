@@ -1,21 +1,24 @@
 # DESCRIPTION: Terraform/OpenTofu container
 # REQUIREMENTS: Docker
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
-# TEST: docker run -it --rm tf[:<tag>]
+# TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
 # VERSION: 2.00
 # DATE: 2026-08-02
 
-ARG POWERSHELL_VERSION=7.5.3
-# ARG TOFU_VERSION=1.11.4
-# ARG TF_VERSION=1.13.4
-# ARG TFSEC_VERSION=1.28.13
-# ARG TERRAFORM_DOC_VERSION=0.20.0
+ARG POWERSHELL_VERSION=7.5.0.6911470
 ARG ALPINE_VERSION=3.23.3
 
-FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
-
+# ARG TOFU_VERSION=1.11.4
 # FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
+
+# ARG TF_VERSION=1.13.4
+
+# ARG TFSEC_VERSION=1.28.13
+
+# ARG TERRAFORM_DOC_VERSION=0.20.0
+
+FROM demisto/powershell:${POWERSHELL_VERSION} AS pwsh
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -26,10 +29,11 @@ LABEL version="2.00"
 
 USER root
 
-# RUN apk update && \
-#     apk upgrade && \
-#     apk add --no-cache \
-#         bash \
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache \
+        bash
+        # \
 #         ca-certificates \
 #         cargo \
 #         coreutils \
