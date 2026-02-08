@@ -6,13 +6,18 @@
 # VERSION: 2.00
 # DATE: 2026-08-02
 
-# ARG TOFU_VERSION=1.11.4
-# FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
-# ARG TF_VERSION=1.13.4
 # ARG TFSEC_VERSION=1.28.13
 # ARG TERRAFORM_DOC_VERSION=0.20.0
 # # Copy the tofu binary from the minimal image
 # COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
+
+ARG TF_VERSION=1.14.4
+
+FROM hashicorp/terraform:${TF_VERSION} AS terraform
+
+ARG TOFU_VERSION=1.11.4
+
+FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
 
 ARG ALPINE_VERSION=3.23.3
 
