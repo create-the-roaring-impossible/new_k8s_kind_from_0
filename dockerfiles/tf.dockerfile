@@ -67,6 +67,7 @@ RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
     pip install  --upgrade --no-cache-dir azure-cli && \
 # Deactivate Python env
     deactivate
+
 # Install Terraform
 ARG TF_VERSION=1.13.4
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
@@ -80,7 +81,10 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
     unzip "/tmp/terraform_${TF_VERSION}_linux_amd64.zip" -d /tmp && \
     mv /tmp/terraform /usr/local/bin/terraform && \
     rm -f "/tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig"
-# Install tfsec
+
+# Install OpenTofu
+
+# Install tfsec # TODO to replace with ASDASDASD
 ARG TFSEC_VERSION=1.28.13
 ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
 RUN chmod +x /usr/local/bin/tfsec && \
