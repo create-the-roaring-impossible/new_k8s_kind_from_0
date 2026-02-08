@@ -36,7 +36,7 @@ RUN apk update && \
 #         ca-certificates \
 #         cargo \
 #         coreutils \
-#         curl \
+        curl \
 #         gcc \
         git \
 #         krb5-libs \
@@ -92,9 +92,8 @@ RUN apk add --no-cache \
     aws-cli=="${AWS_VERSION}-r0"
 
 # Install Azure cli
-ARG AZURE_DISTRO=$(lsb_release -cs)
 ARG AZURE_VERSION=2.83.0
-RUN sudo apt-get install azure-cli="${AZURE_VERSION}-1~${AZURE_DISTRO}"
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash -s -- --version "${AZURE_VERSION}" --install-dir /usr/local/azure-cli
 
 # Install GCP cli
 # TODO: add GCP cli installation
