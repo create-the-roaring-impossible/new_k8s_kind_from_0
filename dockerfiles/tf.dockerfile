@@ -90,13 +90,14 @@ COPY --from=tfsec /usr/bin/tfsec /usr/bin/tfsec
 ARG AWS_VERSION=2.32.7
 RUN apk add --no-cache \
     aws-cli=="${AWS_VERSION}-r0"
-# RUN python3 -m venv /opt/venv && \
-#     . /opt/venv/bin/activate && \
-#     pip install --upgrade --no-cache-dir pip && \
-# # Install Azure CLI
-#     pip install  --upgrade --no-cache-dir azure-cli && \
-# # Deactivate Python env
-#     deactivate
+
+# Install Azure cli
+ARG AZURE_DISTRO=$(lsb_release -cs)
+ARG AZURE_VERSION=2.83.0
+RUN sudo apt-get install azure-cli="${AZURE_VERSION}-1~${AZURE_DISTRO}"
+
+# Install GCP cli
+# TODO: add GCP cli installation
 
 FROM tools AS final
 
