@@ -33,31 +33,9 @@ RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
         bash \
-#         ca-certificates \
-#         cargo \
-#         coreutils \
         curl \
-#         gcc \
         git \
-#         krb5-libs \
-#         less \
-#         libffi-dev \
-#         libintl \
-#         libssl3 \
-#         lttng-ust \
-#         make \
-#         musl-dev \
-#         ncurses-terminfo-base \
-#         openssh-client \
-#         openssl-dev \
-#         py3-pip \
-#         python3 \
-#         python3-dev \
         sudo \
-#         tar \
-#         tzdata \
-#         userspace-rcu \
-#         zlib \
         wget
 
 FROM base AS tools
@@ -93,7 +71,33 @@ RUN apk add --no-cache \
 
 # Install Azure cli
 ARG AZURE_VERSION=2.83.0
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash -s -- --version "${AZURE_VERSION}" --install-dir /usr/local/azure-cli
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache \
+#         ca-certificates \
+        cargo \
+#         coreutils \
+        gcc \
+#         krb5-libs \
+#         less \
+        libffi-dev \
+#         libintl \
+#         libssl3 \
+#         lttng-ust \
+        make \
+        musl-dev \
+#         ncurses-terminfo-base \
+#         openssh-client \
+        openssl-dev \
+        py3-pip \
+        python3 \
+        python3-dev && \
+#         tar \
+#         tzdata \
+#         userspace-rcu \
+#         zlib \
+    pip install --upgrade pip && \
+    pip install azure-cli=="${AZURE_VERSION}"
 
 # Install GCP cli
 # TODO: add GCP cli installation
