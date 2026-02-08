@@ -103,5 +103,3 @@ RUN apk update && \
 # TODO: add GCP cli installation
 
 FROM tools AS final
-
-# ENV PATH="/opt/venv/bin:$PATH"
