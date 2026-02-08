@@ -74,28 +74,15 @@ ARG AZURE_VERSION=2.83.0
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
-#         ca-certificates \
         cargo \
-#         coreutils \
         gcc \
-#         krb5-libs \
-#         less \
         libffi-dev \
-#         libintl \
-#         libssl3 \
-#         lttng-ust \
         make \
         musl-dev \
-#         ncurses-terminfo-base \
-#         openssh-client \
         openssl-dev \
         py3-pip \
         python3 \
         python3-dev && \
-#         tar \
-#         tzdata \
-#         userspace-rcu \
-#         zlib \
     python3 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install azure-cli=="${AZURE_VERSION}"
@@ -104,3 +91,5 @@ RUN apk update && \
 # TODO: add GCP cli installation
 
 FROM tools AS final
+
+ENV PATH="/opt/venv/bin:$PATH"
