@@ -10,7 +10,6 @@ ARG TF_VERSION=1.14.4
 ARG TOFU_VERSION=1.11.4
 ARG TF_DOC_VERSION=0.20.0
 ARG TFSEC_VERSION=v1.28.14
-ARG AWS_VERSION=2.33.17
 ARG ALPINE_VERSION=3.23.3
 
 FROM hashicorp/terraform:${TF_VERSION} AS terraform
@@ -20,8 +19,6 @@ FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
 FROM quay.io/terraform-docs/terraform-docs:${TF_DOC_VERSION} AS terraform-docs
 
 FROM ghcr.io/aquasecurity/tfsec-alpine:${TFSEC_VERSION} AS tfsec
-
-FROM amazon/aws-cli:${AWS_VERSION} AS awscli
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -76,17 +73,6 @@ RUN apk add --no-cache \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
     sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
-    # && \
-# # Activate Python env and upgrade PIP
-#     python3 -m venv /opt/venv && \
-#     . /opt/venv/bin/activate && \
-#     pip install --upgrade --no-cache-dir pip && \
-# # Install AWS CLI
-#     pip install --upgrade --no-cache-dir awscli && \
-# # Install Azure CLI
-#     pip install  --upgrade --no-cache-dir azure-cli && \
-# # Deactivate Python env
-#     deactivate
 
 # Copy the terraform binary
 COPY --from=terraform /bin/terraform /bin/terraform
@@ -100,8 +86,17 @@ COPY --from=terraform-docs /usr/local/bin/terraform-docs /usr/local/bin/terrafor
 # Copy the tfsec binary
 COPY --from=tfsec /usr/bin/tfsec /usr/bin/tfsec
 
-# Copy the aws cli binary
-COPY --from=awscli /usr/local/bin/aws /usr/local/bin/aws
+# Install AWS cli
+ARG AWS_VERSION=2.32.7
+RUN apk add --no-cache \
+    aws-cli=="${AWS_VERSION}-r0"
+# RUN python3 -m venv /opt/venv && \
+#     . /opt/venv/bin/activate && \
+#     pip install --upgrade --no-cache-dir pip && \
+# # Install Azure CLI
+#     pip install  --upgrade --no-cache-dir azure-cli && \
+# # Deactivate Python env
+#     deactivate
 
 FROM tools AS final
 
