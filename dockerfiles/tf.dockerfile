@@ -96,8 +96,9 @@ RUN apk update && \
 #         tzdata \
 #         userspace-rcu \
 #         zlib \
-    pip install --upgrade pip && \
-    pip install azure-cli=="${AZURE_VERSION}"
+    python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install azure-cli=="${AZURE_VERSION}"
 
 # Install GCP cli
 # TODO: add GCP cli installation
