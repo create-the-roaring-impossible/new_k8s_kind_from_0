@@ -6,18 +6,15 @@
 # VERSION: 2.00
 # DATE: 2026-08-02
 
-# ARG TFSEC_VERSION=1.28.13
-# ARG TERRAFORM_DOC_VERSION=0.20.0
-# # Copy the tofu binary from the minimal image
-# COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
-
 ARG TF_VERSION=1.14.4
 ARG TOFU_VERSION=1.11.4
+ARG TF_DOC_VERSION=0.20.0
 ARG ALPINE_VERSION=3.23.3
+# ARG TFSEC_VERSION=1.28.13
 
 FROM hashicorp/terraform:${TF_VERSION} AS terraform
-
 FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
+FROM quay.io/terraform-docs/terraform-docs:${TF_DOC_VERSION} AS terraform-docs
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -90,6 +87,9 @@ COPY --from=terraform /bin/terraform /bin/terraform
 # Copy the tofu binary
 COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 
+# Copy the terraform-docs binary
+COPY --from=terraform-docs /usr/local/bin/terraform-docs /usr/local/bin/terraform-docs
+
 # # Install tfsec # TODO to replace with ASDASDASD
 # ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
 # RUN chmod +x /usr/local/bin/tfsec && \
@@ -102,13 +102,6 @@ COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 #         python3-dev && \
 #     apk cache clean && \
 #     rm -rf /var/cache/apk/* /tmp/* /root/.cache
-
-# # Install terraform-docs
-# ADD https://terraform-docs.io/dl/v${TERRAFORM_DOC_VERSION}/terraform-docs-v${TERRAFORM_DOC_VERSION}-linux-amd64.tar.gz /tmp/terraform-docs.tar.gz
-# RUN tar -xzf /tmp/terraform-docs.tar.gz -C /tmp && \
-#     mv /tmp/terraform-docs /usr/local/bin/terraform-docs && \
-#     chmod +x /usr/local/bin/terraform-docs && \
-#     rm -f /tmp/terraform-docs.tar.gz
 
 FROM tools AS final
 
