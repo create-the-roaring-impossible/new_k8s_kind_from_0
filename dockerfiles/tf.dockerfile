@@ -1,17 +1,26 @@
-# DESCRIPTION: Terraform container with non-root user setup
+# DESCRIPTION: Terraform/OpenTofu container
 # REQUIREMENTS: Docker
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
-# VERSION: 1.3.3
-# DATE: 2026-01-10
+# VERSION: 1.3.4
+# DATE: 2026-08-02
 
-FROM alpine:3.22 AS base
+ARG TOFU_VERSION=1.11.4
+ARG ALPINE_VERSION=3.23.3
+ARG POWERSHELL_VERSION=7.5.3
+ARG TF_VERSION=1.13.4
+ARG TFSEC_VERSION=1.28.13
+ARG TERRAFORM_DOC_VERSION=0.20.0
+
+FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
+
+FROM alpine:${ALPINE_VERSION} AS base
 
 # Add metadata labels
-LABEL description="Terraform container with non-root user setup"
+LABEL description="Terraform/OpenTofu container"
 LABEL maintainer="Matteo Cristiano"
-LABEL version="1.3.3"
+LABEL version="1.3.4"
 
 USER root
 
@@ -50,8 +59,10 @@ RUN apk update && \
 
 FROM base AS tools
 
+# Copy the tofu binary from the minimal image
+COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
+
 # Install PowerShell
-ARG POWERSHELL_VERSION=7.5.3
 ADD "https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
 RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
@@ -69,7 +80,6 @@ RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
     deactivate
 
 # Install Terraform
-ARG TF_VERSION=1.13.4
 RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
     cd /tmp && \
     curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" && \
@@ -85,11 +95,9 @@ RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
 # Install OpenTofu
 
 # Install tfsec # TODO to replace with ASDASDASD
-ARG TFSEC_VERSION=1.28.13
 ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
 RUN chmod +x /usr/local/bin/tfsec && \
     apk del .deps \
-        cargo \
         gcc \
         libffi-dev \
         make \
@@ -100,7 +108,6 @@ RUN chmod +x /usr/local/bin/tfsec && \
     rm -rf /var/cache/apk/* /tmp/* /root/.cache
 
 # Install terraform-docs
-ARG TERRAFORM_DOC_VERSION=0.20.0
 ADD https://terraform-docs.io/dl/v${TERRAFORM_DOC_VERSION}/terraform-docs-v${TERRAFORM_DOC_VERSION}-linux-amd64.tar.gz /tmp/terraform-docs.tar.gz
 RUN tar -xzf /tmp/terraform-docs.tar.gz -C /tmp && \
     mv /tmp/terraform-docs /usr/local/bin/terraform-docs && \
