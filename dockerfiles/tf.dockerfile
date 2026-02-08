@@ -39,10 +39,8 @@ RUN apk update && \
 #         krb5-libs \
 #         less \
 #         libffi-dev \
-#         libgcc \
 #         libintl \
 #         libssl3 \
-#         libstdc++ \
 #         lttng-ust \
 #         make \
 #         musl-dev \
@@ -52,7 +50,7 @@ RUN apk update && \
 #         py3-pip \
 #         python3 \
 #         python3-dev \
-#         sudo \
+        sudo \
 #         tar \
 #         tzdata \
 #         userspace-rcu \
@@ -64,7 +62,10 @@ FROM base AS tools
 # Install PowerShell
 ARG PWSH_VERSION=7.5.4
 ADD "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
-RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
+RUN apk add --no-cache \
+        libgcc \
+        libstdc++ \
+    sudo mkdir -p /opt/microsoft/powershell/7 && \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
     sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
