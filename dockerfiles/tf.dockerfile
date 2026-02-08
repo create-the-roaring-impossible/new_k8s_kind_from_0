@@ -12,14 +12,12 @@
 # COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 
 ARG TF_VERSION=1.14.4
+ARG TOFU_VERSION=1.11.4
+ARG ALPINE_VERSION=3.23.3
 
 FROM hashicorp/terraform:${TF_VERSION} AS terraform
 
-ARG TOFU_VERSION=1.11.4
-
 FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
-
-ARG ALPINE_VERSION=3.23.3
 
 FROM alpine:${ALPINE_VERSION} AS base
 
