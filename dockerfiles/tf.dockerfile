@@ -3,8 +3,8 @@
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
-# VERSION: 2.00
-# DATE: 2026-08-02
+# VERSION: 2.0.0
+# DATE: 2026-10-02
 
 ARG TF_VERSION=1.14.4
 ARG TOFU_VERSION=1.11.4
@@ -25,7 +25,7 @@ FROM alpine:${ALPINE_VERSION} AS base
 # Add metadata labels
 LABEL description="Terraform/OpenTofu container"
 LABEL maintainer="Matteo Cristiano"
-LABEL version="2.00"
+LABEL version="2.0.0"
 
 USER root
 
