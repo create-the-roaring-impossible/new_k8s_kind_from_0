@@ -9,7 +9,7 @@
 ARG TF_VERSION=1.14.4
 ARG TOFU_VERSION=1.11.4
 ARG TF_DOC_VERSION=0.20.0
-ARG TFSEC_VERSION=v1.28.14
+##########ARG TFSEC_VERSION=v1.28.14
 ARG ALPINE_VERSION=3.23.3
 
 FROM hashicorp/terraform:${TF_VERSION} AS terraform
@@ -18,7 +18,7 @@ FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
 
 FROM quay.io/terraform-docs/terraform-docs:${TF_DOC_VERSION} AS terraform-docs
 
-FROM ghcr.io/aquasecurity/tfsec-alpine:${TFSEC_VERSION} AS tfsec
+##########FROM ghcr.io/aquasecurity/tfsec-alpine:${TFSEC_VERSION} AS tfsec
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -61,8 +61,8 @@ COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 # Copy the terraform-docs binary
 COPY --from=terraform-docs /usr/local/bin/terraform-docs /usr/local/bin/terraform-docs
 
-# Copy the tfsec binary
-COPY --from=tfsec /usr/bin/tfsec /usr/bin/tfsec
+########### Copy the tfsec binary
+##########COPY --from=tfsec /usr/bin/tfsec /usr/bin/tfsec
 
 # Install AWS cli
 ARG AWS_VERSION=2.32.7
