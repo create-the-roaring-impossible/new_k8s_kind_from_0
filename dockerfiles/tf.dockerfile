@@ -4,12 +4,11 @@
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
 # VERSION: 2.0.0
-# DATE: 2026-10-02
+# DATE: 2026-02-15
 
 ARG TF_VERSION=1.14.4
 ARG TOFU_VERSION=1.11.4
 ARG TF_DOC_VERSION=0.20.0
-##########ARG TFSEC_VERSION=v1.28.14
 ARG ALPINE_VERSION=3.23.3
 
 FROM hashicorp/terraform:${TF_VERSION} AS terraform
@@ -17,8 +16,6 @@ FROM hashicorp/terraform:${TF_VERSION} AS terraform
 FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
 
 FROM quay.io/terraform-docs/terraform-docs:${TF_DOC_VERSION} AS terraform-docs
-
-##########FROM ghcr.io/aquasecurity/tfsec-alpine:${TFSEC_VERSION} AS tfsec
 
 FROM alpine:${ALPINE_VERSION} AS base
 
@@ -35,6 +32,8 @@ RUN apk update && \
         bash \
         curl \
         git \
+        py3-pip \
+        python3 \
         sudo \
         wget
 
@@ -61,9 +60,6 @@ COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
 # Copy the terraform-docs binary
 COPY --from=terraform-docs /usr/local/bin/terraform-docs /usr/local/bin/terraform-docs
 
-########### Copy the tfsec binary
-##########COPY --from=tfsec /usr/bin/tfsec /usr/bin/tfsec
-
 # Install AWS cli
 ARG AWS_VERSION=2.32.7
 RUN apk add --no-cache \
@@ -89,6 +85,13 @@ RUN apk update && \
 
 # Install GCP cli
 # TODO: add GCP cli installation
+
+# Install Checkov
+ARG CHECKOV_VERSION=3.2.500
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip3 install --no-cache-dir --upgrade pip && \
+    /opt/venv/bin/pip3 install --no-cache-dir --upgrade setuptools && \
+    /opt/venv/bin/pip3 install --no-cache-dir "checkov==${CHECKOV_VERSION}"
 
 FROM tools AS final
 
