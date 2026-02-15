@@ -34,7 +34,7 @@ jobs:
       RC_Version: ${{ steps.set-rc-version.outputs.RCVersion }}
     steps:
       - name: 'Repository Checkout'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: 'Login to GitHub Container Registry'
@@ -61,6 +61,7 @@ jobs:
           file: ${{ github.event.inputs.dockerfile }}
           push: true
           tags: ${{ github.event.inputs.docker_repository }}:${{ github.event.inputs.tag }}${{ env.RCVersion }}
+          provenance: false
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.created=${{ steps.date.outputs.date }}
@@ -76,6 +77,7 @@ jobs:
           file: ${{ github.event.inputs.dockerfile }}
           push: true
           tags: ${{ github.event.inputs.docker_repository }}:latest
+          provenance: false
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.created=${{ steps.date.outputs.date }}
