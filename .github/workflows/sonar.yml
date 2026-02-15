@@ -14,7 +14,6 @@ jobs:
       credentials:
         username: ${{ secrets.DOCKER_HUB_SENNAR19_USER }}
         password: ${{ secrets.DOCKER_HUB_SENNAR19_TOKEN }}
-      # options: --user root
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -24,5 +23,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_USER_HOME: "${{ github.workspace }}/.sonar"
+        shell: bash
         run: |
           sonar-scanner -Dsonar.token=$SONAR_TOKEN -Dsonar.qualitygate.wait=true

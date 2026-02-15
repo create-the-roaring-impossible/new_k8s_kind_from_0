@@ -108,7 +108,7 @@ jobs:
       RCVersion: ${{ needs.buildAndPush.outputs.RC_Version }}
     steps:
       - name: 'Cleanup tags "${{ github.event.inputs.tag }}${{ env.RCVersion }}", and "latest", of Docker image ${{ github.event.inputs.docker_repository }}'
+        shell: bash
         run: |
           chmod +x ./scripts/bash/docker_clean.sh
           ./scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}
-        shell: bash
