@@ -107,8 +107,12 @@ jobs:
     env:
       RCVersion: ${{ needs.buildAndPush.outputs.RC_Version }}
     steps:
+      # TODO: to add 'decode private key' step
+      # TODO: to add 'generate token' step
+      # TODO: to add 'repo checkout in "alternative_repo"' step
       - name: 'Cleanup tags "${{ github.event.inputs.tag }}${{ env.RCVersion }}", and "latest", of Docker image ${{ github.event.inputs.docker_repository }}'
         shell: bash
         run: |
+          # TODO: to use "alternative_repo"
           chmod +x ./scripts/bash/docker_clean.sh
           ./scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}
