@@ -75,12 +75,13 @@ jobs:
           tags: ${{ github.event.inputs.docker_repository }}:${{ github.event.inputs.tag }}${{ env.RCVersion }}
           provenance: false
           labels: |
+            org.opencontainers.image.title=${{ github.event.inputs.docker_repository }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ github.event.inputs.tag }}
+            org.opencontainers.image.version=${{ github.event.inputs.tag }}${{ env.RCVersion }}
+            org.opencontainers.image.created=${{ steps.set-build-date.outputs.date }}
+            org.opencontainers.image.authors=${{ steps.set-author-mail.outputs.email }}
             org.opencontainers.image.licenses=gpl-3.0
-            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
       - name: 'Build and Push Docker Image, tag "latest"'
         if: ${{ github.event.inputs.isRC == 'false' }}
         uses: docker/build-push-action@v6
@@ -91,12 +92,13 @@ jobs:
           tags: ${{ github.event.inputs.docker_repository }}:latest
           provenance: false
           labels: |
+            org.opencontainers.image.title=${{ github.event.inputs.docker_repository }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ github.event.inputs.tag }}
+            org.opencontainers.image.version=latest
+            org.opencontainers.image.created=${{ steps.set-build-date.outputs.date }}
+            org.opencontainers.image.authors=${{ steps.set-author-mail.outputs.email }}
             org.opencontainers.image.licenses=gpl-3.0
-            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
   cleanup:
     name: 'Cleanup'
     needs: [buildAndPush]
