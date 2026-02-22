@@ -32,8 +32,7 @@ jobs:
               echo "Skipping $dir folder"
               continue
             fi
-            parent_dir=$(dirname $dir)
-            terraform fmt $dir -recursive -diff "$dir"
+            terraform fmt -recursive -diff "$dir"
             checkov -d "$dir" --quiet --compact --soft-fail --output cli --output-file-path "$dir"
           done
       - name: Generate Terraform documentation
