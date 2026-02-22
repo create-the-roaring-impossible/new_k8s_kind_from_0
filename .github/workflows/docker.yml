@@ -107,12 +107,34 @@ jobs:
     env:
       RCVersion: ${{ needs.buildAndPush.outputs.RC_Version }}
     steps:
-      # TODO: to add 'decode private key' step
-      # TODO: to add 'generate token' step
-      # TODO: to add 'repo checkout in "alternative_repo"' step
+      - name: Decode GitHub App private key
+        id: decode_key
+        shell: bash
+        run: |
+          private_key=$(echo "${{ secrets.CROSS_REPO_READ_ONLY_PRIVATE_KEY }}" | base64 -d | awk 'BEGIN {ORS="\\n"} {print}' | head -c -2) &> /dev/null
+          echo "::add-mask::private_key"
+          echo "private_key=$private_key" >> $GITHUB_ENV
+          echo "private_key=$private_key" >> $GITHUB_OUTPUT
+      - name: Generate GitHub token
+        id: app-token
+        uses: actions/create-github-app-token@v2 # TODO: to check if "v3" is available
+        with:
+          app_id: ${{ vars.CROSS_REPO_READ_ONLY_ID }}
+          private_key: ${{ steps.decode_key.outputs.private_key }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            new_k8s_kind_from_0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.repository }}
+          ref: studies/terraform # TODO: to use 'main'
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+          path: 'temp_new_k8s_kind_from_0'
+          fetch-depth: 0
       - name: 'Cleanup tags "${{ github.event.inputs.tag }}${{ env.RCVersion }}", and "latest", of Docker image ${{ github.event.inputs.docker_repository }}'
         shell: bash
         run: |
-          # TODO: to use "alternative_repo"
-          chmod +x ./scripts/bash/docker_clean.sh
-          ./scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}
+          chmod +x ./temp_new_k8s_kind_from_0/scripts/bash/docker_clean.sh
+          ./temp_new_k8s_kind_from_0/scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}

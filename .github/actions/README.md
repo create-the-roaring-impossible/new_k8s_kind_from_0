@@ -1,12 +1,12 @@
-# Workflows
+# Actions
 
 ## Introduction
 
-This folder contains all workflows files.
+This folder contains all actions files, used in workflows.
 
 ## Goal
 
-To manage all via reusable workflows.
+To manage all via composite actions.
 
 ### Architecture flow
 
