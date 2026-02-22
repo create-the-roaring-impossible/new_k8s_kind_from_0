@@ -3,8 +3,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 env:
-  TERRAFORM_FOLDER: 'terraform/'
+  TERRAFORM_FOLDERS: 'terraform/desktop-s8glse7'
   TERRAFORM_DOCS_FOLDER: 'docs'
+  TERRAFORM_FOLDERS_EXCLUDED: 'docs environments'
 jobs:
   terraformDocsAndScan:
     name: 'Terraform Docs And Scan'
@@ -23,40 +24,24 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-      - name: Copy some files, formatting and scanning, in all environment folders
+      - name: Formatting and scanning
         shell: bash
         run: |
-          for subdir in $(find ${TERRAFORM_FOLDER} -mindepth 2 -maxdepth 2 -type d); do
-            if [[ "$(basename $subdir)" == "${TERRAFORM_DOCS_FOLDER}" ]]; then
-              echo "Skipping $subdir folder"
+          for dir in ${{ env.TERRAFORM_FOLDERS }}; do
+            if [[ "$(basename $dir)" == "${{ env.TERRAFORM_FOLDERS_EXCLUDED }}" ]]; then
+              echo "Skipping $dir folder"
               continue
             fi
-            parent_dir=$(dirname $subdir)
-            echo "Copying files to: $subdir"
-            cp $parent_dir/backend.tf $subdir/backend.tf
-            cp $parent_dir/variables.tf $subdir/variables.tf
-            cp -r $parent_dir/${TERRAFORM_DOCS_FOLDER}/ $subdir/${TERRAFORM_DOCS_FOLDER}/
-            terraform fmt $subdir
-            tfsec --format markdown --out $subdir/tfsec.report --tfvars-file $subdir/terraform.tfvars . || true
+            parent_dir=$(dirname $dir)
+            terraform fmt $dir -recursive -diff "$dir"
+            checkov -d "$dir" --quiet --compact --soft-fail --output cli --output-file-path "$dir"
           done
       - name: Generate Terraform documentation
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          atlantis-file: '${{ env.TERRAFORM_FOLDER }}atlantis.yaml'
+          atlantis-file: terraform/atlantis.yaml'
           config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
           git-push: 'false'
-      - name: Delete some files in all environment folders
-        shell: bash
-        run: |
-          for subdir in $(find ${TERRAFORM_FOLDER} -mindepth 2 -maxdepth 2 -type d); do
-            if [[ "$(basename $subdir)" == "${TERRAFORM_DOCS_FOLDER}" ]]; then
-              echo "Skipping $subdir folder"
-              continue
-            fi
-            echo "Cleaning files from: $subdir"
-            rm -f $subdir/backend.tf $subdir/variables.tf
-            rm -rf $subdir/${TERRAFORM_DOCS_FOLDER}/
-          done
       - name: Commit and push new documentation and scan reports
         shell: bash
         run: |
