@@ -4,7 +4,7 @@ on:
     types: [opened, synchronize, reopened]
 env:
   TERRAFORM_FOLDERS: 'terraform/desktop-s8glse7'
-  TERRAFORM_DOCS_FOLDER: 'docs'
+  TERRAFORM_DOCS_FOLDER: 'terraform/desktop-s8glse7/docs'
   TERRAFORM_FOLDERS_EXCLUDED: 'docs environments'
 jobs:
   terraformDocsAndScan:
@@ -38,7 +38,7 @@ jobs:
       - name: Generate Terraform documentation
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          atlantis-file: terraform/atlantis.yaml'
+          atlantis-file: 'terraform/atlantis.yaml'
           config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
           git-push: 'false'
       - name: Commit and push new documentation and scan reports
