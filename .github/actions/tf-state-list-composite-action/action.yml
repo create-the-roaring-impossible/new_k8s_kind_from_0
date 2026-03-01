@@ -13,11 +13,14 @@ inputs:
   gitlab_project_id:
     description: 'GitLab project ID'
     required: true
-  scope:
-    description: 'Scope'
+  tool:
+    description: 'Tool'
     required: true
   env:
     description: 'Environment'
+    required: true
+  scope:
+    description: 'Scope'
     required: true
   logLevel:
     description: 'Log Level'
@@ -33,11 +36,12 @@ runs:
     - name: STATE LIST - Run terraform.sh script
       shell: bash
       run: |
-        bash scripts/bash/terraform.sh -TF_PATH 'terraform/${{ inputs.scope }}' \
-                                        -ENV '${{ inputs.env }}' \
-                                        -SCOPE '${{ inputs.scope }}' \
-                                        -ACTION 'state list' \
-                                        -LOG_LEVEL '${{ inputs.logLevel }}' \
-                                        -GITLAB_USER ${{ inputs.gitlab_user }} \
-                                        -GITLAB_TOKEN ${{ inputs.gitlab_token }} \
-                                        -GITLAB_PROJECT_ID ${{ inputs.gitlab_project_id }}
+        bash scripts/bash/terraform.sh -TOOL '${{ inputs.tool }}' \
+                                       -TF_PATH 'terraform/${{ inputs.scope }}' \
+                                       -ENV '${{ inputs.env }}' \
+                                       -SCOPE '${{ inputs.scope }}' \
+                                       -ACTION 'state list' \
+                                       -LOG_LEVEL '${{ inputs.logLevel }}' \
+                                       -GITLAB_USER ${{ inputs.gitlab_user }} \
+                                       -GITLAB_TOKEN ${{ inputs.gitlab_token }} \
+                                       -GITLAB_PROJECT_ID ${{ inputs.gitlab_project_id }}
