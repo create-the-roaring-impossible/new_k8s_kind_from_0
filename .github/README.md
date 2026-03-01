@@ -20,7 +20,7 @@ Follow this points:
 2. Test your branch, before to create a Pull Request (PR)
 3. All PRs have to be from feature branches to the _default_ one (main, master, etc..)
 4. Each PR required at least on reviewer, different from the creator of the PR
-5. If you work in this repository, add your "Name Surname <your-mail@consulcesi.com>" at the and of this file
+5. If you work in this repository, add your "Name Surname <your-mail@your-domain>" at the and of this file
 
 Thanks!!
 

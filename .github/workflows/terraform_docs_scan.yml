@@ -1,0 +1,56 @@
+name: 'Terraform Docs & Scan'
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+env:
+  TERRAFORM_FOLDERS: 'terraform/desktop-s8glse7'
+  TERRAFORM_DOCS_FOLDER: 'terraform/desktop-s8glse7/docs'
+  TERRAFORM_FOLDERS_EXCLUDED: 'docs environments'
+jobs:
+  terraformDocsAndScan:
+    name: 'Terraform Docs And Scan'
+    runs-on: 'arc-desktop-s8glse7'
+    permissions:
+      contents: write
+      pull-requests: write
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Formatting and scanning
+        shell: bash
+        run: |
+          for dir in ${{ env.TERRAFORM_FOLDERS }}; do
+            if [[ "$(basename $dir)" == "${{ env.TERRAFORM_FOLDERS_EXCLUDED }}" ]]; then
+              echo "Skipping $dir folder"
+              continue
+            fi
+            terraform fmt -recursive -diff "$dir"
+            checkov -d "$dir" --quiet --compact --soft-fail --output cli --output-file-path "$dir"
+          done
+      - name: Generate Terraform documentation
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          atlantis-file: 'terraform/atlantis.yaml'
+          config-file: '${{ env.TERRAFORM_DOCS_FOLDER }}/.terraform-docs.yml'
+          git-push: 'false'
+      - name: Commit and push new documentation and scan reports
+        shell: bash
+        run: |
+          # Configure git
+          git config --global --add safe.directory '*'
+          git config --global user.email "github@fake-domain.lol"
+          git config --global user.name "GitHub Bot"
+          # Check the current status
+          git status
+          # Commit and push
+          git add .
+          git commit -m "Formatting and updating documentation and scan reports - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+          git push origin HEAD:refs/heads/${{ github.event.pull_request.head.ref }}

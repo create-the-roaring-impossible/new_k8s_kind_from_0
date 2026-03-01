@@ -1,0 +1,69 @@
+formatter: "markdown table"
+
+version: ">= 0.20.0"
+
+header-from: "docs/.header.md"
+footer-from: "docs/.footer.md"
+
+recursive:
+  enabled: false
+  path: modules
+  include-main: true
+
+sections:
+  hide: []
+  show: []
+
+content: |-
+  {{ .Header }}
+
+  and even in between sections. also spaces will be preserved:
+
+  - item 1
+    - item 1-1
+  - item 2
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  and they don't even need to be in the default order
+
+  {{ .Inputs }}
+
+  {{ .Resources }}
+
+  {{ .Outputs }}
+
+  {{ .Footer }}
+
+output:
+  file: "README.md"
+  mode: replace
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+output-values:
+  enabled: false
+  from: ""
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: true
+  escape: true
+  hide-empty: true
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true

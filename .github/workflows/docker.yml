@@ -34,7 +34,7 @@ jobs:
       RC_Version: ${{ steps.set-rc-version.outputs.RCVersion }}
     steps:
       - name: 'Repository Checkout'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: 'Login to GitHub Container Registry'
@@ -45,6 +45,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: Set variable 'RCVersion', based on input 'isRC'
         id: set-rc-version
+        shell: bash
         run: |
           if [ "${{ github.event.inputs.isRC }}" = "true" ]; then
             RCVersion="-${{ github.run_number }}"
@@ -53,7 +54,18 @@ jobs:
           fi
           echo "RCVersion=$RCVersion" >> $GITHUB_ENV
           echo "RCVersion=$RCVersion" >> $GITHUB_OUTPUT
+      - name: Set build date
+        id: set-build-date
         shell: bash
+        run: |
+          echo "date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+      - name: Set author mail
+        id: set-author-mail
+        shell: bash
+        run: |
+          echo "email=$(git show -s --format='%ae' "${GITHUB_SHA}")" >> $GITHUB_ENV
+          echo "email=$(git show -s --format='%ae' "${GITHUB_SHA}")" >> $GITHUB_OUTPUT
       - name: 'Build and Push Docker Image, tag "${{ github.event.inputs.tag }}${{ env.RCVersion }}"'
         uses: docker/build-push-action@v6
         with:
@@ -61,13 +73,15 @@ jobs:
           file: ${{ github.event.inputs.dockerfile }}
           push: true
           tags: ${{ github.event.inputs.docker_repository }}:${{ github.event.inputs.tag }}${{ env.RCVersion }}
+          provenance: false
           labels: |
+            org.opencontainers.image.title=${{ github.event.inputs.docker_repository }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ github.event.inputs.tag }}
+            org.opencontainers.image.version=${{ github.event.inputs.tag }}${{ env.RCVersion }}
+            org.opencontainers.image.created=${{ steps.set-build-date.outputs.date }}
+            org.opencontainers.image.authors=${{ steps.set-author-mail.outputs.email }}
             org.opencontainers.image.licenses=gpl-3.0
-            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
       - name: 'Build and Push Docker Image, tag "latest"'
         if: ${{ github.event.inputs.isRC == 'false' }}
         uses: docker/build-push-action@v6
@@ -76,13 +90,15 @@ jobs:
           file: ${{ github.event.inputs.dockerfile }}
           push: true
           tags: ${{ github.event.inputs.docker_repository }}:latest
+          provenance: false
           labels: |
+            org.opencontainers.image.title=${{ github.event.inputs.docker_repository }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ github.event.inputs.tag }}
+            org.opencontainers.image.version=latest
+            org.opencontainers.image.created=${{ steps.set-build-date.outputs.date }}
+            org.opencontainers.image.authors=${{ steps.set-author-mail.outputs.email }}
             org.opencontainers.image.licenses=gpl-3.0
-            org.opencontainers.image.authors=${{ secrets.AUTHOR_EMAIL }}
   cleanup:
     name: 'Cleanup'
     needs: [buildAndPush]
@@ -91,8 +107,34 @@ jobs:
     env:
       RCVersion: ${{ needs.buildAndPush.outputs.RC_Version }}
     steps:
-      - name: 'Cleanup tags "${{ github.event.inputs.tag }}${{ env.RCVersion }}", and "latest", of Docker image ${{ github.event.inputs.docker_repository }}'
-        run: |
-          chmod +x ./scripts/bash/docker_clean.sh
-          ./scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}
+      - name: Decode GitHub App private key
+        id: decode_key
         shell: bash
+        run: |
+          private_key=$(echo "${{ secrets.CROSS_REPO_READ_ONLY_PRIVATE_KEY }}" | base64 -d | awk 'BEGIN {ORS="\\n"} {print}' | head -c -2) &> /dev/null
+          echo "::add-mask::$private_key"
+          echo "private_key=$private_key" >> $GITHUB_ENV
+          echo "private_key=$private_key" >> $GITHUB_OUTPUT
+      - name: Generate GitHub token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.CROSS_REPO_READ_ONLY_ID }}
+          private-key: ${{ steps.decode_key.outputs.private_key }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            new_k8s_kind_from_0
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+          path: 'temp_new_k8s_kind_from_0'
+          fetch-depth: 0
+      - name: 'Cleanup tags "${{ github.event.inputs.tag }}${{ env.RCVersion }}", and "latest", of Docker image ${{ github.event.inputs.docker_repository }}'
+        shell: bash
+        run: |
+          chmod +x ./temp_new_k8s_kind_from_0/scripts/bash/docker_clean.sh
+          ./temp_new_k8s_kind_from_0/scripts/bash/docker_clean.sh ${{ github.event.inputs.docker_repository }} ${{ github.event.inputs.tag }}${{ env.RCVersion }}

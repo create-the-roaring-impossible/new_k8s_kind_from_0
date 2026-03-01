@@ -1,17 +1,28 @@
-# DESCRIPTION: Terraform container with non-root user setup
+# DESCRIPTION: Terraform/OpenTofu container
 # REQUIREMENTS: Docker
 # USAGE: docker build -f [<path>/]tf.dockerfile -t tf[:<tag>] . --debug
 # TEST: docker run -it --rm tf[:<tag>] /bin/bash
 # AUTHORS: Matteo Cristiano
-# VERSION: 1.3.2
-# DATE: 2025-11-30
+# VERSION: 2.0.0
+# DATE: 2026-02-15
 
-FROM alpine:3.22 AS base
+ARG TF_VERSION=1.14.4
+ARG TOFU_VERSION=1.11.4
+ARG TF_DOC_VERSION=0.20.0
+ARG ALPINE_VERSION=3.23.3
+
+FROM hashicorp/terraform:${TF_VERSION} AS terraform
+
+FROM ghcr.io/opentofu/opentofu:${TOFU_VERSION}-minimal AS tofu
+
+FROM quay.io/terraform-docs/terraform-docs:${TF_DOC_VERSION} AS terraform-docs
+
+FROM alpine:${ALPINE_VERSION} AS base
 
 # Add metadata labels
-LABEL description="Terraform container with non-root user setup"
+LABEL description="Terraform/OpenTofu container"
 LABEL maintainer="Matteo Cristiano"
-LABEL version="1.3.2"
+LABEL version="2.0.0"
 
 USER root
 
@@ -19,81 +30,68 @@ RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
         bash \
-        ca-certificates \
-        cargo \
-        coreutils \
         curl \
-        gcc \
         git \
-        icu-libs \
-        krb5-libs \
-        less \
-        libffi-dev \
-        libgcc \
-        libintl \
-        libssl3 \
-        libstdc++ \
-        lttng-ust \
-        make \
-        musl-dev \
-        ncurses-terminfo-base \
-        openssh-client \
-        openssl-dev \
         py3-pip \
         python3 \
-        python3-dev \
         sudo \
-        tar \
-        tzdata \
-        userspace-rcu \
-        zlib
+        wget
 
 FROM base AS tools
 
 # Install PowerShell
-ARG POWERSHELL_VERSION=7.5.3
-ADD "https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell-${POWERSHELL_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
-RUN sudo mkdir -p /opt/microsoft/powershell/7 && \
+ARG PWSH_VERSION=7.5.4
+ADD "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-musl-x64.tar.gz" /tmp/powershell.tar.gz
+RUN apk add --no-cache \
+        icu-libs \
+        libgcc \
+        libstdc++ && \
+    sudo mkdir -p /opt/microsoft/powershell/7 && \
     sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 && \
     sudo chmod +x /opt/microsoft/powershell/7/pwsh && \
-    sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && \
-# Activate Python env and upgrade PIP
-    python3 -m venv /opt/venv && \
-    . /opt/venv/bin/activate && \
-    pip install --upgrade --no-cache-dir pip && \
-# Install AWS CLI
-    pip install --upgrade --no-cache-dir awscli && \
-# Install Azure CLI
-    pip install  --upgrade --no-cache-dir azure-cli && \
-# Deactivate Python env
-    deactivate
-# Install Terraform
-ARG TF_VERSION=1.13.4
-RUN apk --no-cache add --update --virtual .deps --no-cache gnupg && \
-    cd /tmp && \
-    curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" && \
-    curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" && \
-    curl --proto "=https" --tlsv1.2 -sSf -LO "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS.sig" && \
-    curl --proto "=https" --tlsv1.2 -sSf "https://www.hashicorp.com/.well-known/pgp-key.txt" | gpg --import && \
-    gpg --verify "terraform_${TF_VERSION}_SHA256SUMS.sig" "terraform_${TF_VERSION}_SHA256SUMS" && \
-    grep "terraform_${TF_VERSION}_linux_amd64.zip" "terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c && \
-    unzip "/tmp/terraform_${TF_VERSION}_linux_amd64.zip" -d /tmp && \
-    mv /tmp/terraform /usr/local/bin/terraform && \
-    rm -f "/tmp/terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS terraform_${TF_VERSION}_SHA256SUMS.sig"
-# Install tfsec
-ARG TFSEC_VERSION=1.28.13
-ADD "https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64" /usr/local/bin/tfsec
-RUN chmod +x /usr/local/bin/tfsec && \
-    apk del .deps \
+    sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
+
+# Copy the terraform binary
+COPY --from=terraform /bin/terraform /bin/terraform
+
+# Copy the tofu binary
+COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
+
+# Copy the terraform-docs binary
+COPY --from=terraform-docs /usr/local/bin/terraform-docs /usr/local/bin/terraform-docs
+
+# Install AWS cli
+ARG AWS_VERSION=2.32.7
+RUN apk add --no-cache \
+    aws-cli=="${AWS_VERSION}-r0"
+
+# Install Azure cli
+ARG AZURE_VERSION=2.83.0
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache \
         cargo \
         gcc \
         libffi-dev \
         make \
         musl-dev \
         openssl-dev \
+        py3-pip \
+        python3 \
         python3-dev && \
-    apk cache clean && \
-    rm -rf /var/cache/apk/* /tmp/* /root/.cache
+    python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install azure-cli=="${AZURE_VERSION}"
+
+# Install GCP cli
+# TODO: add GCP cli installation
+
+# Install Checkov
+ARG CHECKOV_VERSION=3.2.500
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip3 install --no-cache-dir --upgrade pip && \
+    /opt/venv/bin/pip3 install --no-cache-dir --upgrade setuptools && \
+    /opt/venv/bin/pip3 install --no-cache-dir "checkov==${CHECKOV_VERSION}"
 
 FROM tools AS final
 

@@ -1,0 +1,5 @@
+version: 1
+
+projects:
+  - name: desktop-s8glse7
+    dir: terraform/desktop-s8glse7

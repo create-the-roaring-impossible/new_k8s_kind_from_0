@@ -14,7 +14,15 @@ on:
       GITLAB_TOKEN:
         description: 'GitLab token'
         required: true
+      GITLAB_PROJECT_ID:
+        description: 'GitLab project ID'
+        required: true
     inputs:
+      tool:
+        description: 'Set the tool to use for running Terraform/OpenTofu commands'
+        type: string
+        required: true
+        default: 'opentofu'
       env:
         description: 'Set the environment'
         type: string
@@ -36,33 +44,28 @@ on:
         description: 'Set the targets (optional, comma-separated) [only for "plan+apply" action]. Example: -target=aws_instance.web,-target=aws_s3_bucket.data'
         type: string
         required: false
-        default: ''
       source:
-        description: 'Set the source (optional) [only for "move" action]. Example: aws_instance.web'
+        description: 'Set the source (optional) [only for "state move" action]. Example: aws_instance.web'
         type: string
         required: false
-        default: ''
       destination:
-        description: 'Set the destination (optional) [only for "move" action]. Example: aws_instance.web_new'
+        description: 'Set the destination (optional) [only for "state move" action]. Example: aws_instance.web_new'
         type: string
         required: false
-        default: ''
       address:
-        description: 'Set the address (optional) [only for "remove" and "import" actions]. Example: aws_instance.web'
+        description: 'Set the address (optional) [only for "state show", "state remove" and "import" actions]. Example: aws_instance.web'
         type: string
         required: false
-        default: ''
       id:
         description: 'Set the ID (optional) [only for "import" action]. Example: i-1234567890abcdef0'
         type: string
         required: false
-        default: ''
 env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
-  TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: true
+  TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE: false
   TF_IN_AUTOMATION: 'true'
 jobs:
-  terraformPlan:
+  TerraformPlan:
     name: 'Terraform Plan'
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ inputs.action == 'plan+apply' }}
@@ -82,54 +85,56 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ inputs.scope }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
           env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
           logLevel: ${{ inputs.logLevel }}
           targets: ${{ inputs.targets }}
-  # TODO: to add 'plan scan', via Chekov or tfsec or other tools
-  ManualTerraformPlanApproval:
-    name: 'ManualTerraformPlanApproval'
-    runs-on: 'arc-desktop-s8glse7'
-    if: ${{ inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
-    needs: terraformPlan
-    container:
-      image: ghcr.io/create-the-roaring-impossible/tf:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-    timeout-minutes: 15
-    permissions:
-      issues: write
-    steps:
-      # TODO: to check section 'Org team approver', to 'https://github.com/marketplace/actions/manual-workflow-approval' url
-      # - name: Generate token
-      #   id: generate_token
-      #   uses: actions/create-github-app-token@v2
-      #   with:
-      #     app-id: ${{ secrets.APP_ID }}
-      #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Manual Approval
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: Sennar19 # TODO: to set 'Admin'
-          minimum-approvals: 1
-          issue-title: "Terraform Plan - Manual Approval Required"
-          issue-body: "Validate Terraform plan"
-          exclude-workflow-initiator-as-approver: false
-          fail-on-denial: true
-          additional-approved-words: ''
-          additional-denied-words: ''
-  terraformApply:
+  # ManualTerraformPlanApproval:
+  #   name: 'ManualTerraformPlanApproval'
+  #   runs-on: 'arc-desktop-s8glse7'
+  #   if: ${{ inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }}
+  #   needs: terraformPlan
+  #   container:
+  #     image: ghcr.io/create-the-roaring-impossible/tf:latest
+  #     credentials:
+  #       username: ${{ github.actor }}
+  #       password: ${{ secrets.DOCKER_TOKEN }}
+  #   timeout-minutes: 15
+  #   permissions:
+  #     issues: write
+  #   steps:
+  #     # TODO: to check section 'Org team approver', to 'https://github.com/marketplace/actions/manual-workflow-approval' url
+  #     # - name: Generate token
+  #     #   id: generate_token
+  #     #   uses: actions/create-github-app-token@v2
+  #     #   with:
+  #     #     app-id: ${{ secrets.APP_ID }}
+  #     #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
+  #     - name: Manual Approval
+  #       uses: trstringer/manual-approval@v1
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: Sennar19 # TODO: to set 'Admin'
+  #         minimum-approvals: 1
+  #         issue-title: "Terraform Plan - Manual Approval Required"
+  #         issue-body: "Validate Terraform plan"
+  #         exclude-workflow-initiator-as-approver: false
+  #         fail-on-denial: true
+  #         additional-approved-words: ''
+  #         additional-denied-words: ''
+  TerraformApply:
     name: 'Terraform Apply'
     runs-on: 'arc-desktop-s8glse7'
-    if: ${{ inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
-    needs: ManualTerraformPlanApproval
+    if: ${{ inputs.action == 'plan+apply' && needs.terraformPlan.result == 'success' }} # ${{ inputs.action == 'plan+apply' && needs.ManualTerraformPlanApproval.result == 'success' }}
+    needs: terraformPlan # ManualTerraformPlanApproval
     container:
       image: ghcr.io/create-the-roaring-impossible/tf:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -141,10 +146,12 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ inputs.scope }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
           env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
           logLevel: ${{ inputs.logLevel }}
-  terraformStateList:
+  TerraformStateList:
     name: 'Terraform State List'
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ inputs.action == 'state list' }}
@@ -164,10 +171,38 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ inputs.scope }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
           env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
           logLevel: ${{ inputs.logLevel }}
-  terraformStateMove:
+  TerraformStateShow:
+    name: 'Terraform State Show'
+    runs-on: 'arc-desktop-s8glse7'
+    if: ${{ inputs.action == 'state show' }}
+    container:
+      image: ghcr.io/create-the-roaring-impossible/tf:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+    steps:
+      - name: 'Repository Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: 'Terraform State Show'
+        uses: ./.github/actions/tf-state-show-composite-action
+        with:
+          kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
+          gitlab_user: ${{ secrets.GITLAB_USER }}
+          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
+          env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
+          logLevel: ${{ inputs.logLevel }}
+          address: ${{ inputs.address }}
+  TerraformStateMove:
     name: 'Terraform State Move'
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ inputs.action == 'state move' }}
@@ -176,6 +211,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -187,12 +223,14 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ inputs.scope }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
           env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
           logLevel: ${{ inputs.logLevel }}
           source: ${{ inputs.source }}
           destination: ${{ inputs.destination }}
-  terraformStateRemove:
+  TerraformStateRemove:
     name: 'Terraform State Remove'
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ inputs.action == 'state remove' }}
@@ -201,6 +239,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -212,11 +251,13 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ inputs.scope }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
           env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
           logLevel: ${{ inputs.logLevel }}
           address: ${{ inputs.address }}
-  terraformStateImport:
+  TerraformStateImport:
     name: 'Terraform State Import'
     runs-on: 'arc-desktop-s8glse7'
     if: ${{ inputs.action == 'import' }}
@@ -225,6 +266,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKER_TOKEN }}
+    environment: ${{ inputs.env }}
     steps:
       - name: 'Repository Checkout'
         uses: actions/checkout@v5
@@ -236,8 +278,10 @@ jobs:
           kubeconfig: ${{ secrets.LOCAL_K8S_CONFIG }}
           gitlab_user: ${{ secrets.GITLAB_USER }}
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          scope: ${{ inputs.scope }}
+          gitlab_project_id: ${{ secrets.GITLAB_PROJECT_ID }}
+          tool: ${{ inputs.tool }}
           env: ${{ inputs.env }}
+          scope: ${{ inputs.scope }}
           logLevel: ${{ inputs.logLevel }}
           address: ${{ inputs.address }}
           id: ${{ inputs.id }}

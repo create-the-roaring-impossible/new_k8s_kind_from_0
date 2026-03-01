@@ -67,6 +67,8 @@ install_kind:
 	chmod +x ./kind && \
 	sudo mv ./kind /usr/local/bin/kind# TODO: to parametrize "v0.30.0" version
 
+
+
 # install_vagrant:
 # 	sudo apt install vagrant && \
 # 	sudo mkdir -p "/etc/vbox/" && \
@@ -81,6 +83,8 @@ install_kind:
 # 	export PATH="$PATH:/mnt/c/WINDOWS/system32" && \
 # 	VAGRANT_LOG="debug" && \
 # 	vagrant up
+
+
 
 create_docker_registry:
 	if ! docker ps | grep -q 'local-registry'; \
