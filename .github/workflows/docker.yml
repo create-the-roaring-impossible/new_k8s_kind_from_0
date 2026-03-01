@@ -112,15 +112,15 @@ jobs:
         shell: bash
         run: |
           private_key=$(echo "${{ secrets.CROSS_REPO_READ_ONLY_PRIVATE_KEY }}" | base64 -d | awk 'BEGIN {ORS="\\n"} {print}' | head -c -2) &> /dev/null
-          echo "::add-mask::private_key"
+          echo "::add-mask::$private_key"
           echo "private_key=$private_key" >> $GITHUB_ENV
           echo "private_key=$private_key" >> $GITHUB_OUTPUT
       - name: Generate GitHub token
         id: app-token
         uses: actions/create-github-app-token@v2 # TODO: to check if "v3" is available
         with:
-          app_id: ${{ vars.CROSS_REPO_READ_ONLY_ID }}
-          private_key: ${{ steps.decode_key.outputs.private_key }}
+          app-id: ${{ vars.CROSS_REPO_READ_ONLY_ID }}
+          private-key: ${{ steps.decode_key.outputs.private_key }}
           owner: ${{ github.repository_owner }}
           repositories: |
             new_k8s_kind_from_0
