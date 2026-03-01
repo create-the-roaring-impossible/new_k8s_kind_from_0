@@ -117,7 +117,7 @@ jobs:
           echo "private_key=$private_key" >> $GITHUB_OUTPUT
       - name: Generate GitHub token
         id: app-token
-        uses: actions/create-github-app-token@v2 # TODO: to check if "v3" is available
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.CROSS_REPO_READ_ONLY_ID }}
           private-key: ${{ steps.decode_key.outputs.private_key }}
@@ -128,7 +128,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: ${{ github.repository }}
-          ref: studies/terraform # TODO: to use 'main'
+          ref: main
           token: ${{ steps.app-token.outputs.token }}
           persist-credentials: false
           path: 'temp_new_k8s_kind_from_0'
